@@ -1,0 +1,85 @@
+#+TITLE: Cli4Sys first meeting
+
+* Tour de table
+
+- Thomas
+- Phil
+- Adri
+- Margaux
+- Philip Juquel (Cli4Sys)
+
+* Etat de l'arts
+
+- Mastere Ponts et Chaussé en /Smart Mobility/
+- Contrôle des véhicules
+- Synchronisation des feux tricolores
+- Vitesse des véhicules
+  + Video Ford
+
+1. Centrer l'état de l'art avec des docs sur controle d'infra de feux tricolores
+2. Données de dynamique de véhicules
+3. Passage de la dynamique au rejet. pistes:
+  + IFPEN
+  + Trouver des trucs
+  + Contacts de M. Juquel
+
+Chercher des quartiers au trafique un minimum fluide (donc pas les grosses villes).
+
+Contacter les personnes maintenant car ca peut prendre du temps.
+
+* Work packages
+  
+** Partie théorique
+
+1. Qu'est ce qu'on peut atteindre si on controle les véhicules et les feux:
+2. Ensuite on introduira des perturbations etc
+3. trouver données théorique sur les dynamiques de trafique.
+
+** Lien entre dynamique automobile et rejets
+
+Avec un peu de chance, IFPEN va nous donner des analyses si on leur donne les données demandées à TomTom. Mais les données TomTom ne sont pas forcément utiles.
+
+** Études théoriques de recherche d'optimums
+
+*** Contraintes
+
+1. Temps minimum de trajet entre pt A et B
+2. Prise en compte des piétons
+3. Etc...
+
+** Simulation dans un monde virtuel - impact des perturbations
+
+Ca va permettre d'introduire des éléments de perturbations (piétons qui traverse qu'on avait pas prévu - traverse au rouge etc). Du coup le pietons a fait freiner tout le monde derrière. Faut il changer le comportement du feu en temps réel ?
+
+** Mise en projet d'un potentiel déploiement
+   
+integrity modeler / papyrus
+
+* Planning
+
+- Trois jalons, trouver les rendus necessaire.
+- Definition des roles
+- Points de contacts
+
+CLI4SYS: SCRUM sur periodes de 15 jours (avec un entre-meeting au bout de 7 jours)
+
+P2 start- start 5 nov
+P3 start - start 30 jan
+P4 start - end 30 juin
+
+** P2
+   
+- 28-nov-2018 => RDV, 17h @ TP ; reservation de salle
+  + Finir de booker les dates de réunions
+  + Planning projet + attributions des roles
+  + Etats de l'art
+- 17-dec-2018 => RDV, 17h30 @ TP ; 21 avenue Victor Hugo 75009
+- 22-jan-2018 => RDV, 15h00 @ TP ; reservation de salle
+   
+** P3
+   
+** P4
+
+* Partage de documents
+
+- Dropbox fil rouge
