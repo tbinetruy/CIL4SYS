@@ -1,4 +1,4 @@
-#+TITLE: Cli4Sys first meeting
+#+TITLE: Cil4Sys first meeting
 
 * Tour de table
 
@@ -6,7 +6,7 @@
 - Phil
 - Adri
 - Margaux
-- Philip Gicquel (Cli4Sys)
+- Philip Gicquel (Cil4Sys)
 
 * Etat de l'art
 
@@ -61,7 +61,7 @@ integrity modeler / papyrus
 - Definition des roles
 - Points de contacts
 
-CLI4SYS: SCRUM sur periodes de 15 jours (avec un entre-meeting au bout de 7 jours)
+CIL4SYS: SCRUM sur periodes de 15 jours (avec un entre-meeting au bout de 7 jours)
 
 P2 start- start 5 nov
 P3 start - start 30 jan

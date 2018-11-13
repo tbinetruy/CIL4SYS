@@ -2,8 +2,11 @@
 
 - https://trello.com/cil4sys
 
-* Etat de l'art
+* État de l'art
+  
+** Acquisition de données
 
 - https://opentraffic.io
 - https://github.com/graphhopper/open-traffic-collection
 - https://www.stadt-koeln.de/externe-dienste/open-data/traffic.php
+- https://developer.here.com/documentation/traffic/topics_v6.1/resource-parameters-flow.html
