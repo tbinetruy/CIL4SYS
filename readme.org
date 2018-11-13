@@ -11,3 +11,10 @@
 - https://www.stadt-koeln.de/externe-dienste/open-data/traffic.php
 - https://developer.here.com/documentation/traffic/topics_v6.1/resource-parameters-flow.html
 - http://www.pressreleasepoint.com/machine-learning-help-optimize-traffic-and-reduce-pollution
+  
+
+** Keywords
+
+Useful for google searches:
+
+- Traffic smoothing
