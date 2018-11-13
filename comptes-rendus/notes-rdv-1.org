@@ -6,11 +6,11 @@
 - Phil
 - Adri
 - Margaux
-- Philip Juquel (Cli4Sys)
+- Philip Gicquel (Cli4Sys)
 
-* Etat de l'arts
+* Etat de l'art
 
-- Mastere Ponts et Chaussé en /Smart Mobility/
+- Mastere Ponts et Chaussées en /Smart Mobility/
 - Contrôle des véhicules
 - Synchronisation des feux tricolores
 - Vitesse des véhicules
@@ -18,12 +18,12 @@
 
 1. Centrer l'état de l'art avec des docs sur controle d'infra de feux tricolores
 2. Données de dynamique de véhicules
-3. Passage de la dynamique au rejet. pistes:
+3. Passage de la dynamique au rejet. Pistes:
   + IFPEN
   + Trouver des trucs
-  + Contacts de M. Juquel
+  + Contacts de M. Gicquel
 
-Chercher des quartiers au trafique un minimum fluide (donc pas les grosses villes).
+Chercher des quartiers au trafic un minimum fluide (donc pas les grosses villes).
 
 Contacter les personnes maintenant car ca peut prendre du temps.
 
@@ -33,7 +33,7 @@ Contacter les personnes maintenant car ca peut prendre du temps.
 
 1. Qu'est ce qu'on peut atteindre si on controle les véhicules et les feux:
 2. Ensuite on introduira des perturbations etc
-3. trouver données théorique sur les dynamiques de trafique.
+3. trouver données théoriques sur les dynamiques de trafic.
 
 ** Lien entre dynamique automobile et rejets
 
@@ -49,7 +49,7 @@ Avec un peu de chance, IFPEN va nous donner des analyses si on leur donne les do
 
 ** Simulation dans un monde virtuel - impact des perturbations
 
-Ca va permettre d'introduire des éléments de perturbations (piétons qui traverse qu'on avait pas prévu - traverse au rouge etc). Du coup le pietons a fait freiner tout le monde derrière. Faut il changer le comportement du feu en temps réel ?
+Ca va permettre d'introduire des éléments de perturbations (piéton qui traverse qu'on avait pas prévu - traverse au rouge etc). Du coup le piéton a fait freiner tout le monde derrière. Faut il changer le comportement du feu en temps réel ?
 
 ** Mise en projet d'un potentiel déploiement
    
@@ -57,7 +57,7 @@ integrity modeler / papyrus
 
 * Planning
 
-- Trois jalons, trouver les rendus necessaire.
+- Trois jalons, trouver les rendus necessaires.
 - Definition des roles
 - Points de contacts
 
@@ -72,7 +72,7 @@ P4 start - end 30 juin
 - 28-nov-2018 => RDV, 17h @ TP ; reservation de salle
   + Finir de booker les dates de réunions
   + Planning projet + attributions des roles
-  + Etats de l'art
+  + Etat de l'art
 - 17-dec-2018 => RDV, 17h30 @ TP ; 21 avenue Victor Hugo 75009
 - 22-jan-2018 => RDV, 15h00 @ TP ; reservation de salle
    
