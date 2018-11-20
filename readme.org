@@ -18,6 +18,11 @@
 
 - http://www.traffic-simulation.de/
   + code source: https://github.com/movsim/traffic-simulation-de
+
+
+** Traffic flow prediction
+
+- https://arxiv.org/pdf/1710.01695.pdf
   
 
 ** Keywords
