@@ -12,6 +12,7 @@
 - https://developer.here.com/documentation/traffic/topics_v6.1/resource-parameters-flow.html
 - http://www.pressreleasepoint.com/machine-learning-help-optimize-traffic-and-reduce-pollution
 - http://cs229.stanford.edu/proj2005/RobinsonMosherEgner-LearningTrafficLightControlPolicies.pdf
+- https://www.vegvesen.no/_attachment/336339/binary/585485
   
 
 ** Keywords
