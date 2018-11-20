@@ -13,6 +13,10 @@
 - http://www.pressreleasepoint.com/machine-learning-help-optimize-traffic-and-reduce-pollution
 - http://cs229.stanford.edu/proj2005/RobinsonMosherEgner-LearningTrafficLightControlPolicies.pdf
 - https://www.vegvesen.no/_attachment/336339/binary/585485
+
+** Simulation de données
+
+- http://www.traffic-simulation.de/
   
 
 ** Keywords
