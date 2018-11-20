@@ -9,7 +9,7 @@
 - https://opentraffic.io
 - https://github.com/graphhopper/open-traffic-collection
 - https://www.stadt-koeln.de/externe-dienste/open-data/traffic.php
-- https://developer.here.com/documentation/traffic/topics_v6.1/resource-parameters-flow.html
+- https://developer.here.com/documentation/traffic/topics_v6.1/resource-parameters-flow.html (owned my Nokia Maps)
 - http://www.pressreleasepoint.com/machine-learning-help-optimize-traffic-and-reduce-pollution
 - http://cs229.stanford.edu/proj2005/RobinsonMosherEgner-LearningTrafficLightControlPolicies.pdf
 - https://www.vegvesen.no/_attachment/336339/binary/585485
