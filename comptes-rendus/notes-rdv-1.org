@@ -8,6 +8,7 @@
 - Margaux Rodrigues
 - Philippe Gicquel (Cil4Sys)
 - Olivier Rouhaud (Softeam)
+- Quentin Mercier (référent Telecom)
 
 * Etat de l'art
 
@@ -84,3 +85,5 @@ P4 start 17 avr - end 30 juin
 * Partage de documents
 
 - Dropbox fil rouge
+- repository github
+- trello 
