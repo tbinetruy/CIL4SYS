@@ -2,11 +2,12 @@
 
 * Tour de table
 
-- Thomas
-- Phil
-- Adri
-- Margaux
-- Philip Gicquel (Cil4Sys)
+- Thomas Binetruy
+- Philippe Jacquet
+- Adrien Ly
+- Margaux Rodrigues
+- Philippe Gicquel (Cil4Sys)
+- Olivier Rouhaud (Softeam)
 
 * Etat de l'art
 
@@ -16,16 +17,16 @@
 - Vitesse des véhicules
   + Video Ford
 
-1. Centrer l'état de l'art avec des docs sur controle d'infra de feux tricolores
+1. Centrer l'état de l'art avec des documents sur le contrôle d'infra de feux tricolores
 2. Données de dynamique de véhicules
 3. Passage de la dynamique au rejet. Pistes:
   + IFPEN
-  + Trouver des trucs
-  + Contacts de M. Gicquel
+  + Regarder la recherche
+  + Contacts de P. Gicquel
 
-Chercher des quartiers au trafic un minimum fluide (donc pas les grosses villes).
+Chercher des quartiers au trafic un minimum fluide (donc pas les grosses villes, plutôt s'orienter sur une ville de banlieue parisienne ou province).
 
-Contacter les personnes maintenant car ca peut prendre du temps.
+Contacter les personnes maintenant car ça peut prendre du temps.
 
 * Work packages
   
@@ -33,11 +34,11 @@ Contacter les personnes maintenant car ca peut prendre du temps.
 
 1. Qu'est ce qu'on peut atteindre si on controle les véhicules et les feux:
 2. Ensuite on introduira des perturbations etc
-3. trouver données théoriques sur les dynamiques de trafic.
+3. Trouver données théoriques sur les dynamiques de trafic.
 
 ** Lien entre dynamique automobile et rejets
 
-Avec un peu de chance, IFPEN va nous donner des analyses si on leur donne les données demandées à TomTom. Mais les données TomTom ne sont pas forcément utiles.
+Avec un peu de chance, IFPEN va nous donner des analyses si on leur donne les données demandées à TomTom. Mais les données TomTom ne sont pas forcément utiles (il faut voir si la granularité est suffisante pout l'IFPEN).
 
 ** Études théoriques de recherche d'optimums
 
@@ -57,15 +58,15 @@ integrity modeler / papyrus
 
 * Planning
 
-- Trois jalons, trouver les rendus necessaires.
+- Trois jalons établis par Telecom avec présentation orale (chaque fin de période).
 - Definition des roles
 - Points de contacts
 
 CIL4SYS: SCRUM sur periodes de 15 jours (avec un entre-meeting au bout de 7 jours)
 
-P2 start- start 5 nov
-P3 start - start 30 jan
-P4 start - end 30 juin
+P2 start 5 nov - end 30 jan
+P3 start 30 jan - end 17 avr
+P4 start 17 avr - end 30 juin
 
 ** P2
    
