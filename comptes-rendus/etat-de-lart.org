@@ -1,25 +1,39 @@
-#+TITLE: 
+#+TITLE:
 #+INCLUDE: "./nova-print/doctype-memo.org"
 {{{subtitle(Etat de l'art)}}}
-{{{theme-color(5b254e)}}}
- 
-* TODO Introduction
-Dans le but d'appréhender le sujet proposé par Cyl4Sys, le premier travail a effectuer est de réaliser un état de l'art.
+{{{theme-color(19cba9)}}}
+
+* Introduction
+
+Ce document détaille l'état de l'art de l'optimisation de trafic routier. Dans un premier temps, nous présentons le contexte du projet, suivi des problématiques sous-jacentes, pour ensuite passer en revue un certain nombre d'études traitant les problématiques soulevées.
+
+* Définition des objectifs de l'étude
+
+CIL4SYS cherche à proposer un modèle de régulation de vitesse des véhicules pour:
+
+1. Minimiser l'impact des véhicules sur l'environnement
+2. Fluidifier le trafic routier
+3. Réduire le nombre d'accidents sur les routes
+
+Ce modèle passe par le contrôle des feux tricolores.
 
 * Problématiques sous-jacentes
 
+Pour mener à bien cette étude, il est nécessaire de se pencher sur les problématiques suivantes :
 
-* Évaluation du contexte
+- Comment mesurer l'impact sur l'environnement.
+- Récupérer les données de flux routiers à l'échelle d'un quartier.
+- Contraintes d'optimisation (temps de trajet minimal, /etc/)
+- Simulation du modèle
 
-
-* Différends concepts  
+* Différentes études
 
 ** Poster: DeepTFP: Mobile Time Series Data Analytics based Traffic Flow Prediction
-   
+
 "Traffic flow prediction is an important research issue to avoid traffic congestion in transportation systems. Traffic congestion avoiding can be achieved by knowing traffic flow and then conducting transportation planning. Achieving traffic flow prediction is challenging as the prediction is affected by many complex factors such as interregion traffic, vehicles’ relations, and sudden events. However, as the mobile data of vehicles has been widely collected by sensor embedded devices in transportation systems, it is possible to predict the traffic flow by analysing mobile data. This study proposes a deep learning based prediction algorithm, DeepTFP, to collectively predict the traffic flow on each and every traffic road of a city. This algorithm uses three deep residual neural networks to model temporal closeness, period, and trend properties of traffic flow. Each residual neural network consists of a branch of residual convolutional units. DeepTFP aggregates the outputs of the three residual neural networks to optimize the parameters of a time series prediction model. Contrast experiments on mobile time series data from the transportation system of England demonstrate that the proposed DeepTFP outperforms the Long Short-Term Memory (LSTM) architecture based method in prediction accuracy." - https://arxiv.org/pdf/1710.01695.pdf
 
 ** Swarm intelligence for traffic light scheduling: Application to real urban areas
-   
+
 "Congestion, pollution, security, parking, noise, and many other problems derived from vehicular traffic are present every day in most cities around the world. The growing number of traffic lights that control the vehicular flow requires a complex scheduling, and hence, automatic systems are indispensable nowadays for optimally tackling this task. In this work, we propose a Swarm Intelligence approach to find successful cycle programs of traffic lights. Using a microscopic traffic simulator, the solutions obtained by our algorithm are evaluated in the context of two large and heterogeneous metropolitan areas located in the cities of Málaga and Sevilla (in Spain). In comparison with cycle programs predefined by experts (close to real ones), our proposal obtains significant profits in terms of two main indicators: the number of vehicles that reach their destinations on time and the global trip time." - https://www.sciencedirect.com/science/article/pii/S0952197611000777#f0005
 
 ** Hierarchical multi-agent control of traffic lights based on collective learning
@@ -27,5 +41,25 @@ Dans le but d'appréhender le sujet proposé par Cyl4Sys, le premier travail a e
 "Increasing traffic congestion poses significant challenges for urban planning and management in metropolitan areas around the world. One way to tackle the problem is to resort to the emerging technologies in artificial intelligence. Traffic light control is one of the most traditional and important instruments for urban traffic management. The present study proposes a traffic light control system enabled by a hierarchical multi-agent modeling framework in a decentralized manner. In the framework, a traffic network is decomposed into regions represented by region agents. Each region consists of intersections, modeled by intersection agents who coordinate with neighboring intersection agents through communication. For each intersection, a collection of turning movement agents operate individually and implement optimal actions according to local control policies. By employing a reinforcement learning algorithm for each turning movement agent, the intersection controllers are enabled with the capability to make their timing decisions in a complex and dynamic environment. In addition, the traffic light control operates with an advanced phase composition process dynamically combining compatible turning movements. Moreover, the collective operations performed by the agents in a road network are further coordinated by varying priority settings for relevant turning movements. A case study was carried out by simulations to evaluate the performance of the proposed control system while comparing it with an optimized vehicle-actuated control system. The results show that the proposed traffic light system, after a collective machine learning process, not only improves the local signal operations at individual intersections but also enhances the traffic performance at the regional level through coordination of specific turning movements." - https://www.sciencedirect.com/science/article/pii/S0952197617302658?via%3Dihub
 
 ** A real-time traffic signal control system: architecture, algorithms, and analysis
-   
+
 "The paper discusses a real-time traffic-adaptive signal control system referred to as RHODES. The system takes as input detector data for real-time measurement of traffic flow, and “optimally” controls the flow through the network. The system utilizes a control architecture that (1) decomposes the traffic control problem into several subproblems that are interconnected in an hierarchical fashion, (2) predicts traffic flows at appropriate resolution levels (individual vehicles and platoons) to enable pro-active control, (3) allows various optimization modules for solving the hierarchical subproblems, and (4) utilizes a data structure and computer/communication approaches that allow for fast solution of the subproblems, so that each decision can be downloaded in the field appropriately within the given rolling time horizon of the corresponding subproblem. The RHODES architecture, algorithms, and its analysis are presented. Laboratory test results, based on implementation of RHODES on simulation models of actual scenarios, illustrate the effectiveness of the system." - https://www.sciencedirect.com/science/article/pii/S0968090X00000474
+
+
+** Un simulateur multiagent de trafic coopératif
+
+"Cet  article  présente  un  modèle  multiagent  de trafic  coopératif  et  son  implémentation,  vue comme  une  extension  du  simulateur  de  trafic MovSim. La dynamique physique des véhicules est  décrite  avec  le  point  de  vue  du  domaine de la théorie du trafic en proposant un modèle microscopique, multi-anticipatif et bilatéral de suivi de véhicules. Ce modèle est enrichi par des paradigmes agent qui influencent le comportement  des  véhicules  grâce  aux  mécanismes  de perception, de communication et au concept de confiance. Les résultats en simulation, utilisant des données réelles, mettent en valeur l’impact positif des véhicules connectés sur l’homogénéisation  du  flux  de  trafic,  même  en  présence  de capteurs défaillants. Le travail présenté se positionne aussi comme un outil d’aide à la décision pour le déploiement futur de véhicules coopératifs et de leur infrastructure, et pour la conception de stratégies de contrôle de tels systèmes." - https://hal.archives-ouvertes.fr/hal-01163018/document
+
+* Reinforcement Learning
+
+Le reinforcement learning, méthode utilisée à de nombreuses reprises dans l'état de l'art pour optimiser les flux de trafic routier, consiste à affiner notre modèle à chaque itération. Dans le cas le plus simple, l'état du trafic routier est fonction de l'état des feux. Le problème consiste alors à optimiser l'état des feux tricolores pour minimiser les émissions en prenant compte des contraintes (temps minimal de trajet par /ex/).
+
+Le reinforcement learning fonctionne de la manière suivante:
+
+$$
+Y_{i+1} := f_1(Y_i, X_i, \epsilon) \\
+X_{i+1} := f_2(Y_{i+1}, X_i, \epsilon)
+$$
+
+Où $Y_i$ est l'état des feux à l'étape $i$, $X_i$ est l'état de l'environnement (positions, vitesses, accélérations, consommation, piétons etc). Enfin, $\epsilon$ représente le bruit (accidents par exemple). $f_1$ est alors la fonction qui définit l'état des feux à l'étape $i+1$. $f_2$ est a fonction qui définit l'etat de l'environnement à l'étape $i+1$.
+
+Notre modèle $f_1$ (puisque nous n'avons pas le contrôle sur $f_2$) est donc une fonction qui met à jour l'état des feux en se basant sur l'état actuel du trafic routier.
