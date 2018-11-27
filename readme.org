@@ -13,17 +13,22 @@
 - http://www.pressreleasepoint.com/machine-learning-help-optimize-traffic-and-reduce-pollution
 - http://cs229.stanford.edu/proj2005/RobinsonMosherEgner-LearningTrafficLightControlPolicies.pdf
 - https://www.vegvesen.no/_attachment/336339/binary/585485
+- https://data.transportation.gov/Automobiles/Next-Generation-Simulation-NGSIM-Vehicle-Trajector/8ect-6jqj
+- https://archive.ics.uci.edu/ml/datasets/Taxi+Service+Trajectory+-+Prediction+Challenge,+ECML+PKDD+2015
+- https://catalog.data.gov/dataset?q=traffic
 
 ** Simulation de données
 
 - http://www.traffic-simulation.de/
   + code source: https://github.com/movsim/traffic-simulation-de
-
+- http://sumo.dlr.de/index.html
 
 ** Traffic flow prediction
 
 - https://arxiv.org/pdf/1710.01695.pdf
-  
+- https://www.sciencedirect.com/science/article/pii/S0952197611000777#f0005
+- https://www.sciencedirect.com/science/article/pii/S0952197617302658?via%3Dihub
+- https://www.sciencedirect.com/science/article/pii/S0968090X00000474
 
 ** Keywords
 
