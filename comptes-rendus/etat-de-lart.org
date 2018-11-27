@@ -26,6 +26,37 @@ Pour mener à bien cette étude, il est nécessaire de se pencher sur les probl�
 - Contraintes d'optimisation (temps de trajet minimal, /etc/)
 - Simulation du modèle
 
+* Acquisition de données
+
+Ci-dessous, nous présentons une liste de liens qui permettent de télécharger des données de trafic.
+
+- https://opentraffic.io
+- https://github.com/graphhopper/open-traffic-collection
+- https://www.stadt-koeln.de/externe-dienste/open-data/traffic.php
+- https://developer.here.com/documentation/traffic/topics_v6.1/resource-parameters-flow.html (owned my Nokia Maps)
+- http://www.pressreleasepoint.com/machine-learning-help-optimize-traffic-and-reduce-pollution
+- http://cs229.stanford.edu/proj2005/RobinsonMosherEgner-LearningTrafficLightControlPolicies.pdf
+- https://www.vegvesen.no/_attachment/336339/binary/585485
+- https://data.transportation.gov/Automobiles/Next-Generation-Simulation-NGSIM-Vehicle-Trajector/8ect-6jqj
+- https://archive.ics.uci.edu/ml/datasets/Taxi+Service+Trajectory+-+Prediction+Challenge,+ECML+PKDD+2015
+- https://catalog.data.gov/dataset?q=traffic
+
+* Simulation des modèles
+
+Un fois notre modèle entraîné sur les données acquises, il est nécessaire d'évaluer ses performances. Pour ce faire, nous proposons de les tester sur des données simulées. Nous avons trouver les simulateurs de flux routier suivants:
+
+- http://www.traffic-simulation.de/
+  + code source: https://github.com/movsim/traffic-simulation-de
+- http://sumo.dlr.de/index.html
+
+Le logiciel Sumo permet mode modéliser un quartier et de contrôler les feux pour ainsi voir les répercussions sur le flux trafic. Il est donc possible d'évaluer les performances de nos modèles avec ces simulations. De plus, les données obtenues lors de la phase d'acquisition permettent de "benchmarker" notre modèle avec l'état du trafic actuel.
+
+Ce-dessous, un exemple de simulation de trafic obtenue grâce au logiciel Sumo:
+
+{{{figure}}}
+#+CAPTION: Capture d'écran Sumo
+[[./img/sumo-screenshot.png]]
+
 * Différentes études
 
 ** Poster: DeepTFP: Mobile Time Series Data Analytics based Traffic Flow Prediction
