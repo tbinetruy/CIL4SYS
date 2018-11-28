@@ -5,13 +5,13 @@
 
 * Introduction 
 
-* Data Acquisition
+* Acquisition de données
 
 TomTom va nous passer les données via leur portail.
 
 Data:
 
-- Pas les données bruts, elles ont suivit du post-processing (car pas forcément l'autorisation pour donner les data bruts).
+- Pas les données bruts, elles ont suivit du post-processing (car pas forcément l'autorisation pour donner les données bruts).
 - Distances de l'ordre de quelques dizaines de mètres (et variable en fonction du contexte).
 ----> Dynamique probablement insuffisante pour avoir des résultats sur la partie rejet.
 
@@ -21,7 +21,11 @@ Data available ASAP.
 
 - Lisser la dynamique des véhicules
 - Écart type entre utilisateurs entre variation de temps de trajet
-- Piétons arrivent a traverser
+  + Étudier le temps de trajet moyen grâce aux données de TomTom
+- Piétons arrivent à traverser
+- Respect des feux et du code de la route (vitesse maximale /etc/)
+- Un feu ne reste pas au vert tout le temps (pour que les piétons puissent traverser par /ex/)
+- Flux d'entrée / sortie dans le quartier ?
 
 * Optimisation
 
@@ -33,3 +37,27 @@ Data available ASAP.
 /Ex/:
 - Se limiter à un seul carrefour
 - Se limiter à $n$ véhicules
+
+* Follow-up
+
+Planification des 6 prochains mois
+- Répartition des tâches
+- Qu'avoir d'ici Janvier, d'ici Juin ?
+
+* Notes Quantin
+
+- Regarder les complexités numériques.
+
+* Apprentissage par renforcement.
+
+- Quelle serait la récompense ?
+- Comment formaliser ce problème pour faire de l'apprentissage par renforcement.
+
+* Prochaine séance
+
+- CIL4SYS: 
+  + présentation de la partie présentation /simulation par CIL4SYS.
+  + formaliser les contraintes
+- Nous: 
+  + regarder d'autres approches d'optimisation (plus classiques par /ex/). Quelle est la brique qui nous gène et qui représente l'impact future d'une changement de feu ?
+  + Trouver des fonctions de coût adaptées à noter problème
