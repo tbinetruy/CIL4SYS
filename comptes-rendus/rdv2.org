@@ -1,0 +1,35 @@
+#+TITLE: CIL4SYS
+#+INCLUDE: "./nova-print/doctype-memo.org"
+{{{subtitle(RDV 2)}}}
+{{{theme-color(5b254e)}}}
+
+* Introduction 
+
+* Data Acquisition
+
+TomTom va nous passer les données via leur portail.
+
+Data:
+
+- Pas les données bruts, elles ont suivit du post-processing (car pas forcément l'autorisation pour donner les data bruts).
+- Distances de l'ordre de quelques dizaines de mètres (et variable en fonction du contexte).
+----> Dynamique probablement insuffisante pour avoir des résultats sur la partie rejet.
+
+Data available ASAP.
+
+* Contraintes
+
+- Lisser la dynamique des véhicules
+- Écart type entre utilisateurs entre variation de temps de trajet
+- Piétons arrivent a traverser
+
+* Optimisation
+
+- Gestion des feux.
+- Gestion des véhicules
+
+* Simplification de la problématique
+
+/Ex/:
+- Se limiter à un seul carrefour
+- Se limiter à $n$ véhicules
