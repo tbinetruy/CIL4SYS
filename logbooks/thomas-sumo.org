@@ -9,6 +9,20 @@ This document details my findings w.r.t. the Sumo python API allowing to control
 
 The Python API is available [[http://www.sumo.dlr.de/daily/pydoc/traci.html][here]].
 
+* Installation
+  
+** Ubuntu
+
+#+BEGIN_SRC bash
+sudo apt-get install sumo sumo-tools sumo-doc
+#+END_SRC
+
+** Archlinux
+
+#+BEGIN_SRC bash
+yay -S sumo
+#+END_SRC
+
 * Traffic light control
 
 This section is inspired from this official [[http://sumo.dlr.de/wiki/Tutorials/TraCI4Traffic_Lights][tutorial]]. Its code is avaible at [[https://github.com/eclipse/sumo/blob/master/tests/complex/tutorial/traci_tls/][SUMO_HOME/tests/complex/tutorial/traci_tls/]].
