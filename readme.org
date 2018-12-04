@@ -22,6 +22,7 @@
 - http://www.traffic-simulation.de/
   + code source: https://github.com/movsim/traffic-simulation-de
 - http://sumo.dlr.de/index.html
+  + Sumo interaction API in python: http://www.sumo.dlr.de/daily/pydoc/traci.html
 
 ** Traffic flow prediction
 
