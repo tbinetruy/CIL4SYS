@@ -17,3 +17,14 @@ Pour le contrôle de vitesse des véhicules, on propose de discrétiser les vale
 L'intersection contrôle ainsi le moment d'arivée du véhicule au feu et peut optimiser le temps de feu vert.
 
 ## Question ouverte : comment on définit le moment auquel un véhicule 'entre' dans une intersection ? A quelle vitesse ?
+
+# Contraintes
+
+```
+- temps de trajet inférieur ou égal à 1.5x fois le temps de trajet sans algo (valeur à discuter)
+- borne inférieure et supérieure du temps de 'feu vert'
+- vitesse maximale et minimale sur les routes
+- temps de feu rouge minimal (piétons)
+```
+
+**Note :** dans le papier 'Hierarchical multi-agent control of traffic lights based on collective learning', Jin et Ma, ils proposent un algorithme de **reinforcement learning** SARSA (State - Action - Reward - State - Action) pour résoudre le problème. C'est une amélioration de celui de Q learning (prise en compte de l'instant t-1). On commence avec le Q learning ? Autre chose ?
