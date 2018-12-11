@@ -44,7 +44,7 @@ Planification des 6 prochains mois
 - Répartition des tâches
 - Qu'avoir d'ici Janvier, d'ici Juin ?
 
-* Notes Quantin
+* Notes Quentin
 
 - Regarder les complexités numériques.
 
