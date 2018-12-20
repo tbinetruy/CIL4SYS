@@ -1,0 +1,45 @@
+# Projet CIL4SYS - Réunion du 17 décembre
+
+### Point données Tomtom  
+On va avoir accès  au portail Tomtom pour les données. Segments de quelques dizaines de mètres, avec vitesses moyennes.  
+Si intersection, segment découpé autour, critères de cartographie.  
+-> attendre les accès pour voir à quoi ressemblent les données. A priori les segments sont bien découpés par intersection, en vitesse moyenne.  
+Accès API à travers portail développer.  
+On devrait avoir Tomtom Moove, à voir.
+
+### Fonction de coût
+Regarder le temps de calcul de la fonction de coût  (peut-être la discuter ?).  
+Contraintes : vitesse minimale vers 20 - 25 km/h.
+
+### Simulateur (présentation)
+Un peut voir la vitesse en live  
+Pas de jeu de test.
+**Papyrus** : CIL4SYS est en train de réimplémenter IntegrityModeler. Ils sont en train de travailler sur possiblité de s'en servir sans interface graphique pour lancer du batch. Intégré à Eclipse.  	
+Défintion du projet, des phases de vie, des use case définis dans les phases de vie, dans les use case des stories de choses qu'on peut faire  
+*UML diagramme* : il y a des conditions (set d'actions selon l'état dans lequel on se trouve)  
+*Diagrammes de machine à état* : Ils sont générés automatiquement par le système.  
+*Papyrus* : il y a des templates (génération de code plus sure). Dans le projet on a des services / projets.   
+Produit : nous on va utiliser acteur / environnement. Les flux sont des interfaces service / utilsiateur. Dans les flux, on a des interactions ou activités internes (calculate par exemple). Avec un diagramme de séquence on génère des machines à état. Ca donne du code en C++ qu'on peut après compiler.
+
+
+### Modèle de données : 
+Trajectoire connue de bout en bout (le véhicule évolue sur un rail).  
+Position donnée par position en abscisse sur le rail.  
+Données intéressantes : vitesse / accélération (direction).  
+
+Feux :  
+- données de passage des feux (fréquence, temps, intervalle). Eviter les redondances (combien d'attributs pour un feu : position, etc, à voir dans le simulateur).  
+
+### Todo
+- modèle de données :
+Formaliser les données nécessaires des objets pour voir comment les obtenir et comment s'en servir.
+- dates simulateur  (rdv à prendre Adrien + Thomas )
+- traiter la récupartion des données sur le portail Tomtom, regarder les données, comment on créé de la dynamique et  on les complémente ? (Margaux + Philippe)
+- algo utilisé : on considère que c'est OK.
+
+
+## Prochaine réunion en janvier de préparation de soutenance
+
+### To Do  
+Former deux binômes, un binôme données, un binôme génération de données.  
+Softeam à contacter quand on aura accès aux données TomTom, sur la génération des trous.
