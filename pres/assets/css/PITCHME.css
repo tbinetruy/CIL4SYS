@@ -1,7 +1,6 @@
-ul {
+ul, ol {
     font-size: 1.65rem!important;
 }
-
 
 .spaced li {
   margin:0 0 10px 0;
