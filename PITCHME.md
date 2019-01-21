@@ -53,7 +53,7 @@
 
 ### The Cauchy-Schwarz Inequality
 
-`$$\frac{a}{b}$$`
+`\[\sqrt{a}\]`
 
 `\[
 \left( \sum_{k=1}^n a_k b_k \right)^{\!\!2} \leq
