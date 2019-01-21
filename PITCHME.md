@@ -46,3 +46,18 @@
 @snap[south span-100 text-06]
 [Click here to jump straight into the interactive feature guides in the GitPitch Docs @fa[external-link]](https://gitpitch.com/docs/getting-started/tutorial/)
 @snapend
+
+## Testing new slide
+
+Hello
+
+$$\sqrt{a}{b}$$
+
+``` lisp
+(def foo (bar bat)
+  (if (= bar bat)
+      (message "hello world")
+    (message "goodbey world")))
+
+(foo (+ 1 2) 3) ; outputs "hello world"
+```
