@@ -55,7 +55,7 @@
 
 **But:**  Maximiser la récompense
 
-**Solution:** Réseau de neurones approchant la distribution des récompenses
+**Solution:** Approcher la distribution des récompenses réseau de neurones.
 
 ---
 
