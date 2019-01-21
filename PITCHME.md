@@ -50,9 +50,9 @@
 
 #### Introduction
 
-1. @size[1rem](L'apprentissage par renforcement consiste a définir un espace d'action possible sur un environnement à chaque pas de temps.)
-2. @size[1rem](L'effet d'une action provoque un changement d'état du système.)
-3. @size[1rem](Une récompense est ensuite calculée.)
+1. @size[1.65rem](L'apprentissage par renforcement consiste a définir un espace d'action possible sur un environnement à chaque pas de temps.)
+2. @size[1.65rem](L'effet d'une action provoque un changement d'état du système.)
+3. @size[1.65rem](Une récompense est ensuite calculée.)
 
 **But:**  Maximiser la récompense
 
