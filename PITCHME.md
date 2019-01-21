@@ -2,12 +2,6 @@
 
 ---
 
-## Add Some Slide Candy
-
-![](pres/assets/img/presentation.png)
-
----
-
 ## CIL4SYS
 
 - Startup incubée à Telecom ParisTech
