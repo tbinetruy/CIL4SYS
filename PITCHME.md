@@ -18,12 +18,12 @@
 ## Le projet
 
 - @size[1.65rem](Optimisation sous contraintes des flux de trafic routier en milieu urbain:)
-  - @size[1.65rem](Pilotage des feux tricolores)
-  - @size[1.65rem](Recommandations de vitesses aux voitures)
-  - @size[1.65rem](Contraintes:)
-    - @size[1.65rem](Temps de trajet max)
-    - @size[1.65rem](Piétons)
-    - @size[1.65rem](...)
+  - @size[1.45rem](Pilotage des feux tricolores)
+  - @size[1.45rem](Recommandations de vitesses aux voitures)
+  - @size[1.45rem](Contraintes:)
+    - @size[1.25rem](Temps de trajet max)
+    - @size[1.25rem](Piétons)
+    - @size[1.25rem](...)
 - @size[1.65rem](Intégration de notre algorithme à leur simulateur)
 - @size[1.65rem](Les données de trafic de l'API TomTom nous ont été procurées.)
 
