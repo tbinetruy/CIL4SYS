@@ -1,6 +1,3 @@
-# GitPitch In-60-Seconds - A Very Short Tutorial.
-#
-
 #
 # Theme Setting
 # Doc: https://gitpitch.com/docs/settings/theme
@@ -30,7 +27,7 @@ layout : center
 # Footnote Setting
 # Doc: https://gitpitch.com/docs/settings/footnote
 #
-footnote : "GitPitch - The Fastest Way From Idea To Presentation"
+footnote : "Telecom Paristech - Projet CIl4SYS"
 
 #
 # Published Setting
@@ -42,11 +39,11 @@ published : true
 # Twitter Card Settings [Pro Only]
 # Doc: https://gitpitch.com/docs/settings/twitter-card
 #
-title : "GitPitch In 60 Seconds"
-description : "A short tutorial introducing the power and simplicity of GitPitch, the markdown presentation service on Git."
+title : "CIL4SYS pre-pres"
+description : "Draft presentation"
 thumbnail : https://gitpitch.com/gpimg/tutorial-thumb.png
 
 
-# Mathja*
+# Activate Mathja*
 
 mathjax : TeX-MML-AM_HTMLorMML-full
