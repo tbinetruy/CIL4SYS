@@ -17,7 +17,7 @@
 
 ## Le projet
 
-@size[1.65rem](
+@size[1.65rem](aasfdasF)
 - Optimisation sous contraintes des flux de trafic routier en milieu urbain:
   - Pilotage des feux tricolores
   - Recommandations de vitesses aux voitures
@@ -27,7 +27,6 @@
     - ...
 - Intégration de notre algorithme à leur simulateur
 - Les données de trafic de l'API TomTom nous ont été procurées.
-)
 
 ---
 
