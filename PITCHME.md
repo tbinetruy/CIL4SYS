@@ -89,7 +89,7 @@
 
 ---
 
-## Planning 1/2
+## Planning 2/2
 
 ![](pres/assets/img/gantt2.png)
 
