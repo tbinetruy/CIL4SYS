@@ -45,3 +45,8 @@ published : true
 title : "GitPitch In 60 Seconds"
 description : "A short tutorial introducing the power and simplicity of GitPitch, the markdown presentation service on Git."
 thumbnail : https://gitpitch.com/gpimg/tutorial-thumb.png
+
+
+# Mathja*
+
+mathjax : TeX-MML-AM_HTMLorMML-full
