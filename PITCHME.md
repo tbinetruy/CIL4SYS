@@ -7,45 +7,86 @@
 ![](pres/assets/img/presentation.png)
 
 ---
-@title[Customize Slide Layout]
 
-@snap[west span-50]
-## Customize Slide Content Layout
-@snapend
+## CIL4SYS
 
-@snap[east span-50]
-![](pres/assets/img/presentation.png)
-@snapend
+- Startup incubée à Telecom ParisTech
+- Domain: simplification du cahiers des charges dans l'automobile
 
----?color=#E58537
-@title[Add A Little Imagination]
+---
 
-@snap[north-west]
-#### Add a splash of @color[cyan](**color**) and you are ready to start presenting...
-@snapend
+## Le projet
 
-@snap[west span-55]
-@ul[spaced text-white]
-- You will be amazed
-- What you can achieve
-- *With a little imagination...*
-- And **GitPitch Markdown**
-@ulend
-@snapend
+- Optimisation sous contraintes des flux de trafic routier en milieu urbain:
+  - Pilotage des feux tricolores
+  - Recommandations de vitesses aux voitures
+  - Contraintes:
+    - Temps de trajet max
+    - Piétons
+    - ...
+- Intégration de notre algorithme à leur simulateur
+- Les données de trafic de l'API TomTom nous ont été procurées.
 
-@snap[east span-45]
-@img[shadow](pres/assets/img/conference.png)
-@snapend
+---
 
----?image=pres/assets/img/presenter.jpg
+## État de l'art
 
-@snap[north span-100 headline]
-## Now It's Your Turn
-@snapend
+- De nombreux articles récents documentent les améliorations obtenues grâce à l'apprentissage pas renforcement.
+- Ces articles utilisent en grande majorité le simulateur SUMO pour réaliser l'apprentissage.
+- Un framework développé par des chercheurs de l'université de Berkeley, `Flow**, facilite l'apprentissage d'algorithmes avec Sumo.
 
-@snap[south span-100 text-06]
-[Click here to jump straight into the interactive feature guides in the GitPitch Docs @fa[external-link]](https://gitpitch.com/docs/getting-started/tutorial/)
-@snapend
+---
+
+## Notre solution
+
+- Apprentissage par renforcement avec Flow et Sumo
+- Pilotage des feux seulement dans un premier temps
+- Ajout des recommandations de vitesse ensuite.
+
+---
+
+### Apprentissage par renforcement
+
+#### Introduction
+
+1. L'apprentissage par renforcement consiste a définir un espace d'action possible sur un environnement à chaque pas de temps. 
+2. L'effet d'une action provoque un changement d'état du système. 
+3. Une récompense est ensuite calculée.
+
+**But:**  Maximiser la récompense
+**Solution:** Réseau de neurones approchant la distribution des récompenses
+
+---
+
+#### Theoretical background
+
+![System](https://cdn-images-1.medium.com/max/1000/1*mPGk9WTNNvp3i4-9JFgD3w.png)
+
+#### Reward function
+
+![eqn](https://cdn-images-1.medium.com/max/800/1*CLBIXdpk8ft0-1MFH8FwUg.png)
+
+---
+
+#### SUMO: Simulation of Urban MObility
+
+![SUMO](https://blogs.mtu.edu/vehicularcomlab/files/2017/06/sumo_MTUmap.png)
+
+---
+
+#### DQN on SUMO
+
+---
+
+## Planning 1/2
+
+![](pres/assets/img/gantt1.png)
+
+---
+
+## Planning 1/2
+
+![](pres/assets/img/gantt2.png)
 
 ---
 
