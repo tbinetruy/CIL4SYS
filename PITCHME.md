@@ -11,15 +11,15 @@
 
 ## Le projet
 
-- @size[1.65rem](Optimisation sous contraintes des flux de trafic routier en milieu urbain:)
-  - @size[1.45rem](Pilotage des feux tricolores)
-  - @size[1.45rem](Recommandations de vitesses aux voitures)
-  - @size[1.45rem](Contraintes:)
+- Optimisation sous contraintes des flux de trafic routier en milieu urbain:
+  - Pilotage des feux tricolores
+  - Recommandations de vitesses aux voitures
+  - Contraintes:
     - @size[1.25rem](Temps de trajet max)
     - @size[1.25rem](Piétons)
     - @size[1.25rem](...)
-- @size[1.65rem](Intégration de notre algorithme à leur simulateur)
-- @size[1.65rem](Les données de trafic de l'API TomTom nous ont été procurées.)
+- Intégration de notre algorithme à leur simulateur
+- Les données de trafic de l'API TomTom nous ont été procurées.
 
 ---
 
@@ -39,14 +39,13 @@
 
 ---
 
-@size[1rem](
 ### Apprentissage par renforcement
 
 #### Introduction
 
-1. @size[1.65rem](L'apprentissage par renforcement consiste a définir un espace d'action possible sur un environnement à chaque pas de temps.)
-2. @size[1.65rem](L'effet d'une action provoque un changement d'état du système.)
-3. @size[1.65rem](Une récompense est ensuite calculée.)
+1. L'apprentissage par renforcement consiste a définir un espace d'action possible sur un environnement à chaque pas de temps.
+2. L'effet d'une action provoque un changement d'état du système.
+3. Une récompense est ensuite calculée.
 
 **But:**  Maximiser la récompense
 
