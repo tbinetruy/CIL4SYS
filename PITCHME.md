@@ -73,6 +73,14 @@
 
 #### DQN on SUMO
 
+- Define:
+  - simulator state
+  - Define possible actions
+  - Define reward function
+- Setup neural network
+- Integrate to Flow setup
+- Train model
+
 ---
 
 ## Planning 1/2
