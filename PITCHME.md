@@ -62,6 +62,8 @@
 
 ![System](https://cdn-images-1.medium.com/max/1000/1*mPGk9WTNNvp3i4-9JFgD3w.png)
 
+---
+
 #### Reward function
 
 ![eqn](https://cdn-images-1.medium.com/max/800/1*CLBIXdpk8ft0-1MFH8FwUg.png)
