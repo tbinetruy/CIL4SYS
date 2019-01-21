@@ -45,11 +45,11 @@
 
 ---
 
+@size[size-value](1rem)
 ### Apprentissage par renforcement
 
 #### Introduction
 
-@size[size-value](1rem)
 1. L'apprentissage par renforcement consiste a définir un espace d'action possible sur un environnement à chaque pas de temps. 
 2. L'effet d'une action provoque un changement d'état du système. 
 3. Une récompense est ensuite calculée.
