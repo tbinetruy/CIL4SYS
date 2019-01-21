@@ -54,6 +54,7 @@
 3. Une récompense est ensuite calculée.
 
 **But:**  Maximiser la récompense
+
 **Solution:** Réseau de neurones approchant la distribution des récompenses
 
 ---
