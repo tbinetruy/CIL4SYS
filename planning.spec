@@ -39,7 +39,12 @@ TASK Flow DQN dev
         START_DATE 16w
         END_DATE 18w
 
-TASK (TPAM) Restitution
-    COLOR #6b71b4
+TASK Soutenance P3
+    COLOR #926cad
+    START_DATE 7w
+    END_DATE 10w
+
+TASK Soutenance P4
+    COLOR #59A4AF
     START_DATE 18w
-    END_DATE 20w
+    END_DATE 21w
