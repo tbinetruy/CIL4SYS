@@ -3,13 +3,13 @@ INIT_DATE 2/1/19
 TASK Cil4sys sim
     COLOR #59a4af
 
-    SUBTASK (AM) Familiarisation
+    SUBTASK Familiarisation
         START_DATE 0w
         END_DATE 4w
-    SUBTASK (TP) Intégration DQN 1/2
+    SUBTASK Intégration DQN 1/2
         START_DATE 4w
         END_DATE 8w
-    SUBTASK (TP) Intégration DQN 2/2
+    SUBTASK Intégration DQN 2/2
         START_DATE 12w
         END_DATE 16w
 
@@ -17,25 +17,25 @@ TASK Cil4sys sim
 TASK Flow DQN dev
     COLOR #59af92
 
-    SUBTASK (TP) Small mesh DQN
+    SUBTASK Small mesh DQN
         START_DATE 0w
         END_DATE 4w
-    SUBTASK (AM) Model optimisation
+    SUBTASK Model optimisation
         START_DATE 3w
         END_DATE 7w
-    SUBTASK (TP) Large mesh DQN
+    SUBTASK Large mesh DQN
         START_DATE 5w
         END_DATE 9w
-    SUBTASK (AM) Model optimisation
+    SUBTASK Model optimisation
         START_DATE 8w
         END_DATE 12w
-    SUBTASK (TP) Final DQN
+    SUBTASK Final DQN
         START_DATE 11w
         END_DATE 14w
-    SUBTASK (AM) Model optimisation
+    SUBTASK Model optimisation
         START_DATE 12w
         END_DATE 16w
-    SUBTASK (TPAM) Training
+    SUBTASK Training
         START_DATE 16w
         END_DATE 18w
 
