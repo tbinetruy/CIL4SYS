@@ -2,14 +2,16 @@
 
 # Import the library to make the request to the TomTom API
 import requests
-# Import the Beautiful Soup Library
-from bs4 import BeautifulSoup
 # Import the library to read the image
 import imageio
 import matplotlib.pyplot as plt
 import numpy as np
 from PIL import Image
-API_Key = 'zcSAVe7ZiVaLWdxhvUSRQcrAekW1mzkY'
+
+filename = 'API_key'
+f = open(filename, 'r')
+
+API_Key = f.read().strip()
 
 latitude = '2.270668'
 longitude = '48.824232'
