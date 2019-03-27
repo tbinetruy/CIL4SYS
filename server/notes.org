@@ -1,0 +1,44 @@
+* Basic tensorflow server
+
+Here is a prototype server for tensorflow projects.
+
+** Dependencies
+
+- python 3
+- pip
+
+** Usage
+   
+First, create a python 3 virtual environment to install our project's dependencies to:
+
+#+begin_src bash
+python -m venv venv
+#+end_src
+
+The activate the virtual environment:
+
+#+begin_src bash
+source venv/bin/activate
+#+end_src
+
+Install the dependencies (Flask and Tensorflow along with their dependencies):
+
+#+begin_src bash
+pip install requirements.txt
+#+end_src
+
+You can now start the server:
+
+#+begin_src bash
+./bin/start
+#+end_src
+
+Finally you can interact with it:
+
+#+begin_src bash
+./bin/test
+#+end_src
+
+** Notes
+
+For now, the page just returns the result a stochastic matrix multiplication against a GET request. However, the idea is to quickly implement the POST request and integrate a SUMO trained reinforcement learning tensorflow model.
