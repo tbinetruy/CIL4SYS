@@ -2,6 +2,7 @@ from flask import Flask
 app = Flask(__name__)
 
 import tensorflow as tf
+import json
 
 @app.route("/")
 def hello():
@@ -16,5 +17,11 @@ def hello():
 
         result = sess.run(y)
 
-        return result.__repr__()
+        return json.dumps({
+            "a": result.__repr__(),
+            "b": [1,2,3],
+            "c": {
+                "A": "hello",
+            }
+        })
 
