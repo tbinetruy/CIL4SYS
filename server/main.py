@@ -32,8 +32,3 @@ def add_message():
     content = request.json
     print("old speed:", content['speed'])
     return jsonify({"new_speed":content["speed"] * 2})
-
-import requests
-res = requests.post('http://localhost:5000/api/', json={"speed":10})
-if res.ok:
-    print(res.json())
