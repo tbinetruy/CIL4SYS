@@ -1,2 +1,7 @@
 #!/bin/bash
-curl http://127.0.0.1:5000/
+#curl http://127.0.0.1:5000/
+
+curl --header "Content-Type: application/json" \
+  --request POST \
+  --data '{"speed":15}' \
+  http://localhost:5000/api/
