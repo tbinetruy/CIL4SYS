@@ -2,10 +2,6 @@ from flask import Flask
 app = Flask(__name__)
 
 import tensorflow as tf
-import numpy as np
-
-#sess = tf.InteractiveSession()
-#sess.run(tf.global_variables_initializer())
 
 @app.route("/")
 def hello():
