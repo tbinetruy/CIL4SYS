@@ -1,13 +1,13 @@
 
+
 \begin{cases}
   g: \mathcal{E} \longrightarrow \mathcal{A} \\
   \hat{g}(\theta) \in \operatorname*{argmax}_\theta \mathbb{E}(R)
 \end{cases}
 
 
-\mathcal{E}_1 = (x,y,\dot{x},\dot{y},\ddot{x},\ddot{y})^\beta
-\mathcal{E}_2 = (x,y,\dot{x},\dot{y},\ddot{x},\ddot{y})^\beta
-\mathcal{E}_3 = (x,y,\dot{x},\dot{y},\ddot{x},\ddot{y})^\beta \times \{1,0\}^\gamma
-R_1 = \frac{1}{\alpha}\sum_{i=0}^{\alpha} \lVert(\dot{x},\dot{y})_i\rVert
-R_2 = \xi_1R_1 - \xi_2\frac{1}{\alpha}\sum_{i=0}^{\alpha} (\ddot{x},\ddot{y})_i
-R_3 = \xi_2 R_2 - \xi_3 \sum_{i=0}^\alpha \mathbb{I}\{t_{\dot{x}_i=0, \dot{y}_i=0} \geq \tau \}
+| State                                                                                 | Reward                                                                                            | Comments |
+|---------------------------------------------------------------------------------------+---------------------------------------------------------------------------------------------------+----------|
+| $\mathcal{E}_1 = (x,y,\dot{x},\dot{y},\ddot{x},\ddot{y})^\beta$                       | $R_1 = \frac{1}{\alpha}\sum_{i=0}^{\alpha} \lVert(\dot{x},\dot{y})_i\rVert$                       |          |
+| $\mathcal{E}_2 = (x,y,\dot{x},\dot{y},\ddot{x},\ddot{y})^\beta$                       | $R_2 = \xi_1R_1 - \xi_2\frac{1}{\alpha}\sum_{i=0}^{\alpha} (\ddot{x},\ddot{y})_i$                 |          |
+| $\mathcal{E}_3 = (x,y,\dot{x},\dot{y},\ddot{x},\ddot{y})^\beta \times \{1,0\}^\gamma$ | $R_3 = \xi_2 R_2 - \xi_3 \sum_{i=0}^\alpha \mathbb{I}\{t_{\dot{x}_i=0, \dot{y}_i=0} \geq \tau \}$ |          |
