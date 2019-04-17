@@ -48,8 +48,10 @@ inflow_spec = {
     "155558218": 150,
 }
 inflow = get_inflow(inflow_spec)
+
+N_VEH = 20
 vehicles = VehicleParams()
-vehicles.add('human', num_vehicles=20)
+vehicles.add('human', num_vehicles=N_VEH)
 
 flow_params = dict(
     exp_tag='IssyEnv',
@@ -58,7 +60,7 @@ flow_params = dict(
     simulator='traci',
     sim=SumoParams(render=False, restart_instance=True),
     env=EnvParams(
-        additional_params={"model_spec": 1},
+        additional_params={"beta": N_VEH},
         horizon=HORIZON,
         warmup_steps=750,
     ),

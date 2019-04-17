@@ -7,7 +7,25 @@ from flow.envs import Env
 
 class IssyEnvAbstract(Env):
     """Abstract class to inherit from. It provides helpers
-    used accross models such as a traffic light state inversion method"""
+    used accross models such as a traffic light state inversion method
+
+    Required from env_params:
+
+    * beta: (int) number of vehicles the agent can observe
+    """
+    def __init__(self, env_params, sim_params, scenario, simulator='traci'):
+        super().__init__(env_params, sim_params, scenario, simulator)
+        beta = env_params.get_additional_param("beta")
+        self.model_params = dict(
+            beta=beta,
+        )
+
+    @property
+    def action_space(self):
+        """See parent class"""
+        return Box(low=0, high=1, shape=(self.k.traffic_light.num_traffic_lights,),
+                dtype=np.float32)
+
 
     def _invert_tl_state(self, id, api="sumo"):
         """Invert state for given traffic light.
@@ -47,47 +65,38 @@ class IssyEnvAbstract(Env):
         else:
             return NotImplementedError
 
+    def _apply_rl_actions(self, rl_actions):
+        """Converts probabilities of switching each lights into actions by rounding them.
+        We then invert the traffic lights that the agent requested changes for."""
+        tl_ids = self.k.traffic_light.get_ids()
+        actions = np.round(rl_actions)
+
+        for id, a in zip(tl_ids, actions):
+            if a:
+                state = self._invert_tl_state(id)
+                self.k.traffic_light.set_state(id, state)
+
+
 class IssyEnv1(IssyEnvAbstract):
     """Environment used to train traffic lights to regulate traffic flow
     for the Issy les Moulineaux district of study.
 
-    Required from env_params:
-
-    * beta: (int) number of vehicles the agent can observe
+    Required from env_params: See parent class
 
     States
-        An observation is the distance of each vehicle to its intersection, a
-        number uniquely identifying which edge the vehicle is on, and the speed
-        of the vehicle.
+        An observation is the set of positions and speeds of beta observed
+        vehicles
 
     Actions
         The action space consist of a list of float variables ranging from 0-1
-        specifying whether a traffic light is supposed to switch or not. The
-        actions are sent to the traffic light in the grid from left to right
-        and then top to bottom.
+        specifying whether a traffic light is supposed to switch or not.
 
     Rewards
-        The reward is the negative per vehicle delay minus a penalty for
-        switching traffic lights
+        The reward is the average speed of all vehicles present on the mesh.
 
     Termination
         A rollout is terminated once the time horizon is reached.
-
-    Additional
-        Vehicles are rerouted to the start of their original routes once they
-        reach the end of the network in order to ensure a constant number of
-        vehicles.
     """
-    def __init__(self, env_params, sim_params, scenario, simulator='traci'):
-        super().__init__(env_params, sim_params, scenario, simulator)
-        model_spec = env_params.get_additional_param("model_spec")
-        self.model_spec = model_spec
-
-    @property
-    def action_space(self):
-        """See parent class"""
-        return Box(low=0, high=1, shape=(self.k.traffic_light.num_traffic_lights,),
-                dtype=np.float32)
 
     @property
     def observation_space(self):
@@ -101,24 +110,13 @@ class IssyEnv1(IssyEnvAbstract):
     def get_state(self, **kwargs):
         """See parent class"""
         # We select beta=20 observable vehicles
-        ids = self.k.vehicle.get_ids()[:20]
+        ids = self.k.vehicle.get_ids()[:self.model_params["beta"]]
 
         pos = [self.k.vehicle.get_x_by_id(veh_id) for veh_id in ids]
         vel = [self.k.vehicle.get_speed(veh_id) for veh_id in ids]
-        tl = [self.k.traffic_light.get_state(t) for t in self.k.traffic_light.get_ids()]
+        # tl = [self.k.traffic_light.get_state(t) for t in self.k.traffic_light.get_ids()]
 
         return np.concatenate((pos, vel))
-
-
-    def _apply_rl_actions(self, rl_actions):
-        """See parent class"""
-        tl_ids = self.k.traffic_light.get_ids()
-        actions = np.round(rl_actions)
-
-        for id, a in zip(tl_ids, actions):
-            if a:
-                state = self._invert_tl_state(id)
-                self.k.traffic_light.set_state(id, state)
 
     def compute_reward(self, rl_actions, **kwargs):
         """See parent class"""
