@@ -46,6 +46,7 @@ class IssyExperimentParams:
         self.osm_path = '/home/thomas/sumo/models/issy.osm'
         self.edges_distribution = EDGES_DISTRIBUTION
 
+
 class IssyExperiment:
     def __init__(self, params):
         self.exp_params = params
@@ -92,16 +93,15 @@ class IssyExperiment:
         config['horizon'] = self.exp_params.horizon
 
         # save the flow params for replay
-        flow_json = json.dumps(
-            self.flow_params,
-            cls=FlowParamsEncoder,
-            sort_keys=True,
-            indent=4)
+        flow_json = json.dumps(self.flow_params,
+                               cls=FlowParamsEncoder,
+                               sort_keys=True,
+                               indent=4)
         config['env_config']['flow_params'] = flow_json
         config['env_config']['run'] = alg_run
 
-        create_env, gym_name = make_create_env(
-            params=self.flow_params, version=0)
+        create_env, gym_name = make_create_env(params=self.flow_params,
+                                               version=0)
 
         # Register as rllib env
         register_env(gym_name, create_env)
@@ -114,11 +114,11 @@ class IssyExperiment:
             env_name=self.exp_params.env_name,
             scenario='IssyScenario',
             simulator='traci',
-            sim = self.make_sumo_params(),
-            env = self.make_env_params(),
-            net = self.make_net_params(),
-            veh = self.make_vehicles(),
-            initial = self.make_initial_config(),
+            sim=self.make_sumo_params(),
+            env=self.make_env_params(),
+            net=self.make_net_params(),
+            veh=self.make_vehicles(),
+            initial=self.make_initial_config(),
         )
 
     def make_inflow(self):
@@ -138,8 +138,7 @@ class IssyExperiment:
 
     def make_initial_config(self):
         return InitialConfig(
-            edges_distribution=self.exp_params.edges_distribution,
-        )
+            edges_distribution=self.exp_params.edges_distribution, )
 
     def make_env_params(self):
         return EnvParams(
@@ -161,13 +160,13 @@ if __name__ == '__main__':
         "155558218": 150,
     }
     params = IssyExperimentParams(horizon=1000,
-                            rollouts=2,
-                            inflow_spec=inflow_spec,
-                            n_cpus=0,
-                            n_veh=20,
-                            checkpoint_freq=20,
-                            training_iteration=200,
-                            algorithm="PPO")
+                                  rollouts=2,
+                                  inflow_spec=inflow_spec,
+                                  n_cpus=0,
+                                  n_veh=20,
+                                  checkpoint_freq=20,
+                                  training_iteration=200,
+                                  algorithm="PPO")
 
     exp = IssyExperiment(params)
     exp.run()
