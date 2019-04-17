@@ -6,7 +6,6 @@ from flow.core.params import InitialConfig
 from flow.core.params import EnvParams
 from flow.core.params import SumoParams
 from flow.core.experiment import Experiment
-from flow.core.params import InFlows
 from flow.core.params import TrafficLightParams
 
 import ray
@@ -21,7 +20,7 @@ from flow.utils.rllib import FlowParamsEncoder
 
 from IssyEnv import IssyEnv1
 from IssyScenario import IssyScenario, EDGES_DISTRIBUTION
-from helpers import make_create_env
+from helpers import make_create_env, get_inflow
 
 # time horizon of a single rollout
 HORIZON = 1000
@@ -30,15 +29,6 @@ N_ROLLOUTS = 2
 # number of parallel workers
 N_CPUS = 0
 
-def get_inflow(spec):
-    inflow = InFlows()
-    for k, v in spec.items():
-        inflow.add(veh_type="human",
-                edge=k,
-                vehs_per_hour=v,
-                departSpeed=10,
-                departLane="random")
-    return inflow
 
 inflow_spec = {
     "N": 300,
