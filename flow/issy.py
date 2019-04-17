@@ -114,10 +114,10 @@ class IssyExperiment:
             env_name=self.exp_params.env_name,
             scenario='IssyScenario',
             simulator='traci',
-            sim =self.make_sumo_params(),
-            env =self.make_env_params(),
-            net =self.make_net_params(),
-            veh =self.make_vehicles(),
+            sim = self.make_sumo_params(),
+            env = self.make_env_params(),
+            net = self.make_net_params(),
+            veh = self.make_vehicles(),
             initial = self.make_initial_config(),
         )
 
