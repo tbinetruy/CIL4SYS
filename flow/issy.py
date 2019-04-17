@@ -31,7 +31,7 @@ class IssyExperimentParams:
                  n_cpus,
                  n_veh,
                  checkpoint_freq=20,
-                 training_iteration=200):
+                 training_iteration=200, algorithm="PPO"):
         self.horizon = horizon
         self.rollouts = rollouts
         self.n_cpus = n_cpus
@@ -39,15 +39,25 @@ class IssyExperimentParams:
         self.n_veh = n_veh
         self.checkpoint_freq = checkpoint_freq
         self.training_iteration = training_iteration
+        self.algorithm = algorithm
+
+        self.osm_path = '/home/thomas/sumo/models/issy.osm'
+        self.edges_distribution = EDGES_DISTRIBUTION
 
 class IssyExperiment:
     def __init__(self, params):
         self.exp_params = params
         self.flow_params = self.make_flow_params()
 
-    def run(self):
-        alg_run, gym_name, config = self.setup_exps()
         ray.init(num_cpus=self.exp_params.n_cpus + 1, redirect_output=False)
+
+    def run(self):
+        alg_run, gym_name, config = 1, 1, 1
+        if self.exp_params.algorithm == 'PPO':
+            alg_run, gym_name, config = self.setup_ppo_exp()
+        else:
+            return NotImplementedError
+
         trials = run_experiments({
             self.flow_params['exp_tag']: {
                 'run': alg_run,
@@ -63,7 +73,7 @@ class IssyExperiment:
             }
         })
 
-    def setup_exps(self):
+    def setup_ppo_exp(self):
         alg_run = 'PPO'
 
         agent_cls = get_agent_class(alg_run)
@@ -119,14 +129,14 @@ class IssyExperiment:
 
     def make_net_params(self):
         return NetParams(
-            osm_path='/home/thomas/sumo/models/issy.osm',
+            osm_path=self.exp_params.osm_path,
             no_internal_links=False,
             inflows=self.make_inflow(),
         )
 
     def make_initial_config(self):
         return InitialConfig(
-            edges_distribution=EDGES_DISTRIBUTION,
+            edges_distribution=self.exp_params.edges_distribution,
         )
 
     def make_env_params(self):
@@ -154,7 +164,8 @@ if __name__ == '__main__':
                             n_cpus=0,
                             n_veh=20,
                             checkpoint_freq=20,
-                            training_iteration=200)
+                            training_iteration=200,
+                            algorithm="PPO")
 
     exp = IssyExperiment(params)
     exp.run()
