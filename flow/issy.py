@@ -24,18 +24,11 @@ from IssyScenario import IssyScenario, EDGES_DISTRIBUTION
 from helpers import make_create_env
 
 # time horizon of a single rollout
-HORIZON = 3000
+HORIZON = 1000
 # number of rollouts per training iteration
-N_ROLLOUTS = 20
+N_ROLLOUTS = 2
 # number of parallel workers
-N_CPUS = 8
-
-initial_config = InitialConfig(
-    edges_distribution=EDGES_DISTRIBUTION,
-)
-
-vehicles = VehicleParams()
-vehicles.add('human', num_vehicles=20)
+N_CPUS = 0
 
 def get_inflow(spec):
     inflow = InFlows()
@@ -55,50 +48,29 @@ inflow_spec = {
     "155558218": 150,
 }
 inflow = get_inflow(inflow_spec)
-
-env_params = EnvParams()
-sim_params = SumoParams(render=False, restart_instance=True)
-net_params = NetParams(
-    osm_path='/home/thomas/sumo/models/issy.osm',
-    no_internal_links=False,
-    inflows=inflow,
-)
+vehicles = VehicleParams()
+vehicles.add('human', num_vehicles=20)
 
 flow_params = dict(
-    # name of the experiment
     exp_tag='IssyEnv',
-
-    # name of the flow environment the experiment is running on
     env_name='IssyEnv',
-
-    # name of the scenario class the experiment is running on
     scenario='IssyScenario',
-
-    # simulator that is used by the experiment
     simulator='traci',
-
-    # sumo-related parameters (see flow.core.params.SumoParams)
-    sim=sim_params,
-
-    # environment related parameters (see flow.core.params.EnvParams)
+    sim=SumoParams(render=True, restart_instance=True),
     env=EnvParams(
+        additional_params={"model_spec": 1},
         horizon=HORIZON,
         warmup_steps=750,
     ),
-
-    # network-related parameters (see flow.core.params.NetParams and the
-    # scenario's documentation or ADDITIONAL_NET_PARAMS component)
-    net=net_params,
-
-    # vehicles to be placed in the network at the start of a rollout (see
-    # flow.core.vehicles.Vehicles)
+    net=NetParams(
+        osm_path='/home/thomas/sumo/models/issy.osm',
+        no_internal_links=False,
+        inflows=inflow,
+    ),
     veh=vehicles,
-
-    # parameters specifying the positioning of vehicles upon initialization/
-    # reset (see flow.core.params.InitialConfig)
-    initial=initial_config,
-
-    #tls=TrafficLightParams()
+    initial = InitialConfig(
+        edges_distribution=EDGES_DISTRIBUTION,
+    )
 )
 
 def setup_exps():
