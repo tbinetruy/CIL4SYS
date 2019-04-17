@@ -19,7 +19,7 @@ from ray.tune.registry import register_env
 
 from flow.utils.rllib import FlowParamsEncoder
 
-from IssyEnv import IssyEnv
+from IssyEnv import IssyEnv1
 from IssyScenario import IssyScenario, EDGES_DISTRIBUTION
 from helpers import make_create_env
 
@@ -53,10 +53,10 @@ vehicles.add('human', num_vehicles=20)
 
 flow_params = dict(
     exp_tag='IssyEnv',
-    env_name='IssyEnv',
+    env_name='IssyEnv1',
     scenario='IssyScenario',
     simulator='traci',
-    sim=SumoParams(render=True, restart_instance=True),
+    sim=SumoParams(render=False, restart_instance=True),
     env=EnvParams(
         additional_params={"model_spec": 1},
         horizon=HORIZON,

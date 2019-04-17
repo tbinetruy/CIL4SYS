@@ -5,39 +5,9 @@ from gym.spaces.box import Box
 
 from flow.envs import Env
 
-class IssyEnv(Env):
-    """Environment for the Issy les Moulineaux district of study.
-    See parent class for more information."""
-    def __init__(self, env_params, sim_params, scenario, simulator='traci'):
-        super().__init__(env_params, sim_params, scenario, simulator)
-        model_spec = env_params.get_additional_param("model_spec")
-        self.model_spec = model_spec
-
-    @property
-    def action_space(self):
-        """See parent class"""
-        return Box(low=0, high=1, shape=(self.k.traffic_light.num_traffic_lights,),
-                dtype=np.float32)
-
-    @property
-    def observation_space(self):
-        """See parent class"""
-        return Box(
-            low=0,
-            high=float("inf"),
-            shape=(2*self.scenario.vehicles.num_vehicles,),
-        )
-
-    def get_state(self, **kwargs):
-        """See parent class"""
-        # We select beta=20 observable vehicles
-        ids = self.k.vehicle.get_ids()[:20]
-
-        pos = [self.k.vehicle.get_x_by_id(veh_id) for veh_id in ids]
-        vel = [self.k.vehicle.get_speed(veh_id) for veh_id in ids]
-        tl = [self.k.traffic_light.get_state(t) for t in self.k.traffic_light.get_ids()]
-
-        return np.concatenate((pos, vel))
+class IssyEnvAbstract(Env):
+    """Abstract class to inherit from. It provides helpers
+    used accross models such as a traffic light state inversion method"""
 
     def _invert_tl_state(self, id, api="sumo"):
         """Invert state for given traffic light.
@@ -76,6 +46,69 @@ class IssyEnv(Env):
             return state
         else:
             return NotImplementedError
+
+class IssyEnv1(IssyEnvAbstract):
+    """Environment used to train traffic lights to regulate traffic flow
+    for the Issy les Moulineaux district of study.
+
+    Required from env_params:
+
+    * beta: (int) number of vehicles the agent can observe
+
+    States
+        An observation is the distance of each vehicle to its intersection, a
+        number uniquely identifying which edge the vehicle is on, and the speed
+        of the vehicle.
+
+    Actions
+        The action space consist of a list of float variables ranging from 0-1
+        specifying whether a traffic light is supposed to switch or not. The
+        actions are sent to the traffic light in the grid from left to right
+        and then top to bottom.
+
+    Rewards
+        The reward is the negative per vehicle delay minus a penalty for
+        switching traffic lights
+
+    Termination
+        A rollout is terminated once the time horizon is reached.
+
+    Additional
+        Vehicles are rerouted to the start of their original routes once they
+        reach the end of the network in order to ensure a constant number of
+        vehicles.
+    """
+    def __init__(self, env_params, sim_params, scenario, simulator='traci'):
+        super().__init__(env_params, sim_params, scenario, simulator)
+        model_spec = env_params.get_additional_param("model_spec")
+        self.model_spec = model_spec
+
+    @property
+    def action_space(self):
+        """See parent class"""
+        return Box(low=0, high=1, shape=(self.k.traffic_light.num_traffic_lights,),
+                dtype=np.float32)
+
+    @property
+    def observation_space(self):
+        """See parent class"""
+        return Box(
+            low=0,
+            high=float("inf"),
+            shape=(2*self.scenario.vehicles.num_vehicles,),
+        )
+
+    def get_state(self, **kwargs):
+        """See parent class"""
+        # We select beta=20 observable vehicles
+        ids = self.k.vehicle.get_ids()[:20]
+
+        pos = [self.k.vehicle.get_x_by_id(veh_id) for veh_id in ids]
+        vel = [self.k.vehicle.get_speed(veh_id) for veh_id in ids]
+        tl = [self.k.traffic_light.get_state(t) for t in self.k.traffic_light.get_ids()]
+
+        return np.concatenate((pos, vel))
+
 
     def _apply_rl_actions(self, rl_actions):
         """See parent class"""

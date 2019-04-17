@@ -86,7 +86,7 @@ def make_create_env(params, version=0, render=None):
         try:
             register(
                 id=env_name,
-                entry_point=params["env_name"] + ':{}'.format(params["env_name"]),
+                entry_point="IssyEnv" + ':{}'.format(params["env_name"]),
                 kwargs={
                     "env_params": env_params,
                     "sim_params": sim_params,
