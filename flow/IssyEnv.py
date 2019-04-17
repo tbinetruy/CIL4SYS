@@ -36,7 +36,7 @@ class IssyEnvAbstract(Env):
 
     @property
     def action_space(self):
-        """See parent class"""
+        """Vector of floats from 0-1 indicating traffic light states."""
         return Box(low=0, high=1, shape=(self.k.traffic_light.num_traffic_lights,),
                 dtype=np.float32)
 
@@ -81,7 +81,13 @@ class IssyEnvAbstract(Env):
 
     def _apply_rl_actions(self, rl_actions):
         """Converts probabilities of switching each lights into actions by rounding them.
-        We then invert the traffic lights that the agent requested changes for."""
+        We then invert the traffic lights that the agent requested changes for.
+
+        Parameters
+        ----------
+        rl_actions: [float]
+            Individual probabilities of switching traffic light states.
+        """
         tl_ids = self.k.traffic_light.get_ids()
         actions = np.round(rl_actions)
 
@@ -113,7 +119,10 @@ class IssyEnv1(IssyEnvAbstract):
 
     @property
     def observation_space(self):
-        """See parent class"""
+        """ In this model, we only observe positions and speeds of
+        the beta observable vehicles in cartesian coordinates.
+
+        (See parent class for more information)"""
         return Box(
             low=0,
             high=float("inf"),
@@ -121,8 +130,10 @@ class IssyEnv1(IssyEnvAbstract):
         )
 
     def get_state(self, **kwargs):
-        """See parent class"""
-        # We select beta=20 observable vehicles
+        """ We request positions and speeds of observable vehicles.
+
+        (See parent class for more information)"""
+        # We select beta observable vehicles
         ids = self.k.vehicle.get_ids()[:self.model_params["beta"]]
 
         pos = [self.k.vehicle.get_x_by_id(veh_id) for veh_id in ids]
@@ -132,7 +143,10 @@ class IssyEnv1(IssyEnvAbstract):
         return np.concatenate((pos, vel))
 
     def compute_reward(self, rl_actions, **kwargs):
-        """See parent class"""
+        """ The reward in this simple model is simply the mean velocity
+        of all simulated vehicles present on the mesh.
+
+        (See parent class for more information)"""
         ids = self.k.vehicle.get_ids()
         speeds = self.k.vehicle.get_speed(ids)
 
