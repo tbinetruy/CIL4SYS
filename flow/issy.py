@@ -7,6 +7,7 @@ from flow.core.params import EnvParams
 from flow.core.params import SumoParams
 from flow.core.experiment import Experiment
 from flow.core.params import TrafficLightParams
+from flow.utils.rllib import FlowParamsEncoder
 
 import ray
 try:
@@ -15,8 +16,6 @@ except ImportError:
     from ray.rllib.agents.registry import get_agent_class
 from ray.tune import run_experiments
 from ray.tune.registry import register_env
-
-from flow.utils.rllib import FlowParamsEncoder
 
 from IssyEnv import IssyEnv1
 from IssyScenario import IssyScenario, EDGES_DISTRIBUTION
