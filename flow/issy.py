@@ -22,94 +22,139 @@ from IssyEnv import IssyEnv1
 from IssyScenario import IssyScenario, EDGES_DISTRIBUTION
 from helpers import make_create_env, get_inflow
 
-# time horizon of a single rollout
-HORIZON = 1000
-# number of rollouts per training iteration
-N_ROLLOUTS = 2
-# number of parallel workers
-N_CPUS = 0
 
+class IssyExperimentParams:
+    def __init__(self,
+                 horizon,
+                 rollouts,
+                 inflow_spec,
+                 n_cpus,
+                 n_veh,
+                 checkpoint_freq=20,
+                 training_iteration=200):
+        self.horizon = horizon
+        self.rollouts = rollouts
+        self.n_cpus = n_cpus
+        self.inflow_spec = inflow_spec
+        self.n_veh = n_veh
+        self.checkpoint_freq = checkpoint_freq
+        self.training_iteration = training_iteration
 
-inflow_spec = {
-    "N": 300,
-    "NW": 150,
-    "E": 300,
-    "loop": 300,
-    "155558218": 150,
-}
-inflow = get_inflow(inflow_spec)
+class IssyExperiment:
+    def __init__(self, params):
+        self.exp_params = params
+        self.flow_params = self.make_flow_params()
 
-N_VEH = 20
-vehicles = VehicleParams()
-vehicles.add('human', num_vehicles=N_VEH)
+    def run(self):
+        alg_run, gym_name, config = self.setup_exps()
+        ray.init(num_cpus=self.exp_params.n_cpus + 1, redirect_output=False)
+        trials = run_experiments({
+            self.flow_params['exp_tag']: {
+                'run': alg_run,
+                'env': gym_name,
+                'config': {
+                    **config
+                },
+                'checkpoint_freq': self.exp_params.checkpoint_freq,
+                'max_failures': 999,
+                'stop': {
+                    'training_iteration': self.exp_params.training_iteration,
+                },
+            }
+        })
 
-flow_params = dict(
-    exp_tag='IssyEnv',
-    env_name='IssyEnv1',
-    scenario='IssyScenario',
-    simulator='traci',
-    sim=SumoParams(render=False, restart_instance=True),
-    env=EnvParams(
-        additional_params={"beta": N_VEH},
-        horizon=HORIZON,
-        warmup_steps=750,
-    ),
-    net=NetParams(
-        osm_path='/home/thomas/sumo/models/issy.osm',
-        no_internal_links=False,
-        inflows=inflow,
-    ),
-    veh=vehicles,
-    initial = InitialConfig(
-        edges_distribution=EDGES_DISTRIBUTION,
-    )
-)
+    def setup_exps(self):
+        alg_run = 'PPO'
 
-def setup_exps():
+        agent_cls = get_agent_class(alg_run)
+        config = agent_cls._default_config.copy()
+        config['num_workers'] = self.exp_params.n_cpus
+        config['train_batch_size'] = self.exp_params.horizon * self.exp_params.rollouts
+        config['gamma'] = 0.999  # discount rate
+        config['model'].update({'fcnet_hiddens': [32, 32]})
+        config['use_gae'] = True
+        config['lambda'] = 0.97
+        config['kl_target'] = 0.02
+        config['num_sgd_iter'] = 10
+        config['clip_actions'] = False  # FIXME(ev) temporary ray bug
+        config['horizon'] = self.exp_params.horizon
 
-    alg_run = 'PPO'
+        # save the flow params for replay
+        flow_json = json.dumps(
+            self.flow_params,
+            cls=FlowParamsEncoder,
+            sort_keys=True,
+            indent=4)
+        config['env_config']['flow_params'] = flow_json
+        config['env_config']['run'] = alg_run
 
-    agent_cls = get_agent_class(alg_run)
-    config = agent_cls._default_config.copy()
-    config['num_workers'] = N_CPUS
-    config['train_batch_size'] = HORIZON * N_ROLLOUTS
-    config['gamma'] = 0.999  # discount rate
-    config['model'].update({'fcnet_hiddens': [32, 32]})
-    config['use_gae'] = True
-    config['lambda'] = 0.97
-    config['kl_target'] = 0.02
-    config['num_sgd_iter'] = 10
-    config['clip_actions'] = False  # FIXME(ev) temporary ray bug
-    config['horizon'] = HORIZON
+        create_env, gym_name = make_create_env(
+            params=self.flow_params, version=0)
 
-    # save the flow params for replay
-    flow_json = json.dumps(
-        flow_params, cls=FlowParamsEncoder, sort_keys=True, indent=4)
-    config['env_config']['flow_params'] = flow_json
-    config['env_config']['run'] = alg_run
+        # Register as rllib env
+        register_env(gym_name, create_env)
+        e = create_env()
+        return alg_run, gym_name, config
 
-    create_env, gym_name = make_create_env(params=flow_params, version=0)
+    def make_flow_params(self):
+        return dict(
+            exp_tag='IssyEnv',
+            env_name='IssyEnv1',
+            scenario='IssyScenario',
+            simulator='traci',
+            sim =self.make_sumo_params(),
+            env =self.make_env_params(),
+            net =self.make_net_params(),
+            veh =self.make_vehicles(),
+            initial = self.make_initial_config(),
+        )
 
-    # Register as rllib env
-    register_env(gym_name, create_env)
-    e = create_env()
-    return alg_run, gym_name, config
+    def make_inflow(self):
+        return get_inflow(self.exp_params.inflow_spec)
+
+    def make_vehicles(self):
+        vehicles = VehicleParams()
+        vehicles.add('human', num_vehicles=self.exp_params.n_veh)
+        return vehicles
+
+    def make_net_params(self):
+        return NetParams(
+            osm_path='/home/thomas/sumo/models/issy.osm',
+            no_internal_links=False,
+            inflows=self.make_inflow(),
+        )
+
+    def make_initial_config(self):
+        return InitialConfig(
+            edges_distribution=EDGES_DISTRIBUTION,
+        )
+
+    def make_env_params(self):
+        return EnvParams(
+            additional_params={"beta": self.exp_params.n_veh},
+            horizon=self.exp_params.horizon,
+            warmup_steps=750,
+        )
+
+    def make_sumo_params(self):
+        return SumoParams(render=False, restart_instance=True)
 
 
 if __name__ == '__main__':
-    alg_run, gym_name, config = setup_exps()
-    ray.init(num_cpus=N_CPUS + 1, redirect_output=False)
-    trials = run_experiments({
-        flow_params['exp_tag']: {
-            'run': alg_run,
-            'env': gym_name,
-            'config': {
-                **config
-            },
-            'checkpoint_freq': 20,
-            'max_failures': 999,
-            'stop': {
-                'training_iteration': 200,
-            },
-        }
-    })
+    inflow_spec = {
+        "N": 300,
+        "NW": 150,
+        "E": 300,
+        "loop": 300,
+        "155558218": 150,
+    }
+    params = IssyExperimentParams(horizon=1000,
+                            rollouts=2,
+                            inflow_spec=inflow_spec,
+                            n_cpus=0,
+                            n_veh=20,
+                            checkpoint_freq=20,
+                            training_iteration=200)
+
+    exp = IssyExperiment(params)
+    exp.run()
