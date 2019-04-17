@@ -8,6 +8,25 @@ from copy import deepcopy
 import flow.envs
 from flow.core.params import InitialConfig
 from flow.core.params import TrafficLightParams
+from flow.core.params import InFlows
+
+def get_inflow(spec):
+    """ Generates an InFlows object based on a spec
+
+    Prameters
+    ---------
+    spec : dict
+        - keys : edge name to inject vehicles into
+        - values : number of cars to inject hourly
+    """
+    inflow = InFlows()
+    for k, v in spec.items():
+        inflow.add(veh_type="human",
+                edge=k,
+                vehs_per_hour=v,
+                departSpeed=10,
+                departLane="random")
+    return inflow
 
 def make_create_env(params, version=0, render=None):
     """Create a parametrized flow environment compatible with OpenAI gym.
