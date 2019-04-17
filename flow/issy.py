@@ -30,7 +30,9 @@ class IssyExperimentParams:
                  n_cpus,
                  n_veh,
                  checkpoint_freq=20,
-                 training_iteration=200, algorithm="PPO"):
+                 training_iteration=200,
+                 env_name='IssyEnv1',
+                 algorithm='PPO'):
         self.horizon = horizon
         self.rollouts = rollouts
         self.n_cpus = n_cpus
@@ -39,6 +41,7 @@ class IssyExperimentParams:
         self.checkpoint_freq = checkpoint_freq
         self.training_iteration = training_iteration
         self.algorithm = algorithm
+        self.env_name = env_name
 
         self.osm_path = '/home/thomas/sumo/models/issy.osm'
         self.edges_distribution = EDGES_DISTRIBUTION
@@ -108,7 +111,7 @@ class IssyExperiment:
     def make_flow_params(self):
         return dict(
             exp_tag='IssyEnv',
-            env_name='IssyEnv1',
+            env_name=self.exp_params.env_name,
             scenario='IssyScenario',
             simulator='traci',
             sim =self.make_sumo_params(),
