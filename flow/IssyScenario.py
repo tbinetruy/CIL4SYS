@@ -10,16 +10,6 @@
 
 from flow.scenarios import Scenario
 
-# we define an EDGES_DISTRIBUTION variable with the edges within
-# the westbound Bay Bridge
-EDGES_DISTRIBUTION = [
-    "N",
-    "NW",
-    "E",
-    "155558218",
-    "loop",
-]
-
 # we create a new scenario class to specify the expected routes
 class IssyScenario(Scenario):
 

@@ -18,11 +18,15 @@ from ray.tune import run_experiments
 from ray.tune.registry import register_env
 
 from IssyEnv import IssyEnv1
-from IssyScenario import IssyScenario, EDGES_DISTRIBUTION
+from IssyScenario import IssyScenario
 from helpers import make_create_env, get_inflow
 
 
 class IssyExperimentParams:
+    """Parameters for the Issy RL experiment.
+
+    This class is used configure the experiment.
+    """
     def __init__(self,
                  horizon,
                  rollouts,
@@ -31,8 +35,51 @@ class IssyExperimentParams:
                  n_veh,
                  checkpoint_freq=20,
                  training_iteration=200,
+                 discount_rate=0.999,
                  env_name='IssyEnv1',
                  algorithm='PPO'):
+
+        """Instantiate an experiment parameter object.
+
+        Parameters
+        ----------
+        horizon: int
+            How many steps per rollouts.
+        rollouts: int
+            How many rollouts are performed at each timesteps.
+
+            From the Flow paper:
+            "To accumulate samples, we must be able torolloutthe policy for T timesteps.
+            Each iteration, samples are aggregated from multiple rollouts into a batch and
+            the resulting gradient is used to update the policy."
+            https://flow-project.github.io/papers/Flow_Deep_Reinforcement_Learning_for_Control_in_SUMO.pdf
+        n_cpus: int
+            How many cpus to request for parallel training.
+        inflow_spec: dict
+            Dictionary defining how to setup the experiment inflows.
+            See `helpers.get_inflow` docstring for more information.
+        n_veh: int
+            How many vehicules are on the mesh at the start of the rollout.
+        checkpoint_freq: int
+            Number of simulations between model checkpoint saves.
+        discount_rate: float
+            Reward discount rate.
+        training_iteration: int
+            How many simulations the agent is trained for.
+        algorithm: str
+            RLlib algorithm name ('PPO', 'DQN', etc).
+            See: https://ray.readthedocs.io/en/latest/rllib-env.html
+        env_name: str
+            Name of environment class in the file `IssyEnv` that inherits `IssyEnvAbstract`.
+
+        Returns
+        -------
+        An instance of IssyExperimentParams with the parameters as keys with the following additions:
+        osm_path: str
+            Path to the .osm file of the district to simulate.
+        edge_distribution: str
+            Edges to add inflows to.
+        """
         self.horizon = horizon
         self.rollouts = rollouts
         self.n_cpus = n_cpus
@@ -42,10 +89,10 @@ class IssyExperimentParams:
         self.training_iteration = training_iteration
         self.algorithm = algorithm
         self.env_name = env_name
+        self.discount_rate = discount_rate
 
         self.osm_path = '/home/thomas/sumo/models/issy.osm'
-        self.edges_distribution = EDGES_DISTRIBUTION
-
+        self.edges_distribution = list(inflow_spec.keys())
 
 class IssyExperiment:
     def __init__(self, params):
@@ -55,7 +102,7 @@ class IssyExperiment:
         ray.init(num_cpus=self.exp_params.n_cpus + 1, redirect_output=False)
 
     def run(self):
-        alg_run, gym_name, config = 1, 1, 1
+        alg_run, gym_name, config = 1, 1, 1 # placeholders
         if self.exp_params.algorithm == 'PPO':
             alg_run, gym_name, config = self.setup_ppo_exp()
         else:
@@ -83,7 +130,7 @@ class IssyExperiment:
         config = agent_cls._default_config.copy()
         config['num_workers'] = self.exp_params.n_cpus
         config['train_batch_size'] = self.exp_params.horizon * self.exp_params.rollouts
-        config['gamma'] = 0.999  # discount rate
+        config['gamma'] = self.exp_params.discount_rate
         config['model'].update({'fcnet_hiddens': [32, 32]})
         config['use_gae'] = True
         config['lambda'] = 0.97
@@ -166,6 +213,7 @@ if __name__ == '__main__':
                                   n_veh=20,
                                   checkpoint_freq=20,
                                   training_iteration=200,
+                                  env_name='IssyEnv1',
                                   algorithm="PPO")
 
     exp = IssyExperiment(params)
