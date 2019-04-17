@@ -12,6 +12,20 @@ class IssyEnvAbstract(Env):
     Required from env_params:
 
     * beta: (int) number of vehicles the agent can observe
+
+
+    States
+        To be defined in child class.
+
+    Actions
+        The action space consist of a list of float variables ranging from 0-1
+        specifying whether a traffic light is supposed to switch or not.
+
+    Rewards
+        To be defined in child class.
+
+    Termination
+        A rollout is terminated once the time horizon is reached.
     """
     def __init__(self, env_params, sim_params, scenario, simulator='traci'):
         super().__init__(env_params, sim_params, scenario, simulator)
@@ -88,14 +102,13 @@ class IssyEnv1(IssyEnvAbstract):
         vehicles
 
     Actions
-        The action space consist of a list of float variables ranging from 0-1
-        specifying whether a traffic light is supposed to switch or not.
+        See parent class
 
     Rewards
         The reward is the average speed of all vehicles present on the mesh.
 
     Termination
-        A rollout is terminated once the time horizon is reached.
+        See parent class
     """
 
     @property
