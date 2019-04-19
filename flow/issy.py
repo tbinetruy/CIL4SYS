@@ -37,7 +37,8 @@ class IssyExperimentParams:
                  training_iteration=200,
                  discount_rate=0.999,
                  env_name='IssyEnv1',
-                 algorithm='PPO'):
+                 algorithm='PPO',
+                 render=False):
 
         """Instantiate an experiment parameter object.
 
@@ -90,6 +91,7 @@ class IssyExperimentParams:
         self.algorithm = algorithm
         self.env_name = env_name
         self.discount_rate = discount_rate
+        self.render = render
 
         self.osm_path = '/home/thomas/sumo/models/issy.osm'
         self.edges_distribution = list(inflow_spec.keys())
@@ -253,7 +255,7 @@ class IssyExperiment:
         parameter as recommended by the Flow documentation when using inflows.
         See `flow.envs.base_env.reset` docstring for more information.
         """
-        return SumoParams(render=False, restart_instance=True)
+        return SumoParams(render=self.exp_params.render, restart_instance=True)
 
 
 if __name__ == '__main__':
@@ -272,7 +274,8 @@ if __name__ == '__main__':
                                   checkpoint_freq=20,
                                   training_iteration=200,
                                   env_name='IssyEnv1',
-                                  algorithm="PPO")
+                                  algorithm="PPO",
+                                  render=False)
 
     exp = IssyExperiment(params)
     exp.run()
