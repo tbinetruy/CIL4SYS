@@ -95,13 +95,22 @@ class IssyExperimentParams:
         self.edges_distribution = list(inflow_spec.keys())
 
 class IssyExperiment:
+    """Issy experiment class, it sets up paramaters necessary to setup a flow experiment with RLlib."""
     def __init__(self, params):
+        """Setup experiment parameters and initialize ray.
+
+        Parameters
+        ----------
+        params: IssyExperimentParams
+           See IssyExperimentParams class definition
+        """
         self.exp_params = params
         self.flow_params = self.make_flow_params()
 
         ray.init(num_cpus=self.exp_params.n_cpus + 1, redirect_output=False)
 
     def run(self):
+        """Runs the experimint according to the constructor input parameters."""
         alg_run, gym_name, config = 1, 1, 1 # placeholders
         if self.exp_params.algorithm == 'PPO':
             alg_run, gym_name, config = self.setup_ppo_exp()
@@ -124,6 +133,9 @@ class IssyExperiment:
         })
 
     def setup_ppo_exp(self):
+        """Configures RLlib PPO algorithm to be used to train the RL model.
+
+        See: https://ray.readthedocs.io/en/latest/rllib-algorithms.html#proximal-policy-optimization-ppo"""
         alg_run = 'PPO'
 
         agent_cls = get_agent_class(alg_run)
@@ -156,6 +168,12 @@ class IssyExperiment:
         return alg_run, gym_name, config
 
     def make_flow_params(self):
+        """Configures Flow simulation parameters.
+
+        Returns
+        -------
+        A dictionary containing all necessary parameters for the Flow simulation
+        to take place."""
         return dict(
             exp_tag='IssyEnv',
             env_name=self.exp_params.env_name,
@@ -169,14 +187,33 @@ class IssyExperiment:
         )
 
     def make_inflow(self):
+        """Configure simulation inflows.
+
+        Returns
+        -------
+        An inflow object to be used to inject cars into the simulation.
+        See `helpers.get_inflows` for more information.
+        """
         return get_inflow(self.exp_params.inflow_spec)
 
     def make_vehicles(self):
+        """Defines the number of human controlled cars on the mesh at time step 0.
+
+        Returns
+        -------
+        A VehicleParams object defining human controlled vehicles
+        """
         vehicles = VehicleParams()
         vehicles.add('human', num_vehicles=self.exp_params.n_veh)
         return vehicles
 
     def make_net_params(self):
+        """Configures the network network.
+
+        Returns
+        -------
+        A NetParams object loading the OSM map with the appropriate inflow object.
+        """
         return NetParams(
             osm_path=self.exp_params.osm_path,
             no_internal_links=False,
@@ -184,10 +221,23 @@ class IssyExperiment:
         )
 
     def make_initial_config(self):
+        """Configures the simulation's edge distribution.
+
+        Returns
+        -------
+        An InitialConfig object loading the network edges distribution.
+        """
         return InitialConfig(
             edges_distribution=self.exp_params.edges_distribution, )
 
     def make_env_params(self):
+        """Configures the environment parameters.
+
+        Returns
+        -------
+        An EnvParams object with the correct parameters and
+        additional env params.
+        """
         return EnvParams(
             additional_params={"beta": self.exp_params.n_veh},
             horizon=self.exp_params.horizon,
@@ -195,6 +245,12 @@ class IssyExperiment:
         )
 
     def make_sumo_params(self):
+        """Configures the Sumo simulator.
+
+        Returns
+        -------
+        A SumoParams object.
+        """
         return SumoParams(render=False, restart_instance=True)
 
 
