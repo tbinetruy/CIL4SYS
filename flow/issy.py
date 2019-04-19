@@ -249,7 +249,9 @@ class IssyExperiment:
 
         Returns
         -------
-        A SumoParams object.
+        A SumoParams object. In particular it configures the "restart_instance"
+        parameter as recommended by the Flow documentation when using inflows.
+        See `flow.envs.base_env.reset` docstring for more information.
         """
         return SumoParams(render=False, restart_instance=True)
 
