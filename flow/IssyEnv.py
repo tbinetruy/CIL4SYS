@@ -104,6 +104,15 @@ class IssyEnvAbstract(Env):
         for veh_id in self.k.vehicle.get_ids():
             self._reroute_if_final_edge(veh_id)
 
+    def get_observable_veh_ids(self):
+        """Get the ids of all the vehicles observable by the model.
+
+        Returns
+        -------
+        A list of vehicle ids (str)
+        """
+        return [id for id in self.k.vehicle.get_ids() if "human" in id]
+
     def _reroute_if_final_edge(self, veh_id):
         """Checks if an edge is the final edge. If it is spawn a new
         vehicle on a random edge and remove the old one."""
@@ -173,14 +182,14 @@ class IssyEnv1(IssyEnvAbstract):
 
         (See parent class for more information)"""
         # We select beta observable vehicles and exclude inflows
-        ids = [id for id in self.k.vehicle.get_ids() if "human" in id]
+        ids = self.get_observable_veh_ids()
 
         vel = [self.k.vehicle.get_speed(veh_id) for veh_id in ids]
         orientation = [self.k.vehicle.get_orientation(veh_id) for veh_id in ids]
         emission = [self.k.vehicle.kernel_api.vehicle.getCO2Emission(id) for id in ids]
         # tl = [self.k.traffic_light.get_state(t) for t in self.k.traffic_light.get_ids()]
 
-        # We pad the state in case a car is being respawned to prevent
+        # We pad the state in case a vehicle is being respawned to prevent
         # dimension related exceptions
         vel = pad_list(vel, self.model_params["beta"], 0.)
         orientation = pad_list(orientation, self.model_params["beta"], [0.,0.,0.])
