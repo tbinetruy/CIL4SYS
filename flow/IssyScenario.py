@@ -8,10 +8,18 @@
 
 # all other imports are standard
 
+import random
+
 from flow.scenarios import Scenario
 
 # we create a new scenario class to specify the expected routes
 class IssyScenario(Scenario):
+
+    def get_routes_list(self):
+        return list(self.specify_routes({}).keys())
+
+    def get_random_route(self):
+        return random.choice(list(self.get_routes_list()))
 
     def specify_routes(self, net_params):
         return {

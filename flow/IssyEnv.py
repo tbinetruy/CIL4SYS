@@ -1,4 +1,3 @@
-import random
 import numpy as np
 
 from gym.spaces.tuple_space import Tuple
@@ -124,7 +123,7 @@ class IssyEnvAbstract(Env):
         # remove the vehicle
         self.k.vehicle.remove(veh_id)
         # reintroduce it at the start of the network
-        random_route = random.choice(list(self.scenario.specify_routes({}).keys()))
+        random_route = self.scenario.get_random_route()
         self.k.vehicle.add(
             veh_id=veh_id,
             edge=random_route,#route_start_edge,
