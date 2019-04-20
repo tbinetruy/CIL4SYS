@@ -5,7 +5,7 @@ from gym.spaces.box import Box
 
 from flow.envs import Env
 
-from helpers import flatten
+from helpers import flatten, pad_list
 
 class IssyEnvAbstract(Env):
     """Abstract class to inherit from. It provides helpers
@@ -175,11 +175,14 @@ class IssyEnv1(IssyEnvAbstract):
         # We select beta observable vehicles and exclude inflows
         ids = [id for id in self.k.vehicle.get_ids() if "human" in id]
 
-        pos = [self.k.vehicle.get_x_by_id(veh_id) for veh_id in ids]
         vel = [self.k.vehicle.get_speed(veh_id) for veh_id in ids]
         orientation = [self.k.vehicle.get_orientation(veh_id) for veh_id in ids]
         # tl = [self.k.traffic_light.get_state(t) for t in self.k.traffic_light.get_ids()]
-        self.k.vehicle.get_human_ids()
+
+        # We pad the state in case a car is being respawned to prevent
+        # dimension related exceptions
+        vel = pad_list(vel, self.model_params["beta"], 0.)
+        orientation = pad_list(orientation, self.model_params["beta"], [0.,0.,0.])
 
         return np.concatenate((flatten(orientation), vel))
 

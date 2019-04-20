@@ -13,6 +13,31 @@ from flow.core.params import InFlows
 
 flatten = lambda l: [item for sublist in l for item in sublist]
 
+def pad_list(l, length, pad_with=0):
+    """ Pads a list with extra elements.
+
+    Parameters
+    ----------
+    l: list
+        List to pad
+    length: int
+        Must be greater than the length of `l`. The
+        difference will be padded.
+    pad_with: any
+        Element to pad `l` with.
+
+    e.g. pad_list([1,2,3], 5, 0) outputs [1,2,3,0,0]
+
+    We use this helper to make sure that our states are of
+    constant dimension even when some cars are not on the
+    map (which happens when they get respawned)."""
+    if len(l) == length:
+        return l
+
+    l += [pad_with] * (length - len(l))
+    return l
+
+
 def get_inflow(spec):
     """ Generates an InFlows object based on a spec
 
