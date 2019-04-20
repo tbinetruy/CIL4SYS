@@ -19,7 +19,7 @@ class IssyScenario(Scenario):
         return list(self.specify_routes({}).keys())
 
     def get_random_route(self):
-        return random.choice(list(self.get_routes_list()))
+        return random.choice(self.get_routes_list())
 
     def specify_routes(self, net_params):
         return {
