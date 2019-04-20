@@ -10,6 +10,9 @@ from flow.core.params import InitialConfig
 from flow.core.params import TrafficLightParams
 from flow.core.params import InFlows
 
+
+flatten = lambda l: [item for sublist in l for item in sublist]
+
 def get_inflow(spec):
     """ Generates an InFlows object based on a spec
 
