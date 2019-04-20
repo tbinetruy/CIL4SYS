@@ -38,7 +38,7 @@ class IssyExperimentParams:
                  discount_rate=0.999,
                  env_name='IssyEnv1',
                  algorithm='PPO',
-                 warmup_steps,
+                 warmup_steps=750,
                  render=False):
 
         """Instantiate an experiment parameter object.
