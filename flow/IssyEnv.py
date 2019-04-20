@@ -164,7 +164,7 @@ class IssyEnv1(IssyEnvAbstract):
         return Box(
             low=0,
             high=float("inf"),
-            shape=(4*self.scenario.vehicles.num_vehicles,),
+            shape=(5*self.scenario.vehicles.num_vehicles,),
         )
 
     def get_state(self, **kwargs):
@@ -177,23 +177,26 @@ class IssyEnv1(IssyEnvAbstract):
 
         vel = [self.k.vehicle.get_speed(veh_id) for veh_id in ids]
         orientation = [self.k.vehicle.get_orientation(veh_id) for veh_id in ids]
+        emission = [self.k.vehicle.kernel_api.vehicle.getCO2Emission(id) for id in ids]
         # tl = [self.k.traffic_light.get_state(t) for t in self.k.traffic_light.get_ids()]
 
         # We pad the state in case a car is being respawned to prevent
         # dimension related exceptions
         vel = pad_list(vel, self.model_params["beta"], 0.)
         orientation = pad_list(orientation, self.model_params["beta"], [0.,0.,0.])
+        emission = pad_list(emission, self.model_params["beta"], 0.)
 
-        return np.concatenate((flatten(orientation), vel))
+        return np.concatenate((flatten(orientation), vel, emission))
 
     def compute_reward(self, rl_actions, **kwargs):
         """ The reward in this simple model is simply the mean velocity
-        of all simulated vehicles present on the mesh.
+        of all simulated vehicles present on the mesh devided by the
+        mean CO2 emission.
 
         (See parent class for more information)"""
         ids = self.k.vehicle.get_ids()
         speeds = self.k.vehicle.get_speed(ids)
         emission = [self.k.vehicle.kernel_api.vehicle.getCO2Emission(id) for id in ids]
 
-        return np.mean(speeds) - np.mean(emission)
+        return np.mean(speeds) / np.mean(emission)
 
