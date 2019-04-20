@@ -285,6 +285,7 @@ if __name__ == '__main__':
                                   training_iteration=200,
                                   env_name='IssyEnv1',
                                   algorithm="PPO",
+                                  warmup_steps=2000,
                                   render=False)
 
     exp = IssyExperiment(params)
