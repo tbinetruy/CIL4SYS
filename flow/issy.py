@@ -38,6 +38,7 @@ class IssyExperimentParams:
                  discount_rate=0.999,
                  env_name='IssyEnv1',
                  algorithm='PPO',
+                 warmup_steps,
                  render=False):
 
         """Instantiate an experiment parameter object.
@@ -92,6 +93,7 @@ class IssyExperimentParams:
         self.env_name = env_name
         self.discount_rate = discount_rate
         self.render = render
+        self.warmup_steps = warmup_steps
 
         self.osm_path = '/home/thomas/sumo/models/issy.osm'
         self.edges_distribution = list(inflow_spec.keys())
@@ -243,7 +245,7 @@ class IssyExperiment:
         return EnvParams(
             additional_params={"beta": self.exp_params.n_veh},
             horizon=self.exp_params.horizon,
-            warmup_steps=750,
+            warmup_steps=self.exp_params.warmup_steps,
         )
 
     def make_sumo_params(self):
