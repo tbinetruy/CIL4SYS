@@ -5,6 +5,8 @@ from gym.spaces.box import Box
 
 from flow.envs import Env
 
+from helpers import flatten
+
 class IssyEnvAbstract(Env):
     """Abstract class to inherit from. It provides helpers
     used accross models such as a traffic light state inversion method
@@ -132,7 +134,6 @@ class IssyEnvAbstract(Env):
             speed="max")
 
 
-
 class IssyEnv1(IssyEnvAbstract):
     """First environment used to train traffic lights to regulate traffic flow
     for the Issy les Moulineaux district of study.
@@ -156,17 +157,19 @@ class IssyEnv1(IssyEnvAbstract):
     @property
     def observation_space(self):
         """ In this model, we only observe positions and speeds of
-        the beta observable vehicles in cartesian coordinates.
+        the beta observable vehicles in cartesian coordinates,
+        along with their absolute speed and CO2 emission.
 
         (See parent class for more information)"""
         return Box(
             low=0,
             high=float("inf"),
-            shape=(2*self.scenario.vehicles.num_vehicles,),
+            shape=(4*self.scenario.vehicles.num_vehicles,),
         )
 
     def get_state(self, **kwargs):
-        """ We request positions and speeds of observable vehicles.
+        """ We request positions, orientations, speeds, and emissions
+        of observable vehicles.
 
         (See parent class for more information)"""
         # We select beta observable vehicles and exclude inflows
@@ -174,9 +177,11 @@ class IssyEnv1(IssyEnvAbstract):
 
         pos = [self.k.vehicle.get_x_by_id(veh_id) for veh_id in ids]
         vel = [self.k.vehicle.get_speed(veh_id) for veh_id in ids]
+        orientation = [self.k.vehicle.get_orientation(veh_id) for veh_id in ids]
         # tl = [self.k.traffic_light.get_state(t) for t in self.k.traffic_light.get_ids()]
+        self.k.vehicle.get_human_ids()
 
-        return np.concatenate((pos, vel))
+        return np.concatenate((flatten(orientation), vel))
 
     def compute_reward(self, rl_actions, **kwargs):
         """ The reward in this simple model is simply the mean velocity
@@ -185,5 +190,7 @@ class IssyEnv1(IssyEnvAbstract):
         (See parent class for more information)"""
         ids = self.k.vehicle.get_ids()
         speeds = self.k.vehicle.get_speed(ids)
+        emission = [self.k.vehicle.kernel_api.vehicle.getCO2Emission(id) for id in ids]
 
-        return np.mean(speeds)
+        return np.mean(speeds) - np.mean(emission)
+
