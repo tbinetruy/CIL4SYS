@@ -55,24 +55,32 @@ class IssyExperimentParams:
             Each iteration, samples are aggregated from multiple rollouts into a batch and
             the resulting gradient is used to update the policy."
             https://flow-project.github.io/papers/Flow_Deep_Reinforcement_Learning_for_Control_in_SUMO.pdf
-        n_cpus: int
-            How many cpus to request for parallel training.
         inflow_spec: dict
             Dictionary defining how to setup the experiment inflows.
             See `helpers.get_inflow` docstring for more information.
+        n_cpus: int
+            How many cpus to request for parallel training.
         n_veh: int
             How many vehicules are on the mesh at the start of the rollout.
         checkpoint_freq: int
             Number of simulations between model checkpoint saves.
-        discount_rate: float
-            Reward discount rate.
         training_iteration: int
             How many simulations the agent is trained for.
+        discount_rate: float
+            Reward discount rate.
+        env_name: str
+            Name of environment class in the file `IssyEnv` that inherits `IssyEnvAbstract`.
         algorithm: str
             RLlib algorithm name ('PPO', 'DQN', etc).
             See: https://ray.readthedocs.io/en/latest/rllib-env.html
-        env_name: str
-            Name of environment class in the file `IssyEnv` that inherits `IssyEnvAbstract`.
+        warmup_steps: int
+            Number of steps performed before the initialization of training
+            during a rollout. These warmup steps are not added as steps
+            into training, and the actions of rl agents during these steps
+            are dictated by sumo. Defaults to zero
+            Copied from: `flow.core.params.EnvParams.warup_steps` docstring.
+        render: boolean
+            Should sumo-gui be launched during training.
 
         Returns
         -------
