@@ -104,21 +104,20 @@ class IssyEnvAbstract(Env):
 
     def _reroute_if_final_edge(self, veh_id):
         """Checks if an edge is the final edge. If it is spawn a new
-        vehicle and remove old one."""
+        vehicle on a random edge and remove the old one."""
+
+        # no need to reroute inflows
         if "flow" in veh_id:
             return
 
+        # don't reroute if vehicle is not on route final edge
         current_edge = self.k.vehicle.get_edge(veh_id)
         final_edge = self.k.vehicle.get_route(veh_id)[-1]
-        print(current_edge, final_edge)
         if  current_edge != final_edge:
             return
 
-
-        edge = self.k.vehicle.get_edge(veh_id)
         type_id = self.k.vehicle.get_type(veh_id)
         lane_index = self.k.vehicle.get_lane(veh_id)
-        route_start_edge = self.k.vehicle.get_route(veh_id)[0]
 
         # remove the vehicle
         self.k.vehicle.remove(veh_id)
@@ -126,7 +125,7 @@ class IssyEnvAbstract(Env):
         random_route = self.scenario.get_random_route()
         self.k.vehicle.add(
             veh_id=veh_id,
-            edge=random_route,#route_start_edge,
+            edge=random_route,
             type_id=str(type_id),
             lane=str(0),
             pos="0",
