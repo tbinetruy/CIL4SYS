@@ -1,3 +1,4 @@
+import random
 import numpy as np
 
 from gym.spaces.tuple_space import Tuple
@@ -96,9 +97,46 @@ class IssyEnvAbstract(Env):
                 state = self._invert_tl_state(id)
                 self.k.traffic_light.set_state(id, state)
 
+    def additional_command(self):
+        """Used to insert vehicles that are on the exit edge and place them
+        back on their entrance edge."""
+        for veh_id in self.k.vehicle.get_ids():
+            self._reroute_if_final_edge(veh_id)
+
+    def _reroute_if_final_edge(self, veh_id):
+        """Checks if an edge is the final edge. If it is spawn a new
+        vehicle and remove old one."""
+        if "flow" in veh_id:
+            return
+
+        current_edge = self.k.vehicle.get_edge(veh_id)
+        final_edge = self.k.vehicle.get_route(veh_id)[-1]
+        print(current_edge, final_edge)
+        if  current_edge != final_edge:
+            return
+
+
+        edge = self.k.vehicle.get_edge(veh_id)
+        type_id = self.k.vehicle.get_type(veh_id)
+        lane_index = self.k.vehicle.get_lane(veh_id)
+        route_start_edge = self.k.vehicle.get_route(veh_id)[0]
+
+        # remove the vehicle
+        self.k.vehicle.remove(veh_id)
+        # reintroduce it at the start of the network
+        random_route = random.choice(list(self.scenario.specify_routes({}).keys()))
+        self.k.vehicle.add(
+            veh_id=veh_id,
+            edge=random_route,#route_start_edge,
+            type_id=str(type_id),
+            lane=str(0),
+            pos="0",
+            speed="max")
+
+
 
 class IssyEnv1(IssyEnvAbstract):
-    """Environment used to train traffic lights to regulate traffic flow
+    """First environment used to train traffic lights to regulate traffic flow
     for the Issy les Moulineaux district of study.
 
     Required from env_params: See parent class
@@ -133,8 +171,8 @@ class IssyEnv1(IssyEnvAbstract):
         """ We request positions and speeds of observable vehicles.
 
         (See parent class for more information)"""
-        # We select beta observable vehicles
-        ids = self.k.vehicle.get_ids()[:self.model_params["beta"]]
+        # We select beta observable vehicles and exclude inflows
+        ids = [id for id in self.k.vehicle.get_ids() if "human" in id]
 
         pos = [self.k.vehicle.get_x_by_id(veh_id) for veh_id in ids]
         vel = [self.k.vehicle.get_speed(veh_id) for veh_id in ids]
