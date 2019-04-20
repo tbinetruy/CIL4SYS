@@ -261,16 +261,16 @@ class IssyExperiment:
 if __name__ == '__main__':
     inflow_spec = {
         "N": 300,
-        "NW": 150,
-        "E": 300,
-        "loop": 300,
-        "155558218": 150,
+        "NW": 100,
+        "E": 100,
+        "loop": 100,
+        "155558218": 100,
     }
     params = IssyExperimentParams(horizon=1000,
                                   rollouts=2,
                                   inflow_spec=inflow_spec,
                                   n_cpus=0,
-                                  n_veh=20,
+                                  n_veh=5,
                                   checkpoint_freq=20,
                                   training_iteration=200,
                                   env_name='IssyEnv1',
