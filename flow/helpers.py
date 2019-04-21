@@ -71,6 +71,11 @@ def get_inflow(spec):
 def make_create_env(params, version=0, render=None):
     """Create a parametrized flow environment compatible with OpenAI gym.
 
+    This is a slightly modified version of `flow.contrib.registry`'s
+    make_create_env so we don't have to drop our environments and
+    scenarios in Flow's modules. The original docstring is copied pasted
+    bellow.
+
     This environment creation method allows for the specification of several
     key parameters when creating any flow environment, including the requested
     environment and scenario classes, and the inputs needed to make these
