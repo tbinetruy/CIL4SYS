@@ -1,19 +1,10 @@
-
-
-# the TestEnv environment is used to simply simulate the network
-#from flow.envs import TestEnv
-
-# the Experiment class is used for running simulations
-#from flow.core.experiment import Experiment
-
-# all other imports are standard
-
 import random
 
 from flow.scenarios import Scenario
 
-# we create a new scenario class to specify the expected routes
+
 class IssyScenario(Scenario):
+    """We create a new scenario class to specify the expected routes"""
 
     def get_routes_list(self):
         return list(self.specify_routes({}).keys())
@@ -76,7 +67,3 @@ class IssyScenario(Scenario):
             ],
 
         }
-
-
-
-

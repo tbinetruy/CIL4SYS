@@ -27,6 +27,7 @@ class IssyExperimentParams:
 
     This class is used configure the experiment.
     """
+
     def __init__(self,
                  horizon,
                  rollouts,
@@ -40,7 +41,6 @@ class IssyExperimentParams:
                  algorithm='PPO',
                  warmup_steps=750,
                  render=False):
-
         """Instantiate an experiment parameter object.
 
         Parameters
@@ -51,9 +51,10 @@ class IssyExperimentParams:
             How many rollouts are performed at each timesteps.
 
             From the Flow paper:
-            "To accumulate samples, we must be able torolloutthe policy for T timesteps.
-            Each iteration, samples are aggregated from multiple rollouts into a batch and
-            the resulting gradient is used to update the policy."
+            "To accumulate samples, we must be able torolloutthe policy for T
+             timesteps. Each iteration, samples are aggregated from multiple
+            rollouts into a batch and the resulting gradient is used to update
+            the policy."
             https://flow-project.github.io/papers/Flow_Deep_Reinforcement_Learning_for_Control_in_SUMO.pdf
         inflow_spec: dict
             Dictionary defining how to setup the experiment inflows.
@@ -69,7 +70,8 @@ class IssyExperimentParams:
         discount_rate: float
             Reward discount rate.
         env_name: str
-            Name of environment class in the file `IssyEnv` that inherits `IssyEnvAbstract`.
+            Name of environment class in the file `IssyEnv` that inherits
+            `IssyEnvAbstract`.
         algorithm: str
             RLlib algorithm name ('PPO', 'DQN', etc).
             See: https://ray.readthedocs.io/en/latest/rllib-env.html
@@ -84,7 +86,8 @@ class IssyExperimentParams:
 
         Returns
         -------
-        An instance of IssyExperimentParams with the parameters as keys with the following additions:
+        An instance of IssyExperimentParams with the parameters as keys with
+        the following additions:
         osm_path: str
             Path to the .osm file of the district to simulate.
         edge_distribution: str
@@ -106,8 +109,11 @@ class IssyExperimentParams:
         self.osm_path = '/home/thomas/sumo/models/issy.osm'
         self.edges_distribution = list(inflow_spec.keys())
 
+
 class IssyExperiment:
-    """Issy experiment class, it sets up paramaters necessary to setup a flow experiment with RLlib."""
+    """Issy experiment class, it sets up paramaters necessary to setup a flow
+    experiment with RLlib."""
+
     def __init__(self, params):
         """Setup experiment parameters and initialize ray.
 
@@ -122,8 +128,9 @@ class IssyExperiment:
         ray.init(num_cpus=self.exp_params.n_cpus + 1, redirect_output=False)
 
     def run(self):
-        """Runs the experimint according to the constructor input parameters."""
-        alg_run, gym_name, config = 1, 1, 1 # placeholders
+        """Runs the experimint according to the constructor input
+        parameters."""
+        alg_run, gym_name, config = 1, 1, 1  # placeholders
         if self.exp_params.algorithm == 'PPO':
             alg_run, gym_name, config = self.setup_ppo_exp()
         else:
@@ -153,7 +160,8 @@ class IssyExperiment:
         agent_cls = get_agent_class(alg_run)
         config = agent_cls._default_config.copy()
         config['num_workers'] = self.exp_params.n_cpus
-        config['train_batch_size'] = self.exp_params.horizon * self.exp_params.rollouts
+        config['train_batch_size'] = self.exp_params.horizon * \
+            self.exp_params.rollouts
         config['gamma'] = self.exp_params.discount_rate
         config['model'].update({'fcnet_hiddens': [32, 32]})
         config['use_gae'] = True
@@ -184,8 +192,8 @@ class IssyExperiment:
 
         Returns
         -------
-        A dictionary containing all necessary parameters for the Flow simulation
-        to take place."""
+        A dictionary containing all necessary parameters for the Flow
+        simulation to take place."""
         return dict(
             exp_tag='IssyEnv',
             env_name=self.exp_params.env_name,
@@ -224,7 +232,8 @@ class IssyExperiment:
 
         Returns
         -------
-        A NetParams object loading the OSM map with the appropriate inflow object.
+        A NetParams object loading the OSM map with the appropriate inflow
+        object.
         """
         return NetParams(
             osm_path=self.exp_params.osm_path,

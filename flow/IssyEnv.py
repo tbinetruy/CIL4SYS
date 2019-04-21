@@ -1,11 +1,11 @@
 import numpy as np
 
-from gym.spaces.tuple_space import Tuple
 from gym.spaces.box import Box
 
 from flow.envs import Env
 
 from helpers import flatten, pad_list
+
 
 class IssyEnvAbstract(Env):
     """Abstract class to inherit from. It provides helpers
@@ -29,45 +29,47 @@ class IssyEnvAbstract(Env):
     Termination
         A rollout is terminated once the time horizon is reached.
     """
+
     def __init__(self, env_params, sim_params, scenario, simulator='traci'):
         super().__init__(env_params, sim_params, scenario, simulator)
         beta = env_params.get_additional_param("beta")
-        self.model_params = dict(
-            beta=beta,
-        )
+        self.model_params = dict(beta=beta, )
 
     @property
     def action_space(self):
         """Vector of floats from 0-1 indicating traffic light states."""
-        return Box(low=0, high=1, shape=(self.k.traffic_light.num_traffic_lights,),
-                dtype=np.float32)
-
+        return Box(low=0,
+                   high=1,
+                   shape=(self.k.traffic_light.num_traffic_lights, ),
+                   dtype=np.float32)
 
     def _invert_tl_state(self, id, api="sumo"):
         """Invert state for given traffic light.
         It currently only implements conversion for the sumo light state.
-        This function returns the new state string (of the same length as the input state),
-        this allows for handling intersections with different numbers of lanes and lights
-        elegantly.
+        This function returns the new state string (of the same length as the
+        input state), this allows for handling intersections with different
+        numbers of lanes and lights elegantly.
 
-        This function takes any sumo light state but only convets to a "green" or "red" state.
-        Orange and other states are converted accordingly, see implementation for more detail.
+        This function takes any sumo light state but only convets to a "green"
+        or "red" state. Orange and other states are converted accordingly, see
+        implementation for more detail.
 
         Parameters
         ----------
         id: str
             ID of traffic light to invert
-            Use `flow.kernel.traffic_light.get_ids` to get a list of traffic light ids.
+            Use `flow.kernel.traffic_light.get_ids` to get a list of traffic
+            light ids.
         api: str
-            Simulator API which defines the light state format to return. Currently only
-            implements the sumo traffic state format.
+            Simulator API which defines the light state format to return.
+            Currently only implements the sumo traffic state format.
             (see: https://sumo.dlr.de/wiki/Simulation/Traffic_Lights#Signal_state_definitions)
 
         Returns
         ----------
         new_state: str
-            New light state consisting of only red and green lights that oppose the previous state
-            as much as possible.
+            New light state consisting of only red and green lights that
+            oppose the previous state as much as possible.
 
         """
         if api == "sumo":
@@ -82,8 +84,9 @@ class IssyEnvAbstract(Env):
             return NotImplementedError
 
     def _apply_rl_actions(self, rl_actions):
-        """Converts probabilities of switching each lights into actions by rounding them.
-        We then invert the traffic lights that the agent requested changes for.
+        """Converts probabilities of switching each lights into actions by
+        rounding them. We then invert the traffic lights that the agent
+        requested changes for.
 
         Parameters
         ----------
@@ -124,7 +127,7 @@ class IssyEnvAbstract(Env):
         # don't reroute if vehicle is not on route final edge
         current_edge = self.k.vehicle.get_edge(veh_id)
         final_edge = self.k.vehicle.get_route(veh_id)[-1]
-        if  current_edge != final_edge:
+        if current_edge != final_edge:
             return
 
         type_id = self.k.vehicle.get_type(veh_id)
@@ -134,13 +137,12 @@ class IssyEnvAbstract(Env):
         self.k.vehicle.remove(veh_id)
         # reintroduce it at the start of the network
         random_route = self.scenario.get_random_route()
-        self.k.vehicle.add(
-            veh_id=veh_id,
-            edge=random_route,
-            type_id=str(type_id),
-            lane=str(0),
-            pos="0",
-            speed="max")
+        self.k.vehicle.add(veh_id=veh_id,
+                           edge=random_route,
+                           type_id=str(type_id),
+                           lane=str(0),
+                           pos="0",
+                           speed="max")
 
 
 class IssyEnv1(IssyEnvAbstract):
@@ -173,7 +175,7 @@ class IssyEnv1(IssyEnvAbstract):
         return Box(
             low=0,
             high=float("inf"),
-            shape=(5*self.scenario.vehicles.num_vehicles,),
+            shape=(5 * self.scenario.vehicles.num_vehicles, ),
         )
 
     def get_state(self, **kwargs):
@@ -185,14 +187,20 @@ class IssyEnv1(IssyEnvAbstract):
         ids = self.get_observable_veh_ids()
 
         vel = [self.k.vehicle.get_speed(veh_id) for veh_id in ids]
-        orientation = [self.k.vehicle.get_orientation(veh_id) for veh_id in ids]
-        emission = [self.k.vehicle.kernel_api.vehicle.getCO2Emission(id) for id in ids]
-        # tl = [self.k.traffic_light.get_state(t) for t in self.k.traffic_light.get_ids()]
+        orientation = [
+            self.k.vehicle.get_orientation(veh_id) for veh_id in ids
+        ]
+        emission = [
+            self.k.vehicle.kernel_api.vehicle.getCO2Emission(id) for id in ids
+        ]
+        # tl = [self.k.traffic_light.get_state(t)
+        #       for t in self.k.traffic_light.get_ids()]
 
         # We pad the state in case a vehicle is being respawned to prevent
         # dimension related exceptions
         vel = pad_list(vel, self.model_params["beta"], 0.)
-        orientation = pad_list(orientation, self.model_params["beta"], [0.,0.,0.])
+        orientation = pad_list(orientation, self.model_params["beta"],
+                               [0., 0., 0.])
         emission = pad_list(emission, self.model_params["beta"], 0.)
 
         return np.concatenate((flatten(orientation), vel, emission))
@@ -205,7 +213,8 @@ class IssyEnv1(IssyEnvAbstract):
         (See parent class for more information)"""
         ids = self.k.vehicle.get_ids()
         speeds = self.k.vehicle.get_speed(ids)
-        emission = [self.k.vehicle.kernel_api.vehicle.getCO2Emission(id) for id in ids]
+        emission = [
+            self.k.vehicle.kernel_api.vehicle.getCO2Emission(id) for id in ids
+        ]
 
         return np.mean(speeds) / np.mean(emission)
-

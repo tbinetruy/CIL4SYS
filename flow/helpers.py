@@ -5,20 +5,31 @@ from gym.envs.registration import register
 
 from copy import deepcopy
 
-import flow.envs
 from flow.core.params import InitialConfig
 from flow.core.params import TrafficLightParams
 from flow.core.params import InFlows
 
 
-flatten = lambda l: [item for sublist in l for item in sublist]
+def flatten(l):
+    """Flattens nested list.
 
-def pad_list(l, length, pad_with=0):
+    Parameters
+    ----------
+    lst: list
+        Nested list to flatten.
+
+    Returns
+    -------
+    Flattened list."""
+    return [item for sublist in l for item in sublist]
+
+
+def pad_list(lst, length, pad_with=0):
     """ Pads a list with extra elements.
 
     Parameters
     ----------
-    l: list
+    lst: list
         List to pad
     length: int
         Must be greater than the length of `l`. The
@@ -31,11 +42,11 @@ def pad_list(l, length, pad_with=0):
     We use this helper to make sure that our states are of
     constant dimension even when some cars are not on the
     map (which happens when they get respawned)."""
-    if len(l) == length:
-        return l
+    if len(lst) == length:
+        return lst
 
-    l += [pad_with] * (length - len(l))
-    return l
+    lst += [pad_with] * (length - len(lst))
+    return lst
 
 
 def get_inflow(spec):
@@ -50,11 +61,12 @@ def get_inflow(spec):
     inflow = InFlows()
     for k, v in spec.items():
         inflow.add(veh_type="human",
-                edge=k,
-                vehs_per_hour=v,
-                departSpeed=10,
-                departLane="random")
+                   edge=k,
+                   vehs_per_hour=v,
+                   departSpeed=10,
+                   departLane="random")
     return inflow
+
 
 def make_create_env(params, version=0, render=None):
     """Create a parametrized flow environment compatible with OpenAI gym.
@@ -129,17 +141,15 @@ def make_create_env(params, version=0, render=None):
         if render is not None:
             sim_params.render = render
 
-
         try:
-            register(
-                id=env_name,
-                entry_point="IssyEnv" + ':{}'.format(params["env_name"]),
-                kwargs={
-                    "env_params": env_params,
-                    "sim_params": sim_params,
-                    "scenario": scenario,
-                    "simulator": params['simulator']
-                })
+            register(id=env_name,
+                     entry_point="IssyEnv" + ':{}'.format(params["env_name"]),
+                     kwargs={
+                         "env_params": env_params,
+                         "sim_params": sim_params,
+                         "scenario": scenario,
+                         "simulator": params['simulator']
+                     })
         except Exception:
             pass
         return gym.envs.make(env_name)
