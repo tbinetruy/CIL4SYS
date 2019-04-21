@@ -131,7 +131,6 @@ class IssyEnvAbstract(Env):
             return
 
         type_id = self.k.vehicle.get_type(veh_id)
-        lane_index = self.k.vehicle.get_lane(veh_id)
 
         # remove the vehicle
         self.k.vehicle.remove(veh_id)

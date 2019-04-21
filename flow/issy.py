@@ -5,8 +5,6 @@ from flow.core.params import NetParams
 from flow.core.params import InitialConfig
 from flow.core.params import EnvParams
 from flow.core.params import SumoParams
-from flow.core.experiment import Experiment
-from flow.core.params import TrafficLightParams
 from flow.utils.rllib import FlowParamsEncoder
 
 import ray
@@ -17,8 +15,6 @@ except ImportError:
 from ray.tune import run_experiments
 from ray.tune.registry import register_env
 
-from IssyEnv import IssyEnv1
-from IssyScenario import IssyScenario
 from helpers import make_create_env, get_inflow
 
 
@@ -136,7 +132,7 @@ class IssyExperiment:
         else:
             return NotImplementedError
 
-        trials = run_experiments({
+        run_experiments({
             self.flow_params['exp_tag']: {
                 'run': alg_run,
                 'env': gym_name,
@@ -155,6 +151,7 @@ class IssyExperiment:
         """Configures RLlib PPO algorithm to be used to train the RL model.
 
         See: https://ray.readthedocs.io/en/latest/rllib-algorithms.html#proximal-policy-optimization-ppo"""
+
         alg_run = 'PPO'
 
         agent_cls = get_agent_class(alg_run)
@@ -184,7 +181,6 @@ class IssyExperiment:
 
         # Register as rllib env
         register_env(gym_name, create_env)
-        e = create_env()
         return alg_run, gym_name, config
 
     def make_flow_params(self):
