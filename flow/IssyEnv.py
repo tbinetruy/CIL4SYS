@@ -4,6 +4,7 @@ from gym.spaces.box import Box
 
 from flow.envs import Env
 
+from Rewards import Rewards
 from helpers import flatten, pad_list
 
 
@@ -34,6 +35,7 @@ class IssyEnvAbstract(Env):
         super().__init__(env_params, sim_params, scenario, simulator)
         beta = env_params.get_additional_param("beta")
         self.model_params = dict(beta=beta, )
+        self.rewards = Rewards(self.k)
 
     @property
     def action_space(self):
@@ -210,10 +212,5 @@ class IssyEnv1(IssyEnvAbstract):
         mean CO2 emission.
 
         (See parent class for more information)"""
-        ids = self.k.vehicle.get_ids()
-        speeds = self.k.vehicle.get_speed(ids)
-        emission = [
-            self.k.vehicle.kernel_api.vehicle.getCO2Emission(id) for id in ids
-        ]
 
-        return np.mean(speeds) / np.mean(emission)
+        return self.rewards.mean_speed() / self.rewards.mean_emission()
