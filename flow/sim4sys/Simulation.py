@@ -10,7 +10,7 @@ from flow.core.kernel.simulation import KernelSimulation
 class Sim4sysSimulation(KernelSimulation):
     """Sin4sys simulation kernel.
 
-    Extends flow.core.kernel.simulation.KernelSimulation
+    Extends `flow.core.kernel.simulation.KernelSimulation`.
 
     Communication is done with Sim4sys frontend for now over websockets.
 
