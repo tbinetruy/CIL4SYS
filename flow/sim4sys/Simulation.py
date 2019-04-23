@@ -18,7 +18,7 @@ class Sim4sysSimulation(KernelSimulation):
     """
 
     def __init__(self, master_kernel):
-        """Instantiate the sumo simulator kernel.
+        """Instantiate the Sim4sys simulator kernel.
 
         Parameters
         ----------
@@ -27,8 +27,7 @@ class Sim4sysSimulation(KernelSimulation):
             sub-kernels)
         """
         KernelSimulation.__init__(self, master_kernel)
-        # contains the subprocess.Popen instance used to start traci
-        self.sumo_proc = None
+
         self.current_resp = []
         self.event_loop = asyncio.get_event_loop()
         self.simulator_url = "localhost"

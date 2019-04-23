@@ -1,5 +1,6 @@
 from flow.core.kernel.traffic_light import KernelTrafficLight
 
+
 class Sim4sysTrafficLight(KernelTrafficLight):
     """Sim4sys traffic light kernel.
 
