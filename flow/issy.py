@@ -28,6 +28,7 @@ class IssyExperimentParams:
                  horizon,
                  rollouts,
                  inflow_spec,
+                 action_spec,
                  n_cpus,
                  n_veh,
                  checkpoint_freq=20,
@@ -55,6 +56,10 @@ class IssyExperimentParams:
         inflow_spec: dict
             Dictionary defining how to setup the experiment inflows.
             See `helpers.get_inflow` docstring for more information.
+        action_spec: dict
+            Dictionary defining allowed states for a given traffic light ID.
+            - keys: (str) the traffic light ID
+            - values: (Array<str>) acceptable states for that traffic light ID.
         n_cpus: int
             How many cpus to request for parallel training.
         n_veh: int
@@ -93,6 +98,7 @@ class IssyExperimentParams:
         self.rollouts = rollouts
         self.n_cpus = n_cpus
         self.inflow_spec = inflow_spec
+        self.action_spec = action_spec
         self.n_veh = n_veh
         self.checkpoint_freq = checkpoint_freq
         self.training_iteration = training_iteration
@@ -256,7 +262,10 @@ class IssyExperiment:
         additional env params.
         """
         return EnvParams(
-            additional_params={"beta": self.exp_params.n_veh},
+            additional_params={
+                "beta": self.exp_params.n_veh,
+                "action_space": self.exp_params.action_spec
+            },
             horizon=self.exp_params.horizon,
             warmup_steps=self.exp_params.warmup_steps,
         )
@@ -283,6 +292,25 @@ if __name__ == '__main__':
     }
     params = IssyExperimentParams(horizon=1000,
                                   rollouts=2,
+
+    # numbering from the top counter-clockwise
+    action_spec = {
+        # The main traffic light, in sumo traffic light state strings
+        # dictate the state of each traffic light and are ordered counter
+        # clockwise.
+        "30677963": [
+            "GGGGrrrGGGG",  # allow all traffic on the main way w/ U-turns
+            "rrrrGGGrrrr",  # allow only traffic from edge 4794817
+        ],
+        "30763263": [
+            "GGGGGGGGGG",  # allow all traffic on main axis
+            "rrrrrrrrrr",  # block all traffic on main axis to unclog elsewhere
+        ],
+        "30677810": [  # the smallest of all controlled traffic lights
+            "GGrr",
+            "rrGG",
+        ],
+    }
                                   inflow_spec=inflow_spec,
                                   n_cpus=0,
                                   n_veh=5,

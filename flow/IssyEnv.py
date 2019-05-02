@@ -34,6 +34,7 @@ class IssyEnvAbstract(Env):
     def __init__(self, env_params, sim_params, scenario, simulator='traci'):
         super().__init__(env_params, sim_params, scenario, simulator)
         beta = env_params.get_additional_param("beta")
+        self.action_spec = env_params.get_additional_param("action_spec")
         self.model_params = dict(beta=beta, )
         self.rewards = Rewards(self.k)
 
