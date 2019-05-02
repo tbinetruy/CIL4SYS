@@ -38,6 +38,24 @@ class IssyEnvAbstract(Env):
         self.model_params = dict(beta=beta, )
         self.rewards = Rewards(self.k)
 
+        # Hard coded for now
+        self.num_traffic_lights = self.get_num_traffic_lights()
+
+    def get_num_traffic_lights(self):
+        """Calculates the number of possible actions by counting the
+        traffic light states based on `self.action_spec`. It counts
+        the cardinality of the cartesian product of all traffic light
+        states.
+
+        Returns
+        -------
+        Number of actions (int)
+        """
+        count = 1
+        for k in self.action_spec.keys():
+            count *= len(self.action_spec[k])
+        return count
+
     @property
     def action_space(self):
         """Vector of floats from 0-1 indicating traffic light states."""
