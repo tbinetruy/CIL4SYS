@@ -15,6 +15,8 @@ class IssyEnvAbstract(Env):
     Required from env_params:
 
     * beta: (int) number of vehicles the agent can observe
+    * action_spec: (dict<str,[str]>) allowed states for each traffic
+        light ID.
 
 
     States
@@ -38,10 +40,19 @@ class IssyEnvAbstract(Env):
         self.model_params = dict(beta=beta, )
         self.rewards = Rewards(self.k)
 
-        # Hard coded for now
-        self.num_traffic_lights = self.get_num_traffic_lights()
-
     def get_num_traffic_lights(self):
+        """Counts the number of traffic lights by summing
+        the state string length for each intersection.
+
+        Returns
+        -------
+        Number of traffic lights (int)"""
+        count = 0
+        for k in self.action_spec.keys():
+            count += len(self.action_spec[k][0])
+        return count
+
+    def get_num_actions(self):
         """Calculates the number of possible actions by counting the
         traffic light states based on `self.action_spec`. It counts
         the cardinality of the cartesian product of all traffic light
@@ -61,8 +72,31 @@ class IssyEnvAbstract(Env):
         """Vector of floats from 0-1 indicating traffic light states."""
         return Box(low=0,
                    high=1,
-                   shape=(self.k.traffic_light.num_traffic_lights, ),
+                   shape=(self.get_num_actions(), ),
                    dtype=np.float32)
+
+    def encode_tl_state(self, id):
+        """Encodes traffic light state.
+        Yellow and red states are considered off and all other states
+        are considered on.
+
+        "rryGyggrrGGrg" => [0, 0, 0, 1, 0, 1, 1, 0, 0, 1, 1, 0, 1]
+
+        See: https://sumo.dlr.de/wiki/Simulation/Traffic_Lights
+
+        Parameters
+        ----------
+        id: str
+            ID of traffic light to encode state.
+
+        Returns
+        ----------
+        encoded_state: [bool]
+            Encoded light state
+        """
+        state = list(self.k.traffic_light.get_state(id))
+        red_lights = list("ry")
+        return [0 if s in red_lights else 1 for s in state]
 
     def _invert_tl_state(self, id, api="sumo"):
         """Invert state for given traffic light.
@@ -192,10 +226,12 @@ class IssyEnv1(IssyEnvAbstract):
         along with their absolute speed and CO2 emission.
 
         (See parent class for more information)"""
+
         return Box(
             low=0,
             high=float("inf"),
-            shape=(5 * self.scenario.vehicles.num_vehicles, ),
+            shape=(5 * self.scenario.vehicles.num_vehicles +
+                   self.get_num_traffic_lights(), ),
         )
 
     def get_state(self, **kwargs):
