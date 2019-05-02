@@ -98,7 +98,6 @@ class IssyEnvAbstract(Env):
         red_lights = list("ry")
         return [0 if s in red_lights else 1 for s in state]
 
-
     def _apply_rl_actions(self, rl_actions):
         """Converts probabilities of switching each lights into actions by
         rounding them. We then invert the traffic lights that the agent
@@ -119,7 +118,9 @@ class IssyEnvAbstract(Env):
 
     def additional_command(self):
         """Used to insert vehicles that are on the exit edge and place them
-        back on their entrance edge."""
+        back on their entrance edge. Gets executed at each time step.
+
+        See parent class for more information."""
         for veh_id in self.k.vehicle.get_ids():
             self._reroute_if_final_edge(veh_id)
 
