@@ -36,7 +36,8 @@ class IssyExperimentParams:
                  env_name='IssyEnv1',
                  algorithm='PPO',
                  warmup_steps=750,
-                 render=False):
+                 render=False,
+                 osm_path='/Users/adrienly/Documents/Telecom/Cil4Sys/CIL4SYS/flow/issy.osm'):
         """Instantiate an experiment parameter object.
 
         Parameters
@@ -102,7 +103,7 @@ class IssyExperimentParams:
         self.render = render
         self.warmup_steps = warmup_steps
 
-        self.osm_path = '/home/thomas/sumo/models/issy.osm'
+        self.osm_path = osm_path
         self.edges_distribution = list(inflow_spec.keys())
 
 
@@ -291,7 +292,8 @@ if __name__ == '__main__':
                                   env_name='IssyEnv1',
                                   algorithm="PPO",
                                   warmup_steps=2000,
-                                  render=False)
+                                  render=False,
+                                  osm_path='/Users/adrienly/Documents/Telecom/Cil4Sys/CIL4SYS/flow/issy.osm')
 
     exp = IssyExperiment(params)
     exp.run()
