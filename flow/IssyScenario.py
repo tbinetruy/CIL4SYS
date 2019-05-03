@@ -13,6 +13,7 @@ class IssyScenario(Scenario):
         return random.choice(self.get_routes_list())
 
     def specify_routes(self, net_params):
+        """See parent class."""
         return {
             "loop": [
                 "4794817",
