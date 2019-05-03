@@ -24,21 +24,23 @@ class IssyExperimentParams:
     This class is used configure the experiment.
     """
 
-    def __init__(self,
-                 horizon,
-                 rollouts,
-                 inflow_spec,
-                 action_spec,
-                 n_cpus,
-                 n_veh,
-                 checkpoint_freq=20,
-                 training_iteration=200,
-                 discount_rate=0.999,
-                 env_name='IssyEnv1',
-                 algorithm='PPO',
-                 warmup_steps=750,
-                 render=False,
-                 osm_path='/Users/adrienly/Documents/Telecom/Cil4Sys/CIL4SYS/flow/issy.osm'):
+    def __init__(
+            self,
+            horizon,
+            rollouts,
+            inflow_spec,
+            action_spec,
+            n_cpus,
+            n_veh,
+            checkpoint_freq=20,
+            training_iteration=200,
+            discount_rate=0.999,
+            env_name='IssyEnv1',
+            algorithm='PPO',
+            warmup_steps=750,
+            render=False,
+            osm_path='/Users/adrienly/Documents/Telecom/Cil4Sys/CIL4SYS/flow/issy.osm'
+    ):
         """Instantiate an experiment parameter object.
 
         Parameters
