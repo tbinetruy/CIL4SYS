@@ -264,7 +264,7 @@ class IssyExperiment:
         return EnvParams(
             additional_params={
                 "beta": self.exp_params.n_veh,
-                "action_space": self.exp_params.action_spec
+                "action_spec": self.exp_params.action_spec
             },
             horizon=self.exp_params.horizon,
             warmup_steps=self.exp_params.warmup_steps,
@@ -290,8 +290,6 @@ if __name__ == '__main__':
         "loop": 100,
         "155558218": 100,
     }
-    params = IssyExperimentParams(horizon=1000,
-                                  rollouts=2,
 
     # numbering from the top counter-clockwise
     action_spec = {
@@ -311,11 +309,15 @@ if __name__ == '__main__':
             "rrGG",
         ],
     }
+
+    params = IssyExperimentParams(horizon=600,
+                                  rollouts=5,
                                   inflow_spec=inflow_spec,
+                                  action_spec=action_spec,
                                   n_cpus=0,
                                   n_veh=5,
                                   checkpoint_freq=20,
-                                  training_iteration=200,
+                                  training_iteration=2000,
                                   env_name='IssyEnv1',
                                   algorithm="PPO",
                                   warmup_steps=2000,

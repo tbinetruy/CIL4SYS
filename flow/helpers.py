@@ -10,7 +10,7 @@ from flow.core.params import TrafficLightParams
 from flow.core.params import InFlows
 
 
-def _invert_tl_state(old_state, api="sumo"):
+def invert_tl_state(old_state, api="sumo"):
     """Invert state for given traffic light.
     It currently only implements conversion for the sumo light state.
     This function returns the new state string (of the same length as the

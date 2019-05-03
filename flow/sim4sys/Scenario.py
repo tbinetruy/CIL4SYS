@@ -6,7 +6,7 @@ This file derives from a copy paste of `flow.core.kernel.Scenario.traci`."""
 from flow.core.kernel.scenario import KernelScenario
 
 
-class TraCIScenario(KernelScenario):
+class Sim4sysScenario(KernelScenario):
     """Base scenario kernel for sumo-based simulations.
 
     This class initializes a new scenario. Scenarios are used to specify
@@ -26,7 +26,7 @@ class TraCIScenario(KernelScenario):
         sim_params : flow.core.params.SimParams
             simulation-specific parameters
         """
-        super(TraCIScenario, self).__init__(master_kernel, sim_params)
+        super(Sim4sysScenario, self).__init__(master_kernel, sim_params)
         pass
 
     def generate_network(self, network):

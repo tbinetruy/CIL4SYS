@@ -5,7 +5,7 @@ from gym.spaces.box import Box
 from flow.envs import Env
 
 from Rewards import Rewards
-from helpers import flatten, pad_list
+from helpers import flatten, pad_list, invert_tl_state
 
 
 class IssyEnvAbstract(Env):
@@ -50,6 +50,7 @@ class IssyEnvAbstract(Env):
         count = 0
         for k in self.action_spec.keys():
             count += len(self.action_spec[k][0])
+        count = 33
         return count
 
     def get_num_actions(self):
@@ -113,7 +114,8 @@ class IssyEnvAbstract(Env):
 
         for id, a in zip(tl_ids, actions):
             if a:
-                state = self._invert_tl_state(id)
+                old_state = self.k.traffic_light.get_state(id)
+                state = invert_tl_state(old_state)
                 self.k.traffic_light.set_state(id, state)
 
     def additional_command(self):
@@ -211,8 +213,10 @@ class IssyEnv1(IssyEnvAbstract):
         emission = [
             self.k.vehicle.kernel_api.vehicle.getCO2Emission(id) for id in ids
         ]
-        # tl = [self.k.traffic_light.get_state(t)
-        #       for t in self.k.traffic_light.get_ids()]
+
+        tl = np.concatenate([
+            self.encode_tl_state(id) for id in self.k.traffic_light.get_ids()
+        ])
 
         # We pad the state in case a vehicle is being respawned to prevent
         # dimension related exceptions
@@ -221,7 +225,7 @@ class IssyEnv1(IssyEnvAbstract):
                                [0., 0., 0.])
         emission = pad_list(emission, self.model_params["beta"], 0.)
 
-        return np.concatenate((flatten(orientation), vel, emission))
+        return np.concatenate((flatten(orientation), vel, emission, tl))
 
     def compute_reward(self, rl_actions, **kwargs):
         """ The reward in this simple model is simply the mean velocity
