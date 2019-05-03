@@ -50,7 +50,6 @@ class IssyEnvAbstract(Env):
         count = 0
         for k in self.action_spec.keys():
             count += len(self.action_spec[k][0])
-        count = 33
         return count
 
     def get_num_actions(self):
@@ -216,6 +215,7 @@ class IssyEnv1(IssyEnvAbstract):
 
         tl = np.concatenate([
             self.encode_tl_state(id) for id in self.k.traffic_light.get_ids()
+            if id in self.action_spec.keys()
         ])
 
         # We pad the state in case a vehicle is being respawned to prevent
