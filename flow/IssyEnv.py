@@ -1,3 +1,4 @@
+import itertools
 import numpy as np
 
 from gym.spaces.box import Box
@@ -39,6 +40,18 @@ class IssyEnvAbstract(Env):
         self.action_spec = env_params.get_additional_param("action_spec")
         self.model_params = dict(beta=beta, )
         self.rewards = Rewards(self.k)
+
+    def map_action_to_tl_states(self, rl_actions):
+        """Maps an rl_action list to new traffic light states based on
+        `action_spec`
+
+        Parameters
+        ---------
+        rl_actions: [float] list of action probabilities of cardinality
+            `self.get_num_actions()`
+        """
+        all_actions = list(itertools.product(*list(self.action_spec.values())))
+        return all_actions[np.argmax(rl_actions)]
 
     def get_num_traffic_lights(self):
         """Counts the number of traffic lights by summing
@@ -98,24 +111,43 @@ class IssyEnvAbstract(Env):
         red_lights = list("ry")
         return [0 if s in red_lights else 1 for s in state]
 
+    def get_controlled_tl_ids(self):
+        """Returns the list of RL controlled traffic lights."""
+        return [
+            id for id in self.k.traffic_light.get_ids()
+            if id in self.action_spec.keys()
+        ]
+
+    def get_free_tl_ids(self):
+        """Returns the list of uncontrollable traffic lights."""
+        return [
+            id for id in self.k.traffic_light.get_ids()
+            if id not in self.action_spec.keys()
+        ]
+
     def _apply_rl_actions(self, rl_actions):
-        """Converts probabilities of switching each lights into actions by
-        rounding them. We then invert the traffic lights that the agent
-        requested changes for.
+        """Converts probabilities of choosing configuration for states of
+        traffic lights on the map. All traffic lights for which IDs are not
+        keys of `self.action_spec` are updated to all green light states.
 
         Parameters
         ----------
         rl_actions: [float]
-            Individual probabilities of switching traffic light states.
+            Individual probabilities of choosing a particular traffic
+            light state configuration for controllable traffic lights on
+            the map.
         """
-        tl_ids = self.k.traffic_light.get_ids()
-        actions = np.round(rl_actions)
+        # Upadate controllable traffic lights
+        new_tl_states = self.map_action_to_tl_states(rl_actions)
+        for counter, tl_id in enumerate(self.action_spec.keys()):
+            self.k.traffic_light.set_state(tl_id, new_tl_states[counter])
 
-        for id, a in zip(tl_ids, actions):
-            if a:
-                old_state = self.k.traffic_light.get_state(id)
-                state = invert_tl_state(old_state)
-                self.k.traffic_light.set_state(id, state)
+        # Set all other traffic lights to green
+        free_tl_ids = self.get_free_tl_ids()
+        for tl_id in free_tl_ids:
+            old_state = self.k.traffic_light.get_state(tl_id)
+            new_state = "G" * len(old_state)
+            self.k.traffic_light.set_state(tl_id, new_state)
 
     def additional_command(self):
         """Used to insert vehicles that are on the exit edge and place them

@@ -1,4 +1,5 @@
 import json
+from collections import OrderedDict
 
 from flow.core.params import VehicleParams
 from flow.core.params import NetParams
@@ -295,7 +296,7 @@ if __name__ == '__main__':
     }
 
     # numbering from the top counter-clockwise
-    action_spec = {
+    action_spec = OrderedDict({
         # The main traffic light, in sumo traffic light state strings
         # dictate the state of each traffic light and are ordered counter
         # clockwise.
@@ -311,7 +312,7 @@ if __name__ == '__main__':
             "GGrr",
             "rrGG",
         ],
-    }
+    })
 
     params = IssyExperimentParams(horizon=600,
                                   rollouts=5,
