@@ -69,6 +69,8 @@ class Rewards:
             if old_state is not current_states[i]:
                 reward -= penatly
 
+        self.tl_states = current_states
+
         return reward
 
 
