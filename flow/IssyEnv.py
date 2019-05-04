@@ -13,14 +13,16 @@ class IssyEnv1(BaseIssyEnv):
     Required from env_params: See parent class
 
     States
-        An observation is the set of positions and speeds of beta observed
-        vehicles
+        An observation is the set of positions, orientations and speeds of the
+        beta observed vehicles and the binary state of each RL controlled
+        traffic lights.
 
     Actions
         See parent class
 
     Rewards
-        The reward is the average speed of all vehicles present on the mesh.
+        The reward is the ratio of the average speed for all vehicles present
+        on the mesh over the average of their emissions.
 
     Termination
         See parent class
@@ -28,9 +30,14 @@ class IssyEnv1(BaseIssyEnv):
 
     @property
     def observation_space(self):
-        """ In this model, we only observe positions and speeds of
-        the beta observable vehicles in cartesian coordinates,
-        along with their absolute speed and CO2 emission.
+        """ In this model, we only observe 2D-positions and speed norms of
+        the beta observable vehicles in cartesian coordinates, along with
+        their orientation, absolute speed and CO2 emission. We also include
+        the binary state of all RL controlled traffic lights.
+
+        Ex: If beta=2 and gamma=10 (2 observed cars and 3 RL controlled
+        traffic lights), our state lives in $R^{5\times2} U B^10$ where
+        B={0,1} is the on/off state each traffic light can take.
 
         (See parent class for more information)"""
 
