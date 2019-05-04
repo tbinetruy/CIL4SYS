@@ -139,6 +139,8 @@ class IssyExperiment:
         alg_run, gym_name, config = 1, 1, 1  # placeholders
         if self.exp_params.algorithm == 'PPO':
             alg_run, gym_name, config = self.setup_ppo_exp()
+        elif self.exp_params.algorithm == 'DQN':
+            alg_run, gym_name, config = self.setup_dqn_exp()
         else:
             return NotImplementedError
 
@@ -156,6 +158,37 @@ class IssyExperiment:
                 },
             }
         })
+
+    def setup_dqn_exp(self):
+        """Configures RLlib DQN algorithm to be used to train the RL model."""
+
+        alg_run = 'DQN'
+
+        agent_cls = get_agent_class(alg_run)
+        config = agent_cls._default_config.copy()
+        config['num_workers'] = self.exp_params.n_cpus
+        config['train_batch_size'] = self.exp_params.horizon * \
+            self.exp_params.rollouts
+        config['gamma'] = self.exp_params.discount_rate
+        config['model'].update({'fcnet_hiddens': [32, 32]})
+        config['clip_actions'] = False  # FIXME(ev) temporary ray bug
+        config['horizon'] = self.exp_params.horizon
+        config["hiddens"] = [256]
+
+        # save the flow params for replay
+        flow_json = json.dumps(self.flow_params,
+                               cls=FlowParamsEncoder,
+                               sort_keys=True,
+                               indent=4)
+        config['env_config']['flow_params'] = flow_json
+        config['env_config']['run'] = alg_run
+
+        create_env, gym_name = make_create_env(params=self.flow_params,
+                                               version=0)
+
+        # Register as rllib env
+        register_env(gym_name, create_env)
+        return alg_run, gym_name, config
 
     def setup_ppo_exp(self):
         """Configures RLlib PPO algorithm to be used to train the RL model.
@@ -268,7 +301,8 @@ class IssyExperiment:
         return EnvParams(
             additional_params={
                 "beta": self.exp_params.n_veh,
-                "action_spec": self.exp_params.action_spec
+                "action_spec": self.exp_params.action_spec,
+                "algorithm": self.algorithm,
             },
             horizon=self.exp_params.horizon,
             warmup_steps=self.exp_params.warmup_steps,

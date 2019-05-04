@@ -1,8 +1,8 @@
-
 import itertools
 import numpy as np
 
 from gym.spaces.box import Box
+from gym.spaces.discrete import Discrete
 
 from flow.envs import Env
 
@@ -38,6 +38,7 @@ class BaseIssyEnv(Env):
         super().__init__(env_params, sim_params, scenario, simulator)
         beta = env_params.get_additional_param("beta")
         self.action_spec = env_params.get_additional_param("action_spec")
+        self.algorithm = env_params.get_additional_param("algorithm")
         self.model_params = dict(beta=beta, )
         self.rewards = Rewards(self.k, self.action_spec)
 
@@ -86,10 +87,15 @@ class BaseIssyEnv(Env):
     @property
     def action_space(self):
         """Vector of floats from 0-1 indicating traffic light states."""
-        return Box(low=0,
-                   high=1,
-                   shape=(self.get_num_actions(), ),
-                   dtype=np.float32)
+        if self.algorithm == "DQN":
+            return Discrete(self.get_num_actions())
+        elif self.algorithm == "PPO":
+            return Box(low=0,
+                       high=1,
+                       shape=(self.get_num_actions(), ),
+                       dtype=np.float32)
+        else:
+            return NotImplementedError
 
     def get_controlled_tl_ids(self):
         """Returns the list of RL controlled traffic lights."""
