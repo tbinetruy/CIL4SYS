@@ -302,7 +302,7 @@ class IssyExperiment:
             additional_params={
                 "beta": self.exp_params.n_veh,
                 "action_spec": self.exp_params.action_spec,
-                "algorithm": self.algorithm,
+                "algorithm": self.exp_params.algorithm,
             },
             horizon=self.exp_params.horizon,
             warmup_steps=self.exp_params.warmup_steps,

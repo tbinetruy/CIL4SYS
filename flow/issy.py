@@ -4,7 +4,7 @@ from IssyExperiment import IssyExperiment, IssyExperimentParams
 
 if __name__ == '__main__':
     inflow_spec = {
-        "N": 300,
+        "N": 300,  # cars per hour
         "NW": 100,
         "E": 100,
         "loop": 100,
@@ -41,6 +41,7 @@ if __name__ == '__main__':
                                   env_name='IssyEnv2',
                                   algorithm="PPO",
                                   warmup_steps=2000,
+                                  algorithm="DQN",
                                   render=False,
                                   osm_path='/Users/adrienly/Documents/Telecom/Cil4Sys/CIL4SYS/flow/issy.osm')
 

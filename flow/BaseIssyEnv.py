@@ -55,7 +55,7 @@ class BaseIssyEnv(Env):
             `self.get_num_actions()`
         """
         all_actions = list(itertools.product(*list(self.action_spec.values())))
-        return all_actions[np.argmax(rl_actions)]
+        return all_actions[rl_actions]
 
     def get_num_traffic_lights(self):
         """Counts the number of traffic lights by summing
