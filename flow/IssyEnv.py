@@ -246,8 +246,7 @@ class IssyEnv1(IssyEnvAbstract):
         ]
 
         tl = np.concatenate([
-            self.encode_tl_state(id) for id in self.k.traffic_light.get_ids()
-            if id in self.action_spec.keys()
+            self.encode_tl_state(id) for id in self.get_controlled_tl_ids()
         ])
 
         # We pad the state in case a vehicle is being respawned to prevent
