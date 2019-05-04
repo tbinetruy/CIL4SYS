@@ -39,7 +39,10 @@ class BaseIssyEnv(Env):
         beta = env_params.get_additional_param("beta")
         self.action_spec = env_params.get_additional_param("action_spec")
         self.model_params = dict(beta=beta, )
-        self.rewards = Rewards(self.k)
+        self.rewards = Rewards(self.k, self.action_spec)
+
+        # Used for debug purposes
+        self.current_timestep = 0
 
     def map_action_to_tl_states(self, rl_actions):
         """Maps an rl_action list to new traffic light states based on
@@ -133,6 +136,9 @@ class BaseIssyEnv(Env):
         See parent class for more information."""
         for veh_id in self.k.vehicle.get_ids():
             self._reroute_if_final_edge(veh_id)
+
+        # Used for debug purposes
+        self.current_timestep += 1
 
     def get_observable_veh_ids(self):
         """Get the ids of all the vehicles observable by the model.

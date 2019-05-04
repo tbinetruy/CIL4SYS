@@ -38,7 +38,7 @@ if __name__ == '__main__':
                                   n_veh=5,
                                   checkpoint_freq=20,
                                   training_iteration=2000,
-                                  env_name='IssyEnv1',
+                                  env_name='IssyEnv2',
                                   algorithm="PPO",
                                   warmup_steps=2000,
                                   render=False,

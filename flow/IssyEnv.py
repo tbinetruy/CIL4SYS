@@ -87,9 +87,8 @@ class IssyEnv1(BaseIssyEnv):
             self.k.vehicle.kernel_api.vehicle.getCO2Emission(id) for id in ids
         ]
 
-        tl = np.concatenate([
-            self.encode_tl_state(id) for id in self.get_controlled_tl_ids()
-        ])
+        tl = np.concatenate(
+            [self.encode_tl_state(id) for id in self.get_controlled_tl_ids()])
 
         # We pad the state in case a vehicle is being respawned to prevent
         # dimension related exceptions
@@ -108,3 +107,24 @@ class IssyEnv1(BaseIssyEnv):
         (See parent class for more information)"""
 
         return self.rewards.mean_speed() / self.rewards.mean_emission()
+
+
+class IssyEnv2(IssyEnv1):
+    """The model differs from IssyEnv1 with its reward function."""
+
+    def compute_reward(self, rl_actions, **kwargs):
+        """ The reward in this simple model is simply the mean velocity
+        of all simulated vehicles present on the mesh devided by the
+        mean CO2 emission.
+
+        (See parent class for more information)"""
+        # km/h
+        max_speed = 10
+        # mg of CO2 emitted per vehicle during the last timestep
+        max_emission = 3000
+        # Penalty to add if a traffic light changes
+        tl_penalty = 30
+
+        return self.rewards.penalize_min_speed(
+            max_speed) + self.rewards.penalize_max_emission(
+                max_emission) + self.rewards.penalize_tl_switch(tl_penalty)
