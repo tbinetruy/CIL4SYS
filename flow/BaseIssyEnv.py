@@ -47,14 +47,19 @@ class BaseIssyEnv(Env):
 
     def map_action_to_tl_states(self, rl_actions):
         """Maps an rl_action list to new traffic light states based on
-        `action_spec`
+        `action_spec` or keeps current traffic light states as they are.
 
         Parameters
         ---------
         rl_actions: [float] list of action probabilities of cardinality
             `self.get_num_actions()`
         """
-        all_actions = list(itertools.product(*list(self.action_spec.values())))
+        identity_action = [tuple(
+            self.k.traffic_light.get_state(id)
+            for id in self.action_spec.keys()
+        )]
+        all_actions = list(itertools.product(
+            *list(self.action_spec.values()))) + identity_action
         return all_actions[rl_actions]
 
     def get_num_traffic_lights(self):
@@ -73,7 +78,9 @@ class BaseIssyEnv(Env):
         """Calculates the number of possible actions by counting the
         traffic light states based on `self.action_spec`. It counts
         the cardinality of the cartesian product of all traffic light
-        states.
+        states. In the DQN case, it also adds 1 to that product to account
+        for the "identity" action which keeps the traffic light states as they
+        were in the last timestep.
 
         Returns
         -------
@@ -82,7 +89,12 @@ class BaseIssyEnv(Env):
         count = 1
         for k in self.action_spec.keys():
             count *= len(self.action_spec[k])
-        return count
+        if self.algorithm == "DQN":
+            return count + 1
+        elif self.algorithm == "PPO":
+            return count
+        else:
+            return NotImplementedError
 
     @property
     def action_space(self):
