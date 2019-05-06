@@ -194,6 +194,10 @@ def visualizer_rllib(args):
     else:
         use_lstm = False
 
+    env.restart_simulation(
+        sim_params=sim_params, render=sim_params.render)
+
+
     final_outflows = []
     mean_speed = []
     for i in range(args.num_rollouts):
