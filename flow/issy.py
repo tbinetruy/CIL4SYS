@@ -39,7 +39,6 @@ if __name__ == '__main__':
                                   checkpoint_freq=20,
                                   training_iteration=2000,
                                   env_name='IssyEnv2',
-                                  algorithm="PPO",
                                   warmup_steps=2000,
                                   algorithm="DQN",
                                   render=False,
