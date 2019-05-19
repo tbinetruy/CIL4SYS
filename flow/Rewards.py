@@ -73,9 +73,6 @@ class Rewards:
 
         return reward
 
-
-
-
     def penalize_max_emission(self, max_emission, reward=1, penalty=0):
         """This rewards the beta vehicles emitting less CO2 than a constraint.
 
