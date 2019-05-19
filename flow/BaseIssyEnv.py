@@ -149,11 +149,18 @@ class BaseIssyEnv(Env):
 
     def additional_command(self):
         """Used to insert vehicles that are on the exit edge and place them
-        back on their entrance edge. Gets executed at each time step.
+        back on their entrance edge. It also colors the beta observable
+        vehicles on sumo's gui.
+
+        Gets executed at each time step.
 
         See parent class for more information."""
         for veh_id in self.k.vehicle.get_ids():
             self._reroute_if_final_edge(veh_id)
+
+            # color beta observable vehicles
+            if 'human' in veh_id:
+                self.k.vehicle.set_color(veh_id, color=(255, 0, 0))
 
         # Used for debug purposes
         self.current_timestep += 1
