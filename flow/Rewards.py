@@ -26,6 +26,14 @@ class Rewards:
         """Returns IDs of vehicles on the map at current time step."""
         return self.kernel.vehicle.get_ids()
 
+    def _get_obs_veh_ids(self):
+        """Returns IDs of the beta observable vehicles on the map at current
+        time step."""
+        return [
+            veh_id for veh_id in self.kernel.vehicle.get_ids()
+            if 'human' in veh_id
+        ]
+
     def _get_controlled_tl_ids(self):
         return list(self.action_spec.keys())
 
@@ -88,6 +96,32 @@ class Rewards:
         return np.sum([
             reward if self.kernel.vehicle.kernel_api.vehicle.getCO2Emission(id)
             < max_emission else penalty for id in self._get_veh_ids()
+        ])
+
+    def penalize_max_wait(self,
+                          obs_veh_wait_steps,
+                          max_wait,
+                          reward=1,
+                          penalty=0):
+        """Penalizes each observable vehicle that has been idled for over
+        `max_wait` timesteps.
+
+        Parameters
+        ----------
+        obs_veh_wait_steps: dict<veh_id, int>
+            Dictionary assigning to each observable vehicle ID the number of
+            timesteps this vehicle has been idled for.
+            (See `BaseIssyEnv._init_obs_veh_wait_steps` comments for more info)
+        max_wait: int
+            Maximum number of timesteps a car can be idled without being penalized.
+        reward: int
+            reward for each vehicles being idled for less that `max_wait`.
+        penalty: int
+             penalty to assign to vehicles idled for more than `max_wait`.
+        """
+        return np.sum([
+            reward if obs_veh_wait_steps[veh_id] < max_wait else penalty
+            for veh_id in self._get_obs_veh_ids()
         ])
 
     def mean_speed(self):

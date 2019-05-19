@@ -36,14 +36,36 @@ class BaseIssyEnv(Env):
 
     def __init__(self, env_params, sim_params, scenario, simulator='traci'):
         super().__init__(env_params, sim_params, scenario, simulator)
-        beta = env_params.get_additional_param("beta")
+        self.beta = env_params.get_additional_param("beta")
         self.action_spec = env_params.get_additional_param("action_spec")
         self.algorithm = env_params.get_additional_param("algorithm")
-        self.model_params = dict(beta=beta, )
+        self.model_params = dict(beta=self.beta, )
         self.rewards = Rewards(self.k, self.action_spec)
+
+        self._init_obs_veh_wait_steps()
 
         # Used for debug purposes
         self.current_timestep = 0
+
+    def _init_obs_veh_wait_steps(self):
+        """Initializes attributes that will store the number of steps stayed
+        idle by the beta observable vehicles"""
+
+        # Because Sumo has not instantiated vehicles at this stage, we manually
+        # generate the name of controllable vehicles according to the Sumo
+        # naming convention.
+        # We store this list in an attribute since it is needed when updating
+        # `self.obs_veh_wait_steps` in the update loop and
+        # `self.k.vehicles.get_ids` will not list vehicles that are being re-
+        # routed (see `self._reroute_if_final_edge`).
+        self._all_obs_veh_names = ['human_' + str(i) for i in range(self.beta)]
+
+        # We instantiate a dictionary with veh_ids as keys and time steps spent
+        # idled as values. We set all values to 0 since this is an init.
+        self.obs_veh_wait_steps = {
+            veh_id: 0
+            for veh_id in self._all_obs_veh_names
+        }
 
     def map_action_to_tl_states(self, rl_actions):
         """Maps an rl_action list to new traffic light states based on
@@ -147,14 +169,37 @@ class BaseIssyEnv(Env):
             new_state = "G" * len(old_state)
             self.k.traffic_light.set_state(tl_id, new_state)
 
+    def _update_obs_wait_steps(self):
+        """This method updates `self.obs_veh_wait_steps`.
+
+        Ex: If human_1 has been idled for 5 timesteps and human_2 is moving at
+        1km/h, then `self.obs_veh_wait_steps` = {'human_1': 5, 'human_2': 0}"""
+        self.obs_veh_wait_steps = {
+            veh_id: 0 if not self.k.vehicle.get_speed(veh_id) else
+            self.obs_veh_wait_steps[veh_id] + 1
+            for veh_id in self.get_observable_veh_ids()
+        }
+
+        # Because when vehicles are being rerouted, they will not appear in the
+        # list returned by `self.get_observable_veh_ids`, they will be left out
+        # of `self.obs_veh_wait_steps`. We patch the dictionary as follows to
+        # prevent key errors.
+        for k in self._all_obs_veh_names:
+            if k not in self.obs_veh_wait_steps:
+                self.obs_veh_wait_steps[k] = 0
+
     def additional_command(self):
-        """Used to insert vehicles that are on the exit edge and place them
-        back on their entrance edge. It also colors the beta observable
+        """ Gets executed at each time step.
+
+        - updates how long observable vehicles have been waiting for.
+        - Used to insert vehicles that are on the exit edge and place them
+        back on their entrance edge.
+        - It also colors the beta observable
         vehicles on sumo's gui.
 
-        Gets executed at each time step.
-
         See parent class for more information."""
+        self._update_obs_wait_steps()
+
         for veh_id in self.k.vehicle.get_ids():
             self._reroute_if_final_edge(veh_id)
 
