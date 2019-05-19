@@ -30,19 +30,20 @@ if __name__ == '__main__':
         ],
     })
 
-    params = IssyExperimentParams(horizon=600,
-                                  rollouts=5,
+    params = IssyExperimentParams(horizon=2000,
+                                  rollouts=1,
                                   inflow_spec=inflow_spec,
                                   action_spec=action_spec,
                                   n_cpus=0,
                                   n_veh=5,
-                                  checkpoint_freq=20,
-                                  training_iteration=2000,
-                                  env_name='IssyEnv2',
-                                  warmup_steps=2000,
+                                  checkpoint_freq=2,
+                                  training_iteration=200,
+                                  discount_rate=0.999,
+                                  env_name='IssyEnv3',
                                   algorithm="DQN",
+                                  warmup_steps=500,
                                   render=False,
-                                  osm_path='/Users/adrienly/Documents/Telecom/Cil4Sys/CIL4SYS/flow/issy.osm')
+                                  osm_path='/home/thomas/sumo/models/issy.osm')
 
     exp = IssyExperiment(params)
     exp.run()
