@@ -51,7 +51,7 @@ class Rewards:
         return np.sum([
             reward
             if self.kernel.vehicle.get_speed(id) > min_speed else penalty
-            for id in self._get_veh_ids()
+            for id in self._get_obs_veh_ids()
         ])
 
     def penalize_tl_switch(self, penatly=10):
