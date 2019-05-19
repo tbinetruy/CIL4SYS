@@ -113,9 +113,8 @@ class IssyEnv2(IssyEnv1):
     """The model differs from IssyEnv1 with its reward function."""
 
     def compute_reward(self, rl_actions, **kwargs):
-        """ The reward in this simple model is simply the mean velocity
-        of all simulated vehicles present on the mesh devided by the
-        mean CO2 emission.
+        """ The reward penalizes slow and/or emitting for the beta observable
+        vehicles and traffic light state switches.
 
         (See parent class for more information)"""
         # km/h
