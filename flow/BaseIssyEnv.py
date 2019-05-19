@@ -76,10 +76,11 @@ class BaseIssyEnv(Env):
         rl_actions: [float] list of action probabilities of cardinality
             `self.get_num_actions()`
         """
-        identity_action = [tuple(
-            self.k.traffic_light.get_state(id)
-            for id in self.action_spec.keys()
-        )]
+        identity_action = [
+            tuple(
+                self.k.traffic_light.get_state(id)
+                for id in self.action_spec.keys())
+        ]
         all_actions = list(itertools.product(
             *list(self.action_spec.values()))) + identity_action
         return all_actions[rl_actions]
