@@ -1,0 +1,245 @@
+#+LATEX_HEADER: \usepackage[margin=2cm]{geometry}
+
+* Résumé
+
+Ce document présente la solution apportée par notre groupe au projet que nous à proposé CIL4SYS : utilisé l'apprentissage statistique à but de fluidifier le trafique en zone urbaine. Nous proposons à ce stade un modèle DQN ayant pour but de contrôler les feux tricolores sur un morceau de quartier d'Issy les Moulineaux.
+
+* Introduction
+
+Alors que l'écologie devient un enjeu international d'importance, de plus en plus de recherches sont faites sur des transports verts, ou sur des moyens d'économiser de l'énergie. Dans le même temps, les avancées technologiques laissent présager une arrivée de véhicules autonomes capables de communiquer avec leur environnement, ou du moins de l'intelligence artificielle comme assistance de conduite. Dans ce contexte, plusieurs études ont été metnées dans le but de réduire les émissions de polluants des véhicules par l'intermédiaire de la fluidification du trafic routier. Parmi ce domaine de recherche, on distingue notamment les travaux se concentrant sur les zones extra-urbaine (autoroutes et grands axes routiers) [citer papiers sans commenter], des zones urbaines qui sont au c{\oe}ur du sujet traité dans ce rapport. La start-up CIL4SYS nous propose, dans le cadre d'un projet fil-rouge, de nous pencher sur la possibilité de réduire les émissions de polluants dans l'hypothèse de feux tricolores intelligents capables d'envoyer des consignes de vitesse aux véhicules traversants un quartier en zone urbaine dans le but de limiter les accélérations et décélérations des véhicules sources de fortes consommations en carburant.
+
+Le projet s'articule donc autour de CIL4SYS créée en juin 2015 par Philippe GICQUEL qui a travaillé pendant 25 ans en R\&D automobile chez EDAG et PSA Peugeot-Citroën. Le c{\oe}ur de métier de CIL4SYS étant de proposer une solution permettant de générer des cahiers des charges et des spécifications techniques à partir diagrammes UML décrivant le fonctionnement désiré d'un système. Leur cible principale étant l'industrie automobile, un environnement de simulation a été spécifiquement développé dans le but de répondre à cette industrie. Mais aussi de SOFTEAM, grand groupe fournissant un panel de service divers, allant du consulting opérationnel et métier, à la modélisation et l'automatisation, en passant par l'innovation. Leur rôle, durant ce projet, sera de nous assister lors de la phase de machine-learning en nous apportant une expertise avancée en data science. Enfin TélécomParisTech constitue le dernier acteur de se projet par l'intermédiaire de notre groupe d'étudiants chargé d'effectuer les premiers développements et essais ainsi que de proposer les solutions et méthodes à explorer.\
+
+L'objectif principal de ce projet est donc de démontrer à l’échelle d’un quartier que par un contrôle à la fois des feux tricolores et des vitesses des véhicules (dans un contexte où les véhicules sont communicants et peuvent recevoir des instructions de vitesse), il est possible de trouver un optimum de diminution des rejets de polluants et de CO2. Les méthodes mises en place au cours du projet devront faire appel à nos connaissances en apprentissage automatique afin de proposer une première approche de résolution.
+
+Il nous est demandé de d'utiliser nos connaissances pour proposer une solution de machine learning à ce problème.
+
+* Formulation d'optimisation
+
+Plus classiquement, il est possible de donner une formulation d'un point de vue optimisation du problème. En effet, l'objectif principal demandé par CIL4SYS est de trouver des lois de commande des feux et des véhicules de manière à réduire au maximum les émissions de CO2. Au cours de ce projets les émissions de CO2 seront modélisées uniquement par l'intermédiaire des accélérations. Une première approche peut donc être de minimiser
+
+#+begin_latex latex
+\begin{equation}
+\min_{\theta(t)}{\mathbb{E}\left [\sum_{j=1}^{m} \int_{t = 0}^{t^{sortie}_{j}}{ | a_{j}(t,\theta(t),\mathcal{C}_{j}(\xi)) | dt} \right ]},
+\end{equation}
+#+end_latex
+
+où $a_{j}(t)$ représente les accélérations subies par le véhicule $j$ tout au long de sa trajectoire $\mathcal{C}_{j}$ affectée aléatoirement par la variable aléatoire $\xi$ et $\theta(t)$ représente la loi de commande imposée aux véhicules.
+
+On constate d'ors et déjà que la solution à un tel problème d'optimisation est évidente puisqu'il suffit d'imposer une loi de commande de telle sorte que les véhicules restent à l'arrêts pour minimiser les emissions. Le problème initial d'optimisation se doit donc d'être complété par l'intermédiaire de contraintes afin répondre à un certain réalisme. Un première contrainte à envisager est le temps de trajet pour la réalisation du parcours $\mathcal{C}$ du véhicule. En utilisant les données TOMTOM, il sera donc possible de déterminer au sein du quartier qui sera choisi par la suite quel est le temps de trajet moyen réalisé par un véhicule pour une trajectoire imposée $\bar{t}(\mathcal{C})$. Une contrainte seuil sur le temps de trajet pourra alors être imposé avec pour référence le temps de trajet calculé. Le problème de minimisation se reformule alors de la manière suivante
+
+
+#+begin_latex latex
+\begin{equation}
+\begin{cases}
+\displaystyle{\min_{\theta(t)}{\mathbb{E}\left [\sum_{j=1}^{m} \int_{t = 0}^{t^{sortie}_{j}}{ | a_{j}(t,\theta(t),\mathcal{C}(\xi)) | dt} \right ]}}\\
+\text{s.t.~} t^{sortie}_{j} \leq \alpha \cdot \bar{t}(\mathcal{C})
+\end{cases}
+\end{equation}
+#+end_latex
+
+La formalisation du problème d'optimisation reste à compléter et on sera amené à ajouter d'autres contraintes au cours du projet au fur et à mesure de sa prise en main. La fonction de coût à minimiser sera elle aussi amenée à être changée si par exemple le nombre de voitures qui traversent le quartier devient aléatoire lui aussi etc...
+
+* Apprentissage par renforcement
+
+Comme dit précédemment, une des méthodes utilisée dans la littérature actuelle pour effectuer de la fluidification de trafic est l'apprentissage par renforcement. C'est la méthode d'apprentissage sur laquelle nous avons décidée de nous concentrer car novatrice dans le domaine de l'optimisation de trafic routier. Dans cette section, nous présentons les grandes ligne de cette méthode d'apprentissage.
+
+L'apprentissage par renforcement est une méthode statistique de prise de décision dans un environnement donné. L'environnement est modélisé par un état, et l'acteur peut réaliser une action qui affectera l'état. L'algorithme est guidé lors de la phase d'entraînement par une fonction de récompense. Après avoir pris une action $a$ à un état $e$, l'observation du nouvel état permet le calcul d'une récompense, $r \in \mathbb{R}$.
+
+Notons $\mathcal{E}$ l'ensemble des états possibles de notre environnement, $\mathcal{A}$ l'ensemble des actions possibles, et $r_t$ la récompense obtenue au pas de temps $t$. En modélisant la récompense cumulative comme un processus de Markov, elle ne dépend que de l'action prise et de l'état du système aux temps $t \geq t_0$ et est définie de la manière suivante:
+
+#+begin_latex latex
+\[
+R_{t_0} = \sum^\infty_{t=t_0} \gamma^{t-t_0}r_{t+1}
+\]
+#+end_latex
+
+Où le coefficient $\gamma \in [0,1]$ permet de donner plus de poids aux récompenses proches de $t_0$ dans le temps et à la somme de converger.
+
+Le principe de l'apprentissage par renforcement est alors de chercher une fonction $Q^*: \mathcal{E} \times \mathcal{A} \longrightarrow \mathbb{R}$ qui estime le retour cumulatif $R_{t_0}$ pour une action $a \in \mathcal{A}$ réalisée à un état $e \in \mathcal{E}$.
+
+La fonction $\pi(e,a)$ retourne la probabilité de réaliser une action $a$ à l'état $e$. Nous avons donc $\sum_{a\in\mathcal{A}}\pi(e,a) = 1$. Définissons $Q^\pi(e,a)$, la fonction qui prédit l'espérance de la récompense cumulative sous $\pi$ sachant $e$ et $a$:
+
+#+begin_latex latex
+\[
+Q^\pi(e, a) = \mathbb{E}_\pi[R_t|e_t=e,a_t=a]
+\]
+#+end_latex
+
+Définissions $\mathcal{P}^a_{ee'}$, la probabilité de passer d'un état $e$ à un état $e'$ sachant un état $e$ et une action $a$ donnés:
+
+#+begin_latex latex
+\[
+\mathcal{P}^a_{ee'} = \mathbb{P}(e_{t+1}=e'|e_t=e, a_t=a)
+\]
+#+end_latex
+
+Définissions aussi $\mathcal{R}^a_{ee'}$, l'espérance de la récompense $r_{t+1}$
+sachant un état $e$, et une action $a$ à l'instant $t$ ainsi qu'un état $e'$ à
+l'instant $t+1$:
+
+#+begin_latex latex
+\[
+\mathcal{R}^a_{ee'} = \mathbb{E}(r_{t+1}|e_t=e, e_{t+1}=e', a_t=a)
+\]
+#+end_latex
+
+Il est alors possible de d'exprimer $Q^\pi$ de la manière suivante:
+
+#+begin_latex latex
+\begin{align}
+Q^\pi(e, a) &= \mathbb{E}_\pi[R_t|e_t=e,a_t=a] \\
+&= \mathbb{E}_\pi[\sum_{t=t_0}^\infty \gamma^{t-t_0}r_t|e_{t_0}=e,a_{t_0}=a] \\
+&= \mathbb{E}_\pi[r_{t+1}+\gamma\sum_{t=t_0}^\infty \gamma^{t-t_0}r_{t_0+1}|e_{t_0}=e,a_{t_0}=a] \\
+&= \sum_{e'}\mathcal{P}^a_{ee'}\left[ \mathcal{R}^a_{ee'} +
+  \gamma\mathbb{E}_\pi \left( \sum^\infty_{t=t_0}\gamma^{t-t_0}r_{t_0+1}|e_{t+1}=e' \right) \right] \\
+&= \sum_{e'}\mathcal{P}^a_{ee'}\left[ \mathcal{R}^a_{ee'} +
+  \gamma\sum_{a'}\mathbb{E}_\pi \left(
+    \sum^\infty_{t=t_0}\gamma^{t-t_0}r_{t_0+1}|e_{t+1}=e', a_{t+1}=a' \right) \right] \\
+&= \sum_{e'}\mathcal{P}^a_{ee'}\left[ \mathcal{R}^a_{ee'} +
+  \gamma\sum_{a'} \pi(e',a')Q^\pi(e', a') \right]
+\end{align}
+#+end_latex
+
+Si la politique d'action à choisir dans un état donné consiste à maximiser la
+récompense cumulative, alors:
+
+#+begin_latex latex
+\[
+\pi^*(e) = \underset{a}{\mathrm{argmax}} Q^*(e, a)
+\]
+#+end_latex
+
+Cependant, nous ne connaissons pas la fonction $Q^*$, nous utilisons donc un
+modèle statistique pour l'approcher. En prenant alors:
+
+#+begin_latex latex
+\[
+\pi(e) = \underset{a}{\mathrm{argmax}} Q^\pi(e, a)
+\]
+#+end_latex
+
+
+L'équation de $Q^\pi(e,a)$ sous cette politique se simplifie alors:
+
+#+begin_latex latex
+\[
+Q^\pi(e,a) = r + \gamma Q^\pi(e', \pi(e'))
+\]
+#+end_latex
+
+
+*** Exploration vs exploitation
+
+Au début de l'apprentissage, la fonction approchée par notre modèle ne sera pas de bonne qualité, et donc notre politique de prendre l'action avec la plus grande valeur de $Q^\pi_\theta$ peut potentiellement ne pas converger. Pour encourager l'algorithme à explorer son espace d'action, on introduit un paramètre $\epsilon \in [0,1]$. On modifie alors notre politique d'action de manière à faire une action aléatoire dans $\epsilon\%$ des cas:
+
+#+begin_latex latex
+\[
+\pi(e)=\begin{cases}
+    \mathrm{random}(\mathcal{A}), & \text{si $\mathrm{random}([0,1])<\epsilon$}.\\
+    \underset{a}{\mathrm{argmax}} Q^\pi(e, a), & \text{sinon}.
+  \end{cases}
+\]
+#+end_latex
+
+
+Il est aussi possible de faire varier $\epsilon$ dans le temps, avec par exemple des valeurs plus grosses en début d'entraînement pour ensuite diminuer.
+
+*** Deep Q-Network
+
+$Q^\pi$ étant inconnue, l'idée consiste à l'approcher avec un réseau de neurones dense multi-couches, ce qui revient alors a choisir un paramètre $\theta$ de manière a minimiser $\delta$, l'erreur de différence temporelle de notre modèle approché $Q_\theta^\pi(e,a)$:
+
+
+#+begin_latex latex
+\[
+\theta \in \underset{\theta}{\mathrm{argmin}} \mathcal{L}(\delta)
+\]
+
+\[
+\delta = Q^\pi_\theta(e,a) - (r + \gamma\underset{a'}{\mathrm{argmax}} Q^\pi_\theta(e', a'))
+\]
+#+end_latex
+
+Ou $\mathcal{L}$ est une fonction de perte. En pratique, l'optimisation est réalisée par "batchs" de transitions $B$ a l'aide d'une descente de gradient stochastique~\cite{GaoSLIS17}.
+
+En effet, après chaque action prise, le calcul de la récompense obtenue est réalisé et ces transitions sont stockées dans une mémoire $\mathcal{M}$ composée de quadruplets $(a, e, e', r) \in \mathcal{A}\times\mathcal{E}^2\times\mathbb{R}$. A chaque action, nous mettons en mémoire le quaduplet obtenu et réalisons une descente de gradient sur un batch $B \in \mathcal{B}$.
+
+Les paramètres de notre modélisation sont donc nombreux:
+
+- $\theta$, les paramètres de notre modèle statistique
+- $\gamma$, le poids données aux récompenses plus tôt dans le temps
+- $\mathcal{L}$, la fonction de perte
+- Le fonction de calcul de récompense, $\psi : \mathcal{E} \longrightarrow \mathbb{R}$
+
+
+
+* Outils
+
+** Sumo
+
+** RLlib
+
+** Flow
+
+*** Environments
+
+*** Expériences
+
+* Modélisations
+
+Le DQN nous permettant de résoudre la formulation mathématique de notre problème en fonction d'un ensemble d'états, d'actions possibles sur ces états et de récompense entre transitions, il faut maintenant les définir.
+
+** Quartier d'étude
+
+En partant du principe que la densité de trafic à Paris intra muros est trop élevée pour offrir des possibilités de fluidification, et en considération le haute dimension de la formulation mathématique du problème, nous avons choisi d'étudier un ensemble de 4 intersection à Issy les Moulineaux, contrôlé par trois feux tricolores.
+
+En effet, nous avons observé des congestions dans cette zone en période de pointe à l'aide de l'API TomTom et voudrions étudier si une solution par renforcement peut réduire ces bouchons.
+
+
+** États
+
+Dans une logique d'apprentissage, la question devient de trouvé une représentation du système à un temps $t$ qui encode toutes les informations nécessaire pour permettre de prendre /la meilleure/ action possible selon une certaine mesure à définir. Sans nécessairement formuler formellement cette mesure nous savons à ce stade que le but de l'action prise est de fluidifier le trafic. Ainsi, nous aimerions donc que l'état encode des informations relatives à chaque véhicule simulé ainsi qu'aux feux tricolores.
+
+Notre modèle d'état est donc une matrice composée des deux parties, une décrivant l'état des voitures, $e^v$, et l'autre des feux, $e^f$, à un pas de temps $t$ donné:
+
+$$e = [e^v, e^f], \forall e \in \mathcal{E}$$
+
+*** Représentation des voitures observées, $e^v$
+
+En pratique l'algorithme de gestion des feux n'aura pas forcément la capacité de connaître l'état de tout les véhicules. Nous proposons donc un modèle où l'état d'apprentissage inclut seulement un sous ensemble de véhicules - envoyé par la maire pour sonder le trafic par exemple, à l'aube des voitures électriques autonomes, cela semble tout à fait possible. Cela réduit ailleurs la dimensionalité du problème d'étude.
+
+Formellement, pour $\beta$ voitures observées à chaque pas de temps $t$, l'état $e^v_i$ du $i$ ème véhicule observé est décrit de la manière suivante :
+
+$$e^v_i = (x_i, y_i, \theta_i, v_i, \kappa_i, t_{v_0}) \subset \mathbb{R}^6 \mbox{ pour } i = 1, …, \beta$$
+
+Où $x_i, y_i, \theta_i, v_i, \kappa_i, t_{v_0}$ représentent l'ordonnée, l'abscisse, l'orientation, la vitesse absolue, le taux d'émission de $CO_2$, et la temps passé à l'arrêt pour le $i$ ème véhicule observé. En concaténant les $i$ états, nous obtenons :
+
+$$e^v = [e^v_1, …, e^v_\beta]$$
+
+*** Représentation des feux, $e^f$
+
+Contrairement à l'état des voitures, nous considérons que l'algorithme de gestion des feux à vue sur l'état de l'ensemble des feux à synchroniser à chaque pas de temps. Bien que le quarter simulé n'ai que trois intersections contrôlées par des feux tricolores, il peut y avoir plus d'un feu par croisement. En effet, chaque file peut avoir un ou plusieurs feux en considérant les feux de type /tourner à droite/ ou /U-turn/. En l'occurrence, le quartier d'analyse comporte 27 feux.
+
+Pour un soucis de simplicité, nous restreignons l'état de chaque feu à /rouge/ ou /vert/ et ignorons le orange, cela consiste donc en une représentation binaire : $e^f_i \in \{0,1\}$. Donc :
+
+$$e^f \in \{0,1\}^\gamma$$
+
+*** Représentation finale, $e\in\mathcal{E}$
+
+Comme évoqué précédemment, l'état $e = e^v + e^f$ de l'environnement à chaque instant $t$ pour les $\beta$ voitures observées et $\gamma$ feux contrôlés est un élément de $\mathcal{E}\subset \mathbb{R}^{6\times\beta}\times\{0,1\}^\gamma$.
+
+** Actions
+
+Les trois intersections régulées par des feux tricolores
+
+** Récompenses
+
+** Environments de simulations
+
+** Notes d'implémentation
+
+* Infrastructure de calcul
+
+* Résultats
+
+* Conclusion
