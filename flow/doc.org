@@ -230,9 +230,98 @@ Comme évoqué précédemment, l'état $e = e^v + e^f$ de l'environnement à cha
 
 ** Actions
 
-Les trois intersections régulées par des feux tricolores
+Dans notre modèle, l'agent peut contrôler l'état de chacun des $\gamma$ feux, chaque action $a \in \mathcal{A}$ est donc un vecteur de $\gamma$ booléens puisque seul les états /rouge/ et /vert/ sont considérés dans notre analyse.  Il y a donc $2^\gamma$ actions possibles sur l'état des feux à chaque pas de temps. Le quartier comportant 27 feux, cela signifie qu'il y a un peu plus de 130 millions d'actions possibles sur le système à chaque pas de temps.
+
+Il est donc nécessaire de choisir un sous ensemble d'actions, $\mathcal{A}^* \subset \mathcal{A}$ de manière à réduire la dimensionalité de notre problème. Par ailleurs, certaines actions théoriquement possibles ne le sont par en pratique, nous pensons notamment aux deux actions qui passent tous les feux au même état - ce qui au mieux immobiliserait tout le trafic et au pire serait catastrophique.
+
+La cardinalité de $\mathcal{A}^*$ ainsi que ses éléments est arbitraire bien que le but soit de trouver un « petit » ensemble d'actions qui « aient du sens » d'un point de vue de la gestion du trafic. Pour nous aider à la tâche, nous avons essayer de borner $\mathcal{A^*}$ de la manière suivante: pour trois intersections contrôlées par des feux, il faudrait que chaque intersections et au moins deux états. Alors, si $n$ intersections sont contrôlées par $\gamma \geq n$ feux, le nombre minimal d'actions pour que le modèle ait un sens est de $2^n \leq \gamma^n$. Dans notre cas, pour $n = 3$ et $\gamma = 27$; nous avons donc $|\mathcal{A}^*|$ bornées entre $2^3$ et $|\mathcal{A}| - 2 = 2^{27} - 2$ (le $-2$ provenant des actions qui changent tous les feux au même état).
+
+Pour commencer par le cas le plus simple, nous avons donc recensé deux états de feux par intersection en se demandant lesquelles permettraient de faire passer toutes les voitures à un moment ou à un autre. Les états séléctionnés sont les suivants :
+
+#+CAPTION: Structure de données encodant les états de feux possibles du système.
+#+BEGIN_SRC python
+action_spec = OrderedDict({
+    # The main traffic light, in sumo traffic light state strings
+    # dictate the state of each traffic light and are ordered counter
+    # clockwise.
+    "30677963": [
+        "GGGGrrrGGGG",  # allow all traffic on the main way w/ U-turns
+        "rrrrGGGrrrr",  # allow only traffic from edge 4794817
+    ],
+    "30763263": [
+        "GGGGGGGGGG",  # allow all traffic on main axis
+        "rrrrrrrrrr",  # block all traffic on main axis to unclog elsewhere
+    ],
+    "30677810": [  # the smallest of all controlled traffic lights
+        "GGrr",
+        "rrGG",
+    ],
+})
+#+END_SRC
+
+Nous retenons donc huit états de feux possible et une action pour chaque. Cependant, nous avons choisi d'en inclure une neuvième, celle de l'action identité qui ne modifie pas l'état des feux. /En effet, nous émettons l'hypothèse que l'agent apprendra plus vite laquelle des neuf actions ne modifie pas l'état plutôt que laquelle des huit actions faut il prendre à un état donné pour ne pas le modifier/. Nous obtenons donc finalement $|\mathcal{A}^*| = 9$.
 
 ** Récompenses
+   
+Les états et actions du modèle étant maintenant définis, nous pouvons concevoir les fonctions de récompenses, l'idée étant guider l'agent durant l'apprentissage. Cependant, contrairement à un approche par optimisation sous contraintes, choisir une action de manière à maximiser l'espérance de la récompense ne garanti pas une solution contrainte. Par exemple, si la fonction de récompense pénalise les changements de feux trop fréquent mais récompense autre chose, alors l'agent évitera les changements trop fréquents, /mais ne les exclura pas de la solution/. L'agent pourra par exemple choisir de changer l'état des feux à faible intervalle occasionnellement si cela maximise l'espérance de la récompense à cet état donné. Une solution apprise par renforcement se comporte donc différemment que la solution d'un problème d'optimisation sous contrainte. Nous verrons comment palier à se problème ultérieurement et nous focalisons maintenant sur la conception de fonctions de récompenses pertinentes.
+
+Nous voudrions concevoir une fonction de récompense qui encourage :
+
+- le débit des flux
+- les voitures en mouvement
+
+Et pénalise :
+
+- les accélérations
+- les émissions de $CO_2$
+- les changements de feux
+- les voitures arrêtées pendant trop longtemps
+
+Une fonction de récompense simple est par exemple :
+
+$$\psi = \frac{\bar{v}}{\bar{\kappa}}$$
+
+Où $\bar{v}$ et $\bar{\kappa}$ représentent la vitesse moyenne et le taux d'émission moyen des $\beta$ véhicules observés par l'agent. Cependant, cette fonction est naïve et inadaptée à notre problème puisque la solution serait de laisser l'artère avec le débit de véhicules le plus important et de bloquer tout les autres. Il faudrait donc pouvoir intégrer d'autres variables à la fonction de récompense. L'image de cette fonction étant un sous ensemble de $\mathbb{R}$, ces différentes composantes ne peuvent t'être qu'additionnées entre elles. Cependant la fonction suivante n'a pas de sens :
+
+$$\psi = C_1\bar{v} - C_2\bar{\kappa} - C_3\bar{t}^{v_0}$$
+
+Ou les $C_i$ sont des constantes et $\bar{t^{v_0}}$ la moyenne d'une mesure de temps passé à l'arrêt par les voitures. En effet, le dimensionnement des constantes est très délicat puisque les unités ne peuvent pas être additionnées.
+
+Une façon plus simple de composer la fonction de récompense et de définir un certain nombre de contraintes sur l'état des voitures et de compter les véhicules sous ou sur telle ou telle contrainte. Par exemple, une fonction qui récompense les voitures allant à une vitesse supérieure à $v_{min}$ sera défini de la manière suivante :
+
+$$\psi = \sum^{\beta}_{i=1}\mathbb{I}\{v_i \geq v_{min}\}$$
+
+Cette manière de construire la récompense permet de composer ses termes. La composante due à l'état des voitures de la récompense de notre modèle, $\psi^v$ est la suivante:
+
+#+begin_latex latex
+\begin{equation}
+  \psi^v = \sum^{\beta}_{i=1}\left[
+    C_1 \cdot \mathbb{I}\{v_i \geq v_{min}\}
+    - C_2 \cdot \mathbb{I}\{\kappa_i \geq \kappa_{min}\}
+    - C_3 \cdot \mathbb{I}\{t^{v_0}_i \geq \tau\}
+  \right]
+\end{equation}
+#+end_latex
+
+Par ailleurs, pour inciter l'agent à ne changer l'état des feux que lorsqu'il « a beaucoup à gagner », nous incorporons une composante pénalisant les changements de feux :
+
+#+begin_latex latex
+\begin{equation}
+  \psi^f = \sum^{\gamma}_{i=1}\left[
+    C_4 \cdot \mathbb{I}\{e^f_{i, t} \neq e^f_{i, t-1}\}
+  \right]
+\end{equation}
+#+end_latex
+
+Où $e^f_{i, t}$ est l'état du feu $i$ à l'instant $t$. Nous obtenons alors la récompense de notre modèle aisément:
+
+#+begin_latex latex
+\begin{equation}
+  \psi = \psi^e + \psi^f
+\end{equation}
+#+end_latex
+
+Cette fonction de récompense dépend donc de l'état du système au temps $t$ mais aussi à quatre constantes, « hyperparamètres » en un sens, à accorder à la main pour le moment. En effet, valider une solution revient à la visualiser puis à la valider qualitativement à ce stade. Nous n'avons pas encore de méthode automatisable pour réaliser cela, les quatre constantes doivent donc être ajusté /à la main/.
 
 ** Environments de simulations
 
