@@ -204,12 +204,15 @@ Enfin, un *kernel* est un objet qui fait abstraction de l'API du simulateur util
 ** Sym4sys
 
 
-** Quartier d'étude
+* Quartier d'étude
 
 En partant du principe que la densité de trafic à Paris intra muros est trop élevée pour offrir des possibilités de fluidification, et en considération le haute dimension de la formulation mathématique du problème, nous avons choisi d'étudier un ensemble de 4 intersection à Issy les Moulineaux, contrôlé par trois feux tricolores.
 
 En effet, nous avons observé des congestions dans cette zone en période de pointe à l'aide de l'API TomTom et voudrions étudier si une solution par renforcement peut réduire ces bouchons.
 
+* Modélisations
+
+Le DQN nous permettant de résoudre la formulation mathématique de notre problème en fonction d'un ensemble d'états, d'actions possibles sur ces états et de récompense entre transitions, il faut maintenant les définir.
 
 ** États
 
@@ -294,7 +297,7 @@ action_spec = OrderedDict({
 Nous retenons donc huit états de feux possible et une action pour chaque. Cependant, nous avons choisi d'en inclure une neuvième, celle de l'action identité qui ne modifie pas l'état des feux. /En effet, nous émettons l'hypothèse que l'agent apprendra plus vite laquelle des neuf actions ne modifie pas l'état plutôt que laquelle des huit actions faut il prendre à un état donné pour ne pas le modifier/. Nous obtenons donc finalement $|\mathcal{A}^*| = 9$.
 
 ** Récompenses
-   
+
 Les états et actions du modèle étant maintenant définis, nous pouvons concevoir les fonctions de récompenses, l'idée étant guider l'agent durant l'apprentissage. Cependant, contrairement à un approche par optimisation sous contraintes, choisir une action de manière à maximiser l'espérance de la récompense ne garanti pas une solution contrainte. Par exemple, si la fonction de récompense pénalise les changements de feux trop fréquent mais récompense autre chose, alors l'agent évitera les changements trop fréquents, /mais ne les exclura pas de la solution/. L'agent pourra par exemple choisir de changer l'état des feux à faible intervalle occasionnellement si cela maximise l'espérance de la récompense à cet état donné. Une solution apprise par renforcement se comporte donc différemment que la solution d'un problème d'optimisation sous contrainte. Nous verrons comment palier à se problème ultérieurement et nous focalisons maintenant sur la conception de fonctions de récompenses pertinentes.
 
 Nous voudrions concevoir une fonction de récompense qui encourage :
@@ -361,6 +364,16 @@ Cette fonction de récompense dépend donc de l'état du système au temps $t$ m
 
 * Infrastructure de calcul
 
+** Colab
+
+** Cluster de machines de TP
+
+** Serveur AWS
+
+* Méthode de validation des solutions
+
+
 * Résultats
+
 
 * Conclusion
