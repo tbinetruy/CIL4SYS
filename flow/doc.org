@@ -173,21 +173,36 @@ Les paramètres de notre modélisation sont donc nombreux:
 
 
 
-* Outils
+* Présentation des outils utilisés
+
+L'apprentissage par renforcement reposant sur l'interaction avec un environnement, l'entraînement repose souvent sur un simulateur. C'est le cas de notre modèle, ce qui implique l'interaction de plusieurs unités logiques du code entre elles. Afin de simplifier au maximum ces interactions tout en rendant le passage à l'échelle à l'entraînement possible, notre modèle repose sur un certain nombre d'outils qu'il est nécessaire d'introduire à ce stade du document, c'est ce que nous faisons à présent.
 
 ** Sumo & Traci
 
+Sumo est un simulateur de trafic microscopique multi-platforme, libre, développé et maintenu par le ministère des transports allemand et possédant une API Python nommé /Traci/ de haute qualité. Ce simulateur permet entre autre de requêter et modifier l'état d'une simulation à chaque pas de temps via Traci. C'est ce qui permet de prendre des actions et de calculer les récompenses lors de l'entraînement de notre agent.
+
+Le module Traci de Sumo permet entre autre de requêter les émissions de chaque voitures, l'état de chaque feux, les collisions éventuelles, ainsi que la redirection, suppression et instanciation de véhicules à chaque pas de temps.
+
+Dans Sumo, les routes sont représentées par des /arrêtes/ (/edges/ en anglais), chaque arrêtes pouvant avoir une ou plusieurs /voies/ (/lanes/ en anglais). Chaque arrête et chaque voie sont identifiées de manière unique par une chaîne de caractère, ce qui permet de facilement router les véhicules.
+
 ** RLlib
+
+/RLlib/ est une suite d'outils pour Python facilitant la mise en place d'infrastructure d'apprentissage par renforcement. D'un part il fournit les algorithmes classiques du domaine, dont le DQN, /à la Scikit-learn/, et d'autre part il permet l'entraînement distribué d'agent. En effet, le passage à l'échelle de notre modèle implique un entraînement distribué, et donc la capacité à instancier plusieurs processus Sumo et interagir avec, ce que RLlib permet de réaliser.
 
 ** Flow
 
-*** Environments
+L'intégration de Sumo est RLlib étant complexe à mettre en œuvre, un laboratoire de UC Berkeley travail sur une abstraction open source RLlib et Sumo de manière à faciliter l'application de l'apprentissage par renforcement au problème de fluidification de trafic routier. C'est donc à l'aide cette librairie Python que nous avons implémenté notre solution. Dans l'optique de permettre au lecteur de bien comprendre les prochaines sections du présent document que nous introduisons les concepts fondamentaux le Flow ainsi que son jargon.
 
-*** Expériences
+Un *scénario* est un objet qui définit la simulation en elle même, c'est à dire le définition des arrêtes et des voies, le nombre de voitures et les rails qu'elles suivent, ainsi que la position des feux. Flow fournit la classe abstraite ~BaseScenario~ à sous classer lors de l'implémentions de scénario de calcul. Cette classe propose entre autre des méthodes pour importer des maillages routiers de différents formats dont celui de /Open Street Map/.
 
-* Modélisations
+Un *environnement* est un objet qui sous-classe ~BaseEnv~ et qui définit l'espace des états, $\mathcal{E}$, celui des actions $\mathcal{B}$, les transitions d'états par une action, ainsi que la récompense. De cette manière, il est facile de définir plusieurs modélisations du système pour un scénario données.
 
-Le DQN nous permettant de résoudre la formulation mathématique de notre problème en fonction d'un ensemble d'états, d'actions possibles sur ces états et de récompense entre transitions, il faut maintenant les définir.
+Une *expérience* définit les paramètres de l'algorithme utilisée pour maximiser l'espérance de la récompense (DQN, PPO, etc…) ainsi que d'autres paramètres de simulations tell que le nombre de processus Sumo à instancier, et le nombre d'itération à réaliser durant l'entraînement.
+
+Enfin, un *kernel* est un objet qui fait abstraction de l'API du simulateur utilisé pour l'entraînement, cela permet d'utiliser l'abstraction de Flow pour interagir avec Sumo plutôt que /Traci/ et donc de découpler notre code du simulateur. Il serait donc tout à fait possible d'implémenter un kernel Flow pour interagir avec le simulateur de CIL4SYS, /Sym5sys/.
+
+** Sym4sys
+
 
 ** Quartier d'étude
 
