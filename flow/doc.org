@@ -298,11 +298,11 @@ Une fonction de récompense simple est par exemple :
 
 $$\psi = \frac{\bar{v}}{\bar{\kappa}}$$
 
-Où $\bar{v}$ et $\bar{\kappa}$ représentent la vitesse moyenne et le taux d'émission moyen des $\beta$ véhicules observés par l'agent. Cependant, cette fonction est naïve et inadaptée à notre problème puisque la solution serait de laisser l'artère avec le débit de véhicules le plus important et de bloquer tout les autres. Il faudrait donc pouvoir intégrer d'autres variables à la fonction de récompense. L'image de cette fonction étant un sous ensemble de $\mathbb{R}$, ces différentes composantes ne peuvent t'être qu'additionnées entre elles. Cependant la fonction suivante n'a pas de sens :
+Où $\bar{v}$ et $\bar{\kappa}$ représentent la vitesse moyenne et le taux d'émission moyen des $\beta$ véhicules observés par l'agent. Cependant, cette fonction est naïve et inadaptée à notre problème puisque la solution serait de laisser l'artère avec le débit de véhicules le plus important et de bloquer tout les autres. Il faudrait donc pouvoir intégrer d'autres variables à la fonction de récompense. L'image de cette fonction étant un sous ensemble de $\mathbb{R}$, ces différentes composantes ne peuvent être qu'additionnées entre elles. Cependant la fonction suivante n'a pas de sens :
 
 $$\psi = C_1\bar{v} - C_2\bar{\kappa} - C_3\bar{t}^{v_0}$$
 
-Ou les $C_i$ sont des constantes et $\bar{t^{v_0}}$ la moyenne d'une mesure de temps passé à l'arrêt par les voitures. En effet, le dimensionnement des constantes est très délicat puisque les unités ne peuvent pas être additionnées.
+Ou les $C_i$ sont des constantes et $\bar{t^{v_0}}$ la moyenne d'une mesure de temps passé à l'arrêt par les voitures. En effet, le dimensionnement des constantes est très délicat puisque leurs unités sont incompatible entre elle et ne peuvent être additionnées.
 
 Une façon plus simple de composer la fonction de récompense et de définir un certain nombre de contraintes sur l'état des voitures et de compter les véhicules sous ou sur telle ou telle contrainte. Par exemple, une fonction qui récompense les voitures allant à une vitesse supérieure à $v_{min}$ sera défini de la manière suivante :
 
@@ -338,7 +338,7 @@ Où $e^f_{i, t}$ est l'état du feu $i$ à l'instant $t$. Nous obtenons alors la
 \end{equation}
 #+end_latex
 
-Cette fonction de récompense dépend donc de l'état du système au temps $t$ mais aussi à quatre constantes, « hyperparamètres » en un sens, à accorder à la main pour le moment. En effet, valider une solution revient à la visualiser puis à la valider qualitativement à ce stade. Nous n'avons pas encore de méthode automatisable pour réaliser cela, les quatre constantes doivent donc être ajusté /à la main/.
+Cette fonction de récompense dépend donc de l'état du système au temps $t$ mais aussi à quatre constantes, « hyperparamètres » en un sens, à accorder à la main pour le moment. En effet, valider une solution revient à la visualiser puis à la valider qualitativement à ce stade. Nous n'avons pas encore de méthode automatisable pour réaliser cela, les quatre constantes doivent donc être ajustées /manuellement/.
 
 ** Environments de simulations
 
