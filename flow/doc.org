@@ -202,7 +202,12 @@ Dans une logique d'apprentissage, la question devient de trouver une représenta
 
 Notre modèle d'état est donc une matrice composée de deux parties, une décrivant l'état des voitures, $e^v$, et l'autre des feux, $e^f$, à un pas de temps $t$ donné:
 
-$$e = [e^v, e^f], \forall e \in \mathcal{E}$$
+
+#+begin_latex latex
+\begin{equation}
+    e = [e^v, e^f], \forall e \in \mathcal{E}
+\end{equation}
+#+end_latex
 
 *** Représentation des voitures observées, $e^v$
 
@@ -210,11 +215,19 @@ En pratique l'algorithme de gestion des feux n'aura pas forcément la capacité 
 
 Formellement, pour $\beta$ voitures observées à chaque pas de temps $t$, l'état $e^v_i$ du $i$ ème véhicule observé est décrit de la manière suivante :
 
-$$e^v_i = (x_i, y_i, \theta_i, v_i, \kappa_i, t^{v_0}_i) \subset \mathbb{R}^6 \mbox{ pour } i = 1, …, \beta$$
+#+begin_latex latex
+\begin{equation}
+    e^v_i = (x_i, y_i, \theta_i, v_i, \kappa_i, t^{v_0}_i) \subset \mathbb{R}^6 \mbox{ pour } i = 1, …, \beta
+\end{equation}
+#+end_latex
 
 Où $x_i, y_i, \theta_i, v_i, \kappa_i, t^{v_0}_i$ représentent l'ordonnée, l'abscisse, l'orientation, la vitesse absolue, le taux d'émission de $CO_2$, et la temps passé à l'arrêt pour le $i$ ème véhicule observé. En concaténant les $i$ états, nous obtenons :
 
-$$e^v = [e^v_1, …, e^v_\beta] \subset \mathbb{R}^{6\times\beta}$$
+#+begin_latex latex
+\begin{equation}
+    e^v = [e^v_1, …, e^v_\beta] \subset \mathbb{R}^{6\times\beta}
+\end{equation}
+#+end_latex
 
 *** Représentation des feux, $e^f$
 
@@ -222,7 +235,11 @@ Contrairement à l'état des voitures, nous considérons que l'algorithme de ges
 
 Pour un soucis de simplicité, nous *restreignons* l'état de chaque feu à /rouge/ ou /vert/ et *ignorons* le /orange/, cela consiste donc en une représentation binaire : $e^f_i \in \{0,1\}$. Donc :
 
-$$e^f \in \{0,1\}^\gamma$$
+#+begin_latex latex
+\begin{equation}
+    e^f \in \{0,1\}^\gamma
+\end{equation}
+#+end_latex
 
 *** Représentation finale, $e\in\mathcal{E}$
 
