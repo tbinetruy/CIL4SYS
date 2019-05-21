@@ -1,4 +1,6 @@
 #+LATEX_HEADER: \usepackage[margin=2cm]{geometry}
+#+LATEX_HEADER: \usepackage[demo]{graphicx}
+#+LATEX_HEADER: \usepackage{subcaption}
 
 * Résumé
 
@@ -185,13 +187,7 @@ Le module Traci de Sumo permet entre autre de requêter les émissions de chaque
 
 Dans Sumo, les routes sont représentées par des /arrêtes/ (/edges/ en anglais), chaque arrêtes pouvant avoir une ou plusieurs /voies/ (/lanes/ en anglais). Chaque arrête et chaque voie sont identifiées de manière unique par une chaîne de caractère, ce qui permet de facilement router les véhicules dans l'environnement.
 
-#+caption: File ~1~ de l'arrête ~352962858#1~.
-[[./arrete_file_sumo.png]]
-
 Les /feux/ sont placé à certaines intersections sur la carte. Mais dans Sumo, le nombre de feux peut être supérieur au nombre d'intersection. L'état des feux à une intersection est définit par une chaine de caractère où chaque caractère représente l'état d'un des feux de l'intersection. Par exemple, l'état des feux d'une intersection géré par trois feux pourrait être ~rGG~ ce qui voudrait dire que le premier feu est /rouge/ (red) et les deux suivants /vert/ (green). Le premier caractère de la chaîne représentant l'état du feux le plus au nord de l'intersection gérée, le suivant le feu directement après en allant dans le sens anti-horaire, et ainsi de suite jusqu'à la fin de la chaîne. Enfin, au même titre que les arrêtes, Sumo identifie chaque jeux de feux gérant une intersection par une chaîne de caractère unique permettant de requêter le feu via Traci.
-
-#+caption: Feux ~30677963~ à l'état "GrG" en partant du haut et en allant dans le sens anti-horaire.
-[[./img/feux_sumo.png]]
 
 ** RLlib
 
@@ -208,6 +204,25 @@ Un *environnement* est un objet qui sous-classe ~BaseEnv~ et qui définit l'espa
 Une *expérience* définit les paramètres de l'algorithme utilisée pour maximiser l'espérance de la récompense (DQN, PPO, etc…) ainsi que d'autres paramètres de simulations tell que le nombre de processus Sumo à instancier, et le nombre d'itération à réaliser durant l'entraînement.
 
 Enfin, un *kernel* est un objet qui fait abstraction de l'API du simulateur utilisé pour l'entraînement, cela permet d'utiliser l'abstraction de Flow pour interagir avec Sumo plutôt que /Traci/ et donc de découpler notre code du simulateur. Il serait donc tout à fait possible d'implémenter un kernel Flow pour interagir avec le simulateur de CIL4SYS, /Sym4sys/.
+
+
+#+begin_latex latex
+\begin{figure*}
+    \centering
+    \begin{subfigure}[t]{0.5\textwidth}
+        \centering
+        \includegraphics{./img/feux_sumo.png}
+        \caption{Feux ~30677963~ à l'état ~GrG~ en partant du haut et en allant dans le sens anti-horaire.}
+    \end{subfigure}%
+    ~ 
+    \begin{subfigure}[t]{0.5\textwidth}
+        \centering
+        \includegraphics{./img/arrete_file_sumo.png}
+        \caption{File ~1~ de l'arrête ~352962858#1~.}
+    \end{subfigure}
+    \caption{Nomenclature utilisée par Sumo.}
+\end{figure*}
+#+end_latex
 
 ** Sym4sys
 
