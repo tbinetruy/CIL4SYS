@@ -287,9 +287,9 @@ Où $x_i, y_i, \theta_i, v_i, \kappa_i, t^{v_0}_i$ représentent l'ordonnée, l'
 
 *** Représentation des feux, $e^f$
 
-Contrairement à l'état des voitures, nous considérons que l'algorithme de gestion des feux à vue sur l'état de l'ensemble des feux à synchroniser à chaque pas de temps. Bien que le quartier simulé n'ait que trois intersections contrôlées par des feux tricolores, il peut y avoir plus d'un feu par croisement. En effet, chaque file peut avoir un ou plusieurs feux en considérant les feux de type /tourner à droite/ ou /U-turn/. En l'occurrence, le quartier d'analyse comporte 27 feux.
+Contrairement à l'état des voitures, nous considérons que l'algorithme de gestion des feux a connaissance de l'état de l'ensemble des feux à synchroniser à chaque pas de temps. Bien que le quartier simulé n'ait que trois intersections contrôlées par des feux tricolores, il peut y avoir plus d'un feu par croisement. En effet, chaque file peut avoir un ou plusieurs feux en considérant les feux de type /tourner à droite/ ou /U-turn/. En l'occurrence, le quartier d'analyse comporte 27 feux.
 
-Par soucis de simplicité, nous *restreignons* l'état de chaque feu à /rouge/ ou /vert/ et *ignorons* le /orange/, cela consiste donc en une représentation binaire : $e^f_i \in \{0,1\}$. Donc :
+Par souci de simplicité, nous *restreignons* l'état de chaque feu à /rouge/ ou /vert/ et *ignorons* le /orange/, cela consiste donc en une représentation binaire : $e^f_i \in \{0,1\}$. Donc :
 
 #+begin_latex latex
 \begin{equation}
@@ -337,7 +337,7 @@ Nous retenons donc huit états de feux possibles et une action pour chacun d'ent
 
 ** Récompenses
 
-Les états et actions du modèle étant maintenant définis, nous pouvons concevoir les fonctions de récompenses, l'idée étant guider l'agent durant l'apprentissage. Cependant, contrairement à un approche par optimisation sous contraintes, choisir une action de manière à maximiser l'espérance de la récompense ne garanti pas une solution contrainte. Par exemple, si la fonction de récompense pénalise les changements de feux trop fréquents mais récompense autre chose, alors l'agent évitera les changements trop fréquents, /mais ne les exclura pas de la solution/. L'agent pourra par exemple choisir de changer l'état des feux à faibles intervalles occasionnellement si cela maximise l'espérance de la récompense à cet état donné. Une solution apprise par renforcement se comporte donc différemment qu'une solution à un problème d'optimisation sous contrainte « équivalent ». Nous verrons comment palier à ce problème ultérieurement et nous focalisons maintenant sur la conception de fonctions de récompenses pertinentes.
+Les états et actions du modèle étant maintenant définis, nous pouvons concevoir les fonctions de récompenses, l'idée étant guider l'agent durant l'apprentissage. Cependant, contrairement à une approche par optimisation sous contraintes, choisir une action de manière à maximiser l'espérance de la récompense ne garantit pas une solution contrainte. Par exemple, si la fonction de récompense pénalise les changements de feux trop fréquents mais récompense autre chose, alors l'agent évitera les changements trop fréquents, /mais ne les excluera pas de la solution/. L'agent pourra par exemple choisir de changer l'état des feux à faibles intervalles occasionnellement si cela maximise l'espérance de la récompense à cet état donné. Une solution apprise par renforcement se comporte donc différemment qu'une solution à un problème d'optimisation sous contrainte « équivalent ». Nous verrons comment pallier à ce problème ultérieurement et nous focalisons maintenant sur la conception de fonctions de récompenses pertinentes.
 
 Nous voudrions concevoir une fonction de récompense qui encourage :
 
