@@ -253,7 +253,7 @@ En effet, nous avons observé des congestions dans cette zone en période de poi
 
 * TODO Ajouter image
   
-La figures [[fig:tomtom_data]] bla bla bla.
+La figure [[fig:tomtom_data]] bla bla bla.
   
 #+CAPTION: Les données de trafic TomTom sur le quartier séléctioné. Les intersections contrôlées par des feux sont encerclées en vert.
 #+ATTR_LATEX: :width 200px
