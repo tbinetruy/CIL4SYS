@@ -4,7 +4,7 @@
 
 * Résumé
 
-Ce document présente la solution apportée par notre groupe au projet que nous à proposé CIL4SYS : utilisé l'apprentissage statistique à but de fluidifier le trafic en zone urbaine. Nous proposons à ce stade un modèle DQN ayant pour but de contrôler les feux tricolores sur un morceau de quartier d'Issy les Moulineaux.
+Ce document présente la solution apportée par notre groupe au projet que nous à proposé CIL4SYS : utiliser l'apprentissage statistique à but de fluidifier le trafic en zone urbaine. Nous proposons à ce stade un modèle DQN ayant pour but de contrôler les feux tricolores sur un morceau de quartier d'Issy les Moulineaux.
 
 * Introduction
 
