@@ -324,7 +324,7 @@ Il est donc nécessaire de choisir un sous ensemble d'actions, $\mathcal{A}^* \s
 
 La cardinalité de $\mathcal{A}^*$ ainsi que ses éléments est arbitraire bien que le but soit de trouver un « petit » ensemble d'actions qui « aient du sens » d'un point de vue de la gestion du trafic. Pour nous aider à la tâche, nous avons essayer de borner $\mathcal{A^*}$ de la manière suivante: pour trois intersections contrôlées par des feux, il faudrait que chaque intersection ait au moins deux états. Alors, si $n$ intersections sont contrôlées par $\gamma \geq n$ feux, le nombre minimal d'actions pour que le modèle ait un sens est de $2^n \leq \gamma^n$. Dans notre cas, pour $n = 3$ et $\gamma = 27$; nous avons donc $|\mathcal{A}^*|$ bornées entre $2^3$ et $|\mathcal{A}| - 2 = 2^{27} - 2$ (le $-2$ provenant des actions qui changent tous les feux au même état).
 
-Pour commencer par le cas le plus simple, nous avons donc recensé deux états de feux par intersection en se demandant lesquelles permettraient de faire passer toutes les voitures à un moment ou à un autre. Les états sélectionnés sont exposés dans la structure de données du Listing [[code:tl_state_space]].
+Pour commencer par le cas le plus simple, nous avons donc recensé deux états de feux par intersection en se demandant lesquelles permettraient de faire passer toutes les voitures à un moment ou à un autre. Les états sélectionnés sont exposés dans la structure de données du Listing [[code:tl_state_space]]. Cette structure de données est un dictionnaire ayant pour clefs les chaîne de caractères identifiant les feux contrôlés et pour valeurs une liste de chaîne de caractères décrivant l'état des feux selon le format défini par Sumo. Son type est donc ~OrderedDict< String, List<String> >~.
 
 #+CAPTION: Structure de données encodant les états de feux possibles du système.
 #+label: code:tl_state_space
@@ -346,6 +346,31 @@ action_spec = OrderedDict({
         "rrGG",
     ],
 })
+#+END_SRC
+
+Le fait que le dictionnaire soit ordonné permet de calculer le produit cartésien de ses clefs, qui représente l'ensemble des actions possibles privé de l'action identité, dans le même ordre à chaque pas de temps et donc de pouvoir associer les actions de l'agent à un nouvel état du système aisément, voir l'algorithme présenté sur le Listing [[code:take_rl_action]].
+
+#+CAPTION: Fonction d'association d'une action prise à nouvel état des feux : $T : \mathcal{A}^* \longrightarrow \mathcal{E}^f$
+#+label: code:take_rl_action
+#+BEGIN_SRC python
+def map_action_to_tl_states(self, rl_actions):
+    """Maps an rl_action list to new traffic light states based on
+    `action_spec` or keeps current traffic light states as they are.
+
+    Parameters
+    ---------
+    rl_actions: [float] list of action probabilities of cardinality
+        `self.get_num_actions()`
+    """
+    identity_action = [
+        tuple(
+            self.k.traffic_light.get_state(id)
+            for id in self.action_spec.keys())
+    ]
+    all_actions = list(itertools.product(
+        *list(self.action_spec.values()))) + identity_action
+    return all_actions[rl_actions]
+
 #+END_SRC
 
 Nous retenons donc huit états de feux possibles et une action pour chacun d'entre eux. Cependant, nous avons choisi d'en inclure une neuvième, celle de l'action identité qui ne modifie pas l'état des feux. /En effet, nous émettons l'hypothèse que l'agent apprendra plus vite laquelle des neuf actions ne modifie pas l'état plutôt que laquelle des huit actions faut il prendre à un état donné pour ne pas le modifier/. Nous obtenons donc finalement $|\mathcal{A}^*| = 9$.
