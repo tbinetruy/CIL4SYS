@@ -177,17 +177,17 @@ Les paramètres de notre modélisation sont donc nombreux:
 
 * Présentation des outils utilisés
 
-L'apprentissage par renforcement reposant sur l'interaction avec un environnement, l'entraînement s'appuie souvent sur un simulateur. C'est le cas de notre modèle, ce qui implique donc l'interaction de plusieurs unités logiques du code entre elles. Afin de simplifier au maximum ces interactions tout en rendant le passage à l'échelle à l'entraînement possible, notre modèle repose sur un certain nombre d'outils qu'il est nécessaire d'introduire à ce stade du document, c'est ce que nous faisons à présent.
+L'apprentissage par renforcement reposant sur l'interaction avec un environnement, l'entraînement s'appuie souvent sur un simulateur. C'est le cas de notre modèle, ce qui implique donc l'interaction de plusieurs unités logiques du code entre elles. Afin de simplifier au maximum ces interactions tout en rendant le passage à l'échelle de l'entraînement possible, notre modèle repose sur un certain nombre d'outils qu'il est nécessaire d'introduire à ce stade du document, c'est ce que nous faisons à présent.
 
 ** Sumo & Traci
 
-Sumo est un simulateur de trafic microscopique multi-platforme, libre, développé et maintenu par le ministère des transports allemand et possédant une API Python nommée /Traci/ de haute qualité. Ce simulateur permet entre autre de requêter et modifier l'état d'une simulation à chaque pas de temps via Traci. C'est ce qui permet de prendre des actions et de calculer les récompenses lors de l'entraînement de notre agent.
+Sumo est un simulateur de trafic microscopique multi-plateforme, libre, développé et maintenu par le ministère des transports allemand et possédant une API Python nommée /Traci/ de haute qualité. Ce simulateur permet entre autre de requêter et modifier l'état d'une simulation à chaque pas de temps via Traci. C'est ce qui permet de prendre des actions et de calculer les récompenses lors de l'entraînement de notre agent.
 
-Le module Traci de Sumo permet entre autre de requêter les émissions de chaque voitures, l'état de chaque feux, les collisions éventuelles, ainsi que la redirection, suppression et instanciation de véhicules à chaque pas de temps.
+Le module Traci de Sumo permet entre autre de requêter les émissions de chaque voiture, l'état de chaque feu, les collisions éventuelles, ainsi que la redirection, suppression et instanciation de véhicules à chaque pas de temps.
 
-Dans Sumo, les routes sont représentées par des /arrêtes/ (/edges/ en anglais), chaque arrêtes pouvant avoir une ou plusieurs /voies/ (/lanes/ en anglais). Chaque arrête et chaque voie sont identifiées de manière unique par une chaîne de caractères, ce qui permet d'interagir facilement avec les véhicules de la simulation.
+Dans Sumo, les routes sont représentées par des /arêtes/ (/edges/ en anglais), chaque arête pouvant avoir une ou plusieurs /voies/ (/lanes/ en anglais). Chaque arête et chaque voie est identifiée de manière unique par une chaîne de caractères, ce qui permet d'interagir facilement avec les véhicules de la simulation.
 
-Les /feux/ sont placés à certaines intersections sur la carte. Mais dans Sumo, le nombre de feux peut être supérieur au nombre d'intersections. L'état des feux à une intersection est définit par une chaine de caractères où chaque caractère représente l'état d'un des feux de l'intersection. Par exemple, l'état des feux d'une intersection gérée par trois feux pourrait être ~rGG~ ce qui voudrait dire que le premier feu est /rouge/ (red) et les deux suivants /vert/ (green). Le premier caractère de la chaîne représente l'état du feux le plus au nord de l'intersection gérée, le suivant le feu directement après en allant dans le sens anti-horaire, et ainsi de suite jusqu'à la fin de la chaîne. Enfin, au même titre que les arrêtes, Sumo identifie chaque jeux de feux gérant une intersection par une chaîne de caractère unique permettant de requêter le feu via Traci.
+Les /feux/ sont placés à certaines intersections sur la carte. Mais dans Sumo, le nombre de feux peut être supérieur au nombre d'intersections. L'état des feux à une intersection est défini par une chaîne de caractères où chaque caractère représente l'état d'un des feux de l'intersection. Par exemple, l'état des feux d'une intersection gérée par trois feux pourrait être ~rGG~ ce qui voudrait dire que le premier feu est /rouge/ (red) et les deux suivants /verts/ (green). Le premier caractère de la chaîne représente l'état du feu le plus au nord de l'intersection gérée, le suivant le feu directement après en allant dans le sens anti-horaire, et ainsi de suite jusqu'à la fin de la chaîne. Enfin, au même titre que les arêtes, Sumo identifie chaque jeux de feux gérant une intersection par une chaîne de caractère unique permettant de requêter le feu via Traci.
 
 ** RLlib
 
@@ -195,15 +195,15 @@ Les /feux/ sont placés à certaines intersections sur la carte. Mais dans Sumo,
 
 ** Flow
 
-L'intégration de Sumo est RLlib étant complexe à mettre en œuvre, un laboratoire de UC Berkeley travail sur une abstraction open source de RLlib et Sumo de manière à faciliter l'application de l'apprentissage par renforcement au problème de fluidification de trafic routier. C'est donc à l'aide cette librairie Python que nous avons implémenté notre solution. Dans l'optique de permettre au lecteur de bien comprendre les prochaines sections du présent document, nous introduisons les concepts fondamentaux de Flow ainsi que son jargon.
+L'intégration de Sumo est RLlib étant complexe à mettre en œuvre, un laboratoire de UC Berkeley travaille sur une abstraction open source de RLlib et Sumo de manière à faciliter l'application de l'apprentissage par renforcement au problème de fluidification de trafic routier. C'est donc à l'aide cette librairie Python appelée Flow que nous avons implémenté notre solution. Dans l'optique de permettre au lecteur de bien comprendre les prochaines sections du présent document, nous introduisons les concepts fondamentaux de Flow ainsi que son jargon.
 
-Un *scénario* est un objet qui définit la simulation en elle même, c'est à dire le définition des arrêtes et des voies, le nombre de voitures et les rails qu'elles suivent, ainsi que la position des feux. Flow fournit la classe abstraite ~BaseScenario~ à sous classer lors de l'implémention d'un scénario de calcul. Cette classe propose entre autre des méthodes pour importer des maillages routiers de différents formats, dont celui de /Open Street Map/.
+Un *scénario* est un objet qui définit la simulation en elle même, c'est à dire le définition des arêtes et des voies, le nombre de voitures et les rails qu'elles suivent, ainsi que la position des feux. Flow fournit la classe abstraite ~BaseScenario~ à sous-classer lors de l'implémentation d'un scénario de calcul. Cette classe propose notamment des méthodes pour importer des maillages routiers de différents formats, dont celui de /Open Street Map/.
 
 Un *environnement* est un objet qui sous-classe ~BaseEnv~ et qui définit l'espace des états, $\mathcal{E}$, celui des actions $\mathcal{A}$, les transitions d'états par une action, ainsi que la récompense via les méthodes ~observation_space~, ~action_space~, ~_apply_rl_action~ et ~compute_reward~. De cette manière, il est facile de définir plusieurs modélisations du système pour un scénario donné.
 
 Une *expérience* définit les paramètres de l'algorithme utilisé pour maximiser l'espérance de la récompense (DQN, PPO, etc…) ainsi que d'autres paramètres de simulation tels que le nombre de processus Sumo à instancier, et le nombre d'itérations à réaliser durant l'entraînement.
 
-Enfin, un *kernel* est un objet qui fait abstraction de l'API du simulateur utilisé pour l'entraînement, cela permet d'utiliser l'abstraction de Flow pour interagir avec Sumo plutôt que /Traci/ et donc de découpler notre code du simulateur. Il serait donc tout à fait possible d'implémenter un kernel Flow pour interagir avec le simulateur de CIL4SYS, /Sym4sys/, directement et donc de supprimer la dépendance à Sumo.
+Enfin, un *kernel* est un objet qui fait abstraction de l'API du simulateur utilisé pour l'entraînement, cela permet d'utiliser l'abstraction de Flow pour interagir avec Sumo plutôt que /Traci/ et donc de découpler notre code du simulateur. Il serait donc tout à fait possible d'implémenter un kernel Flow pour interagir avec le simulateur de CIL4SYS, /Sim4sys/, directement et donc de supprimer la dépendance à Sumo.
 
 
 #+begin_latex latex
@@ -224,7 +224,7 @@ Enfin, un *kernel* est un objet qui fait abstraction de l'API du simulateur util
 \end{figure*}
 #+end_latex
 
-** Sym4sys
+** Sim4sys
    
 ** Architectures logicielles
    
