@@ -62,13 +62,13 @@ Le principe de l'apprentissage par renforcement est alors de chercher une foncti
 
 La fonction $\pi(e,a)$ retourne la probabilité de réaliser une action $a$ à l'état $e$. Nous avons donc $\sum_{a\in\mathcal{A}}\pi(e,a) = 1$. Définissons $Q^\pi(e,a)$, la fonction qui prédit l'espérance de la récompense cumulative sous $\pi$ sachant $e$ et $a$:
 
-#+begin_latex latex
-\[
-Q^\pi(e, a) = \mathbb{E}_\pi[R_t|e_t=e,a_t=a]
-\]
-#+end_latex
 
-Définissions $\mathcal{P}^a_{ee'}$, la probabilité de passer d'un état $e$ à un état $e'$ sachant un état $e$ et une action $a$ donnés:
+#+NAME: eqn:q_value
+\begin{equation}
+  Q^\pi(e, a) = \mathbb{E}_\pi[R_t|e_t=e,a_t=a]
+\end{equation}
+
+Définissions $\mathcal{P}^a_{ee'}$, la probabilité de passer d'un état $e$ à un état $e'$ sachant un état $e$ et une action $a$ donnés :
 
 #+begin_latex latex
 \[
@@ -145,7 +145,18 @@ Au début de l'apprentissage, la fonction approchée par notre modèle ne sera p
 #+end_latex
 
 
-Il est aussi possible de faire varier $\epsilon$ dans le temps, avec par exemple des valeurs plus grosses en début d'entraînement pour ensuite diminuer.
+Il est aussi possible de faire varier $\epsilon$ dans le temps, avec par exemple des valeurs plus grosses en début d'entraînement pour ensuite diminuer. Le Listing [[code:eps_greedy]] propose une implémentation possible de stratégie $\epsilon$ – greedy en Python.
+
+#+CAPTION: Stratégie $\epsilon$ – greedy en Python.
+#+label: code:eps_greedy
+#+BEGIN_SRC python
+def act(self, state):
+    if np.random.rand() < self.epsilon:
+        return random.randrange(self.action_size)
+    else:
+        probas = self.model.predict(state)
+        return np.argmax(probas)
+#+END_SRC
 
 *** Deep Q-Network
 
@@ -156,11 +167,12 @@ $Q^\pi$ étant inconnue, l'idée consiste à l'approcher avec un réseau de neur
 \[
 \theta \in \underset{\theta}{\mathrm{argmin}} \mathcal{L}(\delta)
 \]
-
-\[
-\delta = Q^\pi_\theta(e,a) - (r + \gamma\underset{a'}{\mathrm{argmax}} Q^\pi_\theta(e', a'))
-\]
 #+end_latex
+
+#+NAME: eqn:temp_diff
+\begin{equation}
+  \delta = Q^\pi_\theta(e,a) - (r + \gamma\underset{a'}{\mathrm{argmax}} Q^\pi_\theta(e', a'))
+\end{equation}
 
 Ou $\mathcal{L}$ est une fonction de perte. En pratique, l'optimisation est réalisée par "batchs" de transitions $B$ a l'aide d'une descente de gradient stochastique~\cite{GaoSLIS17}.
 
@@ -173,6 +185,45 @@ Les paramètres de notre modélisation sont donc nombreux:
 - $\mathcal{L}$, la fonction de perte
 - Le fonction de calcul de récompense, $\psi : \mathcal{E} \longrightarrow \mathbb{R}$
 
+Le réseau de neurones d'un DQN prend donc en entrée les états accumulés dans la mémoire $\mathcal{M}$ au cours de l'exploration. C'est une fonction à $|\mathcal{A}|$ neurones en sortie où $\mathcal{A}$ est l'espace des actions. L'activation de cette dernière couche est *linéaire*, en effet, l'espérance de la récompense pour une action et un état donnés prend une valeur sur $\mathbb{R}$. Enfin, la fonction à minimiser est celle de la différence temporelle (équation [[eqn:temp_diff]]). Une implémentation utilisant la librairie /Keras/ est proposée dans le Listing [[code:build_dqn]].
+
+#+CAPTION: Implémentation d'un réseau DQN dense bi-couche avec /Keras/.
+#+label: code:build_dqn
+#+BEGIN_SRC python
+def build_DQN(self):
+    model = Sequential([
+        Dense(24, input_shape=(self.state_size,)),
+        Activation('relu'),
+        Dense(24),
+        Activation('relu'),
+        Dense(self.action_size),
+        Activation('linear'),
+    ])
+    model.compile(loss=self.temporal_difference, optimizer=Adam(lr=self.learning_rate))
+
+    return model
+#+END_SRC
+
+Le réseau est entraîné à chaque pas de temps sur un batch /aléatoire/, pioché dans la mémoire $\mathcal{M}$. En effet, cette mémoire contient toutes les paires d'états à une action d'intervalle explorées, il est donc possible d'estimer l'équation [[eqn:q_value]] tout les pas de temps sur ces paires avec le modèle. Le Listing [[code:dqn_replay]] propose une implémentation en Python d'un algorithme d'entraînement du DQN.
+
+#+CAPTION: Entraînement du DQN en Python.
+#+label: code:dqn_replay
+#+BEGIN_SRC python
+def replay(self, batch_size):
+    minibatch = random.sample(self.memory, batch_size)
+  
+    for state, action, reward, next_state, done in minibatch:
+        q_values = self.model.predict(state)
+        if done:
+            q_values[0][action] = reward
+        else:
+            q_values[0][action] = (reward + self.gamma *
+                                  np.amax(self.q_values_model.predict(next_state)[0]))
+        self.model.fit(state, q_values, epochs=1, verbose=0)
+  
+    if self.epsilon > self.epsilon_min:
+        self.epsilon *= self.epsilon_decay
+#+END_SRC
 
 
 * Présentation des outils utilisés
