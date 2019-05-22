@@ -244,9 +244,13 @@ Les figures [[fig:train_arch]] et  [[fig:prod_arch]] schématisent ces architect
 
 * Quartier d'étude
 
-En partant du principe que la densité de trafic à Paris intra muros est trop élevée pour offrir des possibilités de fluidification, et en considération de le haute dimension de la formulation mathématique du problème, nous avons choisi d'étudier un ensemble de 4 intersections à Issy les Moulineaux, contrôlées par trois feux tricolores.
+Le choix du quartier d'étude doit répondre à plusieurs contraintes : la présence de feux tricolores, un trafic qui ne soit pas trop dense comme l'est celui de Paris intra-muros, mais qui soit suffisamment congestionné pour que notre solution puisse apporter une amélioration.
+En considération de la haute dimension de la formulation mathématique du problème, nous avons choisi d'étudier un ensemble de 4 intersections à Issy les Moulineaux, contrôlées par trois feux tricolores.
 
 En effet, nous avons observé des congestions dans cette zone en période de pointe à l'aide de l'API TomTom et voudrions étudier si une solution par renforcement peut réduire ces bouchons.
+
+* TODO Ajouter image
+* TODO Ajouter justification
 
 * Modélisations
 
