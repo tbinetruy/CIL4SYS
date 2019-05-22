@@ -199,7 +199,7 @@ L'intégration de Sumo est RLlib étant complexe à mettre en œuvre, un laborat
 
 Un *scénario* est un objet qui définit la simulation en elle même, c'est à dire le définition des arrêtes et des voies, le nombre de voitures et les rails qu'elles suivent, ainsi que la position des feux. Flow fournit la classe abstraite ~BaseScenario~ à sous classer lors de l'implémention d'un scénario de calcul. Cette classe propose entre autre des méthodes pour importer des maillages routiers de différents formats, dont celui de /Open Street Map/.
 
-Un *environnement* est un objet qui sous-classe ~BaseEnv~ et qui définit l'espace des états, $\mathcal{E}$, celui des actions $\mathcal{B}$, les transitions d'états par une action, ainsi que la récompense via les méthodes ~observation_space~, ~action_space~, ~_apply_rl_action~ et ~compute_reward~. De cette manière, il est facile de définir plusieurs modélisations du système pour un scénario donné.
+Un *environnement* est un objet qui sous-classe ~BaseEnv~ et qui définit l'espace des états, $\mathcal{E}$, celui des actions $\mathcal{A}$, les transitions d'états par une action, ainsi que la récompense via les méthodes ~observation_space~, ~action_space~, ~_apply_rl_action~ et ~compute_reward~. De cette manière, il est facile de définir plusieurs modélisations du système pour un scénario donné.
 
 Une *expérience* définit les paramètres de l'algorithme utilisé pour maximiser l'espérance de la récompense (DQN, PPO, etc…) ainsi que d'autres paramètres de simulation tels que le nombre de processus Sumo à instancier, et le nombre d'itérations à réaliser durant l'entraînement.
 
