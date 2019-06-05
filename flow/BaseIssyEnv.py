@@ -66,6 +66,26 @@ class BaseIssyEnv(Env):
             veh_id: 0
             for veh_id in self._all_obs_veh_names
         }
+    
+    def _init_obs_tl_wait_steps(self):
+        """Initializes attributes that will store the number of steps stayed
+        idle by the traffic lights"""
+
+        # Contrary to the observation of vehicules, the traffic light are already 
+        # named 
+        self._all_tl_names = self.action_spec.keys()
+
+        #We instantiate a dictionary with tl_ids as keys and time steps spent
+        #idled as values. We set all values to 0 since this is an init.
+        self.obs_tl_wait_steps = {
+            tl_id: {
+                'current_state' : '',
+                'timer' : 0
+            }
+            for tl_id in self._all_tl_names
+        }
+
+
 
     def map_action_to_tl_states(self, rl_actions):
         """Maps an rl_action list to new traffic light states based on
@@ -188,6 +208,17 @@ class BaseIssyEnv(Env):
         for k in self._all_obs_veh_names:
             if k not in self.obs_veh_wait_steps:
                 self.obs_veh_wait_steps[k] = 0
+
+    def _update_obs_tl_wait_steps(self):
+        """This method updates `self.obs_tl_wait_steps`.
+
+        """
+        # TODO
+        # self.obs_tl_wait_steps = {
+            
+        #     for tl_id in self.action_spec.keys():
+        #         if self.k.traffic_light.get_state(tl_id) != 
+        # }
 
     def additional_command(self):
         """ Gets executed at each time step.
