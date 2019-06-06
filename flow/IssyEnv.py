@@ -194,6 +194,6 @@ class IssyEnv3(IssyEnv2):
 
         idled_max_steps = 300
         idle_reward = self.rewards.penalize_max_wait(self.obs_veh_wait_steps,
-                                                     idled_max_steps, 0, -10)
+                                                     idled_max_steps, 10, -10)
 
         return base_reward + idle_reward
