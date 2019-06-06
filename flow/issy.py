@@ -1,6 +1,7 @@
 from collections import OrderedDict
 
-from IssyExperiment import IssyExperiment, IssyExperimentParams
+from IssyExperiment import IssyExperiment, IssyExperimentParams, \
+    RayClusterParams
 
 if __name__ == '__main__':
     inflow_spec = {
@@ -30,12 +31,15 @@ if __name__ == '__main__':
         ],
     })
 
+    cluster_params = RayClusterParams(use_cluster=False, redis_address="")
+
     params = IssyExperimentParams(horizon=2000,
                                   rollouts=1,
                                   inflow_spec=inflow_spec,
                                   action_spec=action_spec,
                                   n_cpus=0,
                                   n_veh=5,
+                                  cluster_params=cluster_params,
                                   checkpoint_freq=2,
                                   training_iteration=200,
                                   discount_rate=0.999,

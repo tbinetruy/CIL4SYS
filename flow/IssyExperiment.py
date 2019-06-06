@@ -19,6 +19,22 @@ from ray.tune.registry import register_env
 from helpers import make_create_env, get_inflow
 
 
+class RayClusterParams:
+    """"Parameters for the ray cluster."""
+
+    def __init__(self, use_cluster, redis_address):
+        """ Instantiate an experiment parameter object.
+
+        Parameters
+        ----------
+        use_cluster: bool
+            Should the experiment run on a cluster.
+        redis_address: string
+            IP and port of the ray cluster head node ("<IP>:<PORT>")
+        """
+        self.use_cluster = use_cluster
+        self.redis_address = redis_address
+
 class IssyExperimentParams:
     """Parameters for the Issy RL experiment.
 
@@ -33,6 +49,7 @@ class IssyExperimentParams:
             action_spec,
             n_cpus,
             n_veh,
+            cluster_params,
             checkpoint_freq=20,
             training_iteration=200,
             discount_rate=0.999,
@@ -68,6 +85,9 @@ class IssyExperimentParams:
             How many cpus to request for parallel training.
         n_veh: int
             How many vehicules are on the mesh at the start of the rollout.
+        cluster_params: RayClusterParams
+            Parameters for the ray cluster to run the experiment on. See
+            `RayClusterParams.init` docstring for more information.
         checkpoint_freq: int
             Number of simulations between model checkpoint saves.
         training_iteration: int
@@ -111,6 +131,7 @@ class IssyExperimentParams:
         self.discount_rate = discount_rate
         self.render = render
         self.warmup_steps = warmup_steps
+        self.cluster_params = cluster_params
 
         self.osm_path = osm_path
         self.edges_distribution = list(inflow_spec.keys())
@@ -131,7 +152,11 @@ class IssyExperiment:
         self.exp_params = params
         self.flow_params = self.make_flow_params()
 
-        ray.init(num_cpus=self.exp_params.n_cpus + 1, redirect_output=False)
+        if self.exp_params.cluster_params.use_cluster:
+            ray.init(
+                redis_address=self.exp_params.cluster_params.redis_address)
+        else:
+            ray.init(num_cpus=self.exp_params.n_cpus + 1)
 
     def run(self):
         """Runs the experimint according to the constructor input
