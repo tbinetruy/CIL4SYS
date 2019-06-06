@@ -89,19 +89,39 @@ class BaseIssyEnv(Env):
         """Maps an rl_action list to new traffic light states based on
         `action_spec` or keeps current traffic light states as they are.
 
+        Since the shape of `rl_action` depends on `self.algorithm`, the
+        mapping from actions to new states is implemented for each algorithm.
+
         Parameters
-        ---------
-        rl_actions: [float] list of action probabilities of cardinality
-            `self.get_num_actions()`
+        ----------
+        rl_actions:
+            PPO:  [float] - list of action probabilities of length
+                 `self.get_num_actions()`. TODO: For the moment, only binary
+                 intersections are handled.
+            DQN: int - action number
+
+        Returns: [string]
+        -------
+            List of strings of length `self.action_spec.keys()` containing
+            the new state configuration for each intersection.
         """
-        identity_action = [
-            tuple(
-                self.k.traffic_light.get_state(id)
-                for id in self.action_spec.keys())
-        ]
-        all_actions = list(itertools.product(
-            *list(self.action_spec.values()))) + identity_action
-        return all_actions[rl_actions]
+        if self.algorithm == "DQN":
+            identity_action = [
+                tuple(
+                    self.k.traffic_light.get_state(id)
+                    for id in self.action_spec.keys())
+            ]
+            all_actions = list(
+                itertools.product(
+                    *list(self.action_spec.values()))) + identity_action
+            return all_actions[rl_actions]
+        elif self.algorithm == "PPO":
+            return [
+                v[int(rl_actions[i])]
+                for i, v in enumerate(list(self.action_spec.values()))
+            ]
+        else:
+            return NotImplementedError
 
     def get_num_traffic_lights(self):
         """Counts the number of traffic lights by summing
@@ -117,11 +137,14 @@ class BaseIssyEnv(Env):
 
     def get_num_actions(self):
         """Calculates the number of possible actions by counting the
-        traffic light states based on `self.action_spec`. It counts
-        the cardinality of the cartesian product of all traffic light
-        states. In the DQN case, it also adds 1 to that product to account
+        traffic light states based on `self.action_spec`.
+
+        In the DQN case, it counts the cardinality of the cartesian product of
+        all traffic light states. It also adds 1 to that product to account
         for the "identity" action which keeps the traffic light states as they
         were in the last timestep.
+
+        In the PPO case, it returns the number of intersections.
 
         Returns
         -------
@@ -133,7 +156,7 @@ class BaseIssyEnv(Env):
         if self.algorithm == "DQN":
             return count + 1
         elif self.algorithm == "PPO":
-            return count
+            return len(self.action_spec.keys())
         else:
             return NotImplementedError
 
