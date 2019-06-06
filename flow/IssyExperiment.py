@@ -152,6 +152,7 @@ class IssyExperiment:
         self.exp_params = params
         self.flow_params = self.make_flow_params()
 
+        # Configure init for cluster use if requested
         if self.exp_params.cluster_params.use_cluster:
             ray.init(
                 redis_address=self.exp_params.cluster_params.redis_address)
@@ -159,7 +160,7 @@ class IssyExperiment:
             ray.init(num_cpus=self.exp_params.n_cpus + 1)
 
     def run(self):
-        """Runs the experimint according to the constructor input
+        """Runs the experiment according to the constructor input
         parameters."""
         alg_run, gym_name, config = 1, 1, 1  # placeholders
         if self.exp_params.algorithm == 'PPO':
