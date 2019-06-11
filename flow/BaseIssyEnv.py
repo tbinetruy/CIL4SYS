@@ -43,6 +43,7 @@ class BaseIssyEnv(Env):
         self.rewards = Rewards(self.k, self.action_spec)
 
         self._init_obs_veh_wait_steps()
+        self._init_obs_tl_wait_steps()
 
         # Used for debug purposes
         self.current_timestep = 0
@@ -105,6 +106,7 @@ class BaseIssyEnv(Env):
             List of strings of length `self.action_spec.keys()` containing
             the new state configuration for each intersection.
         """
+        new_state = []
         if self.algorithm == "DQN":
             identity_action = [
                 tuple(
@@ -114,14 +116,28 @@ class BaseIssyEnv(Env):
             all_actions = list(
                 itertools.product(
                     *list(self.action_spec.values()))) + identity_action
-            return all_actions[rl_actions]
+            new_state = all_actions[rl_actions]
         elif self.algorithm == "PPO":
-            return [
+            new_state = [
                 v[int(rl_actions[i])]
                 for i, v in enumerate(list(self.action_spec.values()))
             ]
         else:
             return NotImplementedError
+
+        # Don't update traffic lights that have not exceeded the timer
+        new_state = list(new_state)
+        for i, tl_id in enumerate(self.action_spec.keys()):
+            if self.obs_tl_wait_steps[tl_id]['timer'] < 1000:
+                new_state[i] = self.obs_tl_wait_steps[tl_id]['current_state']
+
+        # print(self.obs_tl_wait_steps)
+        print(new_state, [
+            self.obs_tl_wait_steps[tl_id]['current_state']
+            for tl_id in self.obs_tl_wait_steps.keys()
+        ])
+
+        return new_state
 
     def get_num_traffic_lights(self):
         """Counts the number of traffic lights by summing
@@ -234,12 +250,19 @@ class BaseIssyEnv(Env):
         """This method updates `self.obs_tl_wait_steps`.
 
         """
-        # TODO
-        # self.obs_tl_wait_steps = {
+        new_tl_wait_steps = {}
+        for tl_id in self.action_spec.keys():
+            current_state = self.k.traffic_light.get_state(tl_id)
+            if current_state != self.obs_tl_wait_steps[tl_id]['current_state']:
+                new_tl_wait_steps[tl_id] = {
+                    'current_state': current_state,
+                    'timer': 0
+                }
+            else:
+                new_tl_wait_steps[tl_id] = self.obs_tl_wait_steps[tl_id]
+                new_tl_wait_steps[tl_id]['timer'] += 1
 
-        #     for tl_id in self.action_spec.keys():
-        #         if self.k.traffic_light.get_state(tl_id) !=
-        # }
+        self.obs_tl_wait_steps = new_tl_wait_steps
 
     def additional_command(self):
         """ Gets executed at each time step.
@@ -252,6 +275,7 @@ class BaseIssyEnv(Env):
 
         See parent class for more information."""
         self._update_obs_wait_steps()
+        self._update_obs_tl_wait_steps()
 
         for veh_id in self.k.vehicle.get_ids():
             self._reroute_if_final_edge(veh_id)
