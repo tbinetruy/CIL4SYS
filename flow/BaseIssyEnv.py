@@ -131,6 +131,11 @@ class BaseIssyEnv(Env):
         for i, tl_id in enumerate(self.action_spec.keys()):
             if self.obs_tl_wait_steps[tl_id]['timer'] < self.tl_constraint:
                 new_state[i] = self.k.traffic_light.get_state(tl_id)
+            else:
+                self.obs_tl_wait_steps[tl_id] = {
+                    'current_state': new_state[i],
+                    'timer': 0
+                }
 
         return new_state
 
@@ -241,23 +246,12 @@ class BaseIssyEnv(Env):
             if k not in self.obs_veh_wait_steps:
                 self.obs_veh_wait_steps[k] = 0
 
-    def _update_obs_tl_wait_steps(self):
+    def _increment_obs_tl_wait_steps(self):
         """This method updates `self.obs_tl_wait_steps`.
 
         """
-        new_tl_wait_steps = {}
         for tl_id in self.action_spec.keys():
-            current_state = self.k.traffic_light.get_state(tl_id)
-            if current_state != self.obs_tl_wait_steps[tl_id]['current_state']:
-                new_tl_wait_steps[tl_id] = {
-                    'current_state': current_state,
-                    'timer': 0
-                }
-            else:
-                new_tl_wait_steps[tl_id] = self.obs_tl_wait_steps[tl_id]
-                new_tl_wait_steps[tl_id]['timer'] += 1
-
-        self.obs_tl_wait_steps = new_tl_wait_steps
+            self.obs_tl_wait_steps[tl_id]['timer'] += 1
 
     def additional_command(self):
         """ Gets executed at each time step.
@@ -271,7 +265,7 @@ class BaseIssyEnv(Env):
 
         See parent class for more information."""
         self._update_obs_wait_steps()
-        self._update_obs_tl_wait_steps()
+        self._increment_obs_tl_wait_steps()
 
         for veh_id in self.k.vehicle.get_ids():
             self._reroute_if_final_edge(veh_id)
