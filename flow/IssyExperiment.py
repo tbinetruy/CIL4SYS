@@ -57,6 +57,7 @@ class IssyExperimentParams:
             algorithm='PPO',
             warmup_steps=750,
             render=False,
+            tl_constraint=100,
             osm_path='/Users/adrienly/Documents/Telecom/Cil4Sys/CIL4SYS/flow/issy.osm'
     ):
         """Instantiate an experiment parameter object.
@@ -108,13 +109,15 @@ class IssyExperimentParams:
             Copied from: `flow.core.params.EnvParams.warup_steps` docstring.
         render: boolean
             Should sumo-gui be launched during training.
+        tl_constraint: str
+            Minimum number of timesteps tl has to remain in same state
+        osm_path: str
+            Path to the .osm file of the district to simulate.
 
         Returns
         -------
         An instance of IssyExperimentParams with the parameters as keys with
         the following additions:
-        osm_path: str
-            Path to the .osm file of the district to simulate.
         edge_distribution: str
             Edges to add inflows to.
         """
@@ -132,6 +135,7 @@ class IssyExperimentParams:
         self.render = render
         self.warmup_steps = warmup_steps
         self.cluster_params = cluster_params
+        self.tl_constraint = tl_constraint
 
         self.osm_path = osm_path
         self.edges_distribution = list(inflow_spec.keys())
@@ -329,6 +333,7 @@ class IssyExperiment:
                 "beta": self.exp_params.n_veh,
                 "action_spec": self.exp_params.action_spec,
                 "algorithm": self.exp_params.algorithm,
+                "tl_constraint": self.exp_params.tl_constraint,
             },
             horizon=self.exp_params.horizon,
             warmup_steps=self.exp_params.warmup_steps,
