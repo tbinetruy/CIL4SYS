@@ -45,6 +45,7 @@ if __name__ == '__main__':
                                   discount_rate=0.999,
                                   env_name='IssyEnv3',
                                   algorithm="DQN",
+                                  env_name='IssyEnv4',
                                   warmup_steps=500,
                                   render=False,
                                   tl_constraint=300,

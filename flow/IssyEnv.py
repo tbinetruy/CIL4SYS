@@ -197,3 +197,78 @@ class IssyEnv3(IssyEnv2):
                                                      idled_max_steps, 10, -10)
 
         return 0.001 * (base_reward + idle_reward)
+
+
+class IssyEnv4(IssyEnv3):
+    """Final environment.
+
+    Required from env_params: See parent class
+
+    States
+        An observation is the set of positions, orientations, time spend idled,
+        and speeds of the beta observed vehicles and the binary state of each
+        RL controlled traffic lights along with how long ago each of the
+        controlled intersections switched states.
+
+    Actions
+        See parent class
+
+    Rewards
+        The reward penalizes slow and/or emitting and/or idle time for the beta
+        observable vehicles.
+
+    Termination
+        See parent class
+    """
+
+    @property
+    def observation_space(self):
+        """ In this model, we only observe 2D-positions and speed norms of
+        the beta observable vehicles in cartesian coordinates, along with
+        their orientation, absolute speed, CO2 emission and time steps spent
+        idled (speed=0). We also include the binary state of all RL controlled
+        traffic lights.
+
+        Ex: If beta=2 and gamma=10 (2 observed cars and 3 RL controlled
+        traffic lights), our state lives in $R^{6\times2} U B^10$ where
+        B={0,1} is the on/off state each traffic light can take.
+
+        (See parent class for more information)"""
+
+        return Box(
+            low=0,
+            high=float("inf"),
+            shape=(6 * self.scenario.vehicles.num_vehicles +
+                   self.get_num_traffic_lights() +
+                   len(self.action_spec.keys()), ),
+        )
+
+    def get_state(self, **kwargs):
+        """ We concatenate time tl have not switch to parent state.
+
+        (See parent class for more information)"""
+        tl_wait_steps = [
+            self.obs_tl_wait_steps[tl_id]['timer']
+            for tl_id in self.obs_tl_wait_steps.keys()
+        ]
+
+        return np.concatenate((super().get_state(), tl_wait_steps))
+
+    def compute_reward(self, rl_actions, **kwargs):
+        """ The reward in this simple model is simply the mean velocity
+        of all simulated vehicles present on the mesh devided by the
+        mean CO2 emission.
+
+        (See parent class for more information)"""
+        # km/h
+        max_speed = 10
+        # mg of CO2 emitted per vehicle during the last timestep
+        max_emission = 3000
+
+        base_reward = self.rewards.penalize_min_speed(
+            max_speed) + self.rewards.penalize_max_emission(max_emission)
+
+        idled_max_steps = 300
+        idle_reward = self.rewards.penalize_max_wait(self.obs_veh_wait_steps,
+                                                     idled_max_steps, 10, -10)
+        return 0.001 * (base_reward + idle_reward)
