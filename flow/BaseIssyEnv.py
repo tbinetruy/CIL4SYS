@@ -128,14 +128,8 @@ class BaseIssyEnv(Env):
         # Don't update traffic lights that have not exceeded the timer
         new_state = list(new_state)
         for i, tl_id in enumerate(self.action_spec.keys()):
-            if self.obs_tl_wait_steps[tl_id]['timer'] < 1000:
-                new_state[i] = self.obs_tl_wait_steps[tl_id]['current_state']
-
-        # print(self.obs_tl_wait_steps)
-        print(new_state, [
-            self.obs_tl_wait_steps[tl_id]['current_state']
-            for tl_id in self.obs_tl_wait_steps.keys()
-        ])
+            if self.obs_tl_wait_steps[tl_id]['timer'] < 100:
+                new_state[i] = self.k.traffic_light.get_state(tl_id)
 
         return new_state
 
