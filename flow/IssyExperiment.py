@@ -35,6 +35,7 @@ class RayClusterParams:
         self.use_cluster = use_cluster
         self.redis_address = redis_address
 
+
 class IssyExperimentParams:
     """Parameters for the Issy RL experiment.
 
