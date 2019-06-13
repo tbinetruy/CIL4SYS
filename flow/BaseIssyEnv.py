@@ -247,9 +247,7 @@ class BaseIssyEnv(Env):
                 self.obs_veh_wait_steps[k] = 0
 
     def _increment_obs_tl_wait_steps(self):
-        """This method updates `self.obs_tl_wait_steps`.
-
-        """
+        """This method increments `self.obs_tl_wait_steps`."""
         for tl_id in self.action_spec.keys():
             self.obs_tl_wait_steps[tl_id]['timer'] += 1
 
