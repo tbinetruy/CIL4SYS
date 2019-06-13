@@ -262,6 +262,7 @@ class BaseIssyEnv(Env):
         """ Gets executed at each time step.
 
         - updates how long observable vehicles have been waiting for.
+        - updates how long traffic lights have been in the same state for.
         - Used to insert vehicles that are on the exit edge and place them
         back on their entrance edge.
         - It also colors the beta observable
