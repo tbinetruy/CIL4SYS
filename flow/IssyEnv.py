@@ -215,7 +215,7 @@ class IssyEnv4(IssyEnv3):
 
     Rewards
         The reward penalizes slow and/or emitting and/or idle time for the beta
-        observable vehicles.
+        observable vehicles BUT does not penalize tl switches (as in IssyEnv2)
 
     Termination
         See parent class
@@ -227,10 +227,11 @@ class IssyEnv4(IssyEnv3):
         the beta observable vehicles in cartesian coordinates, along with
         their orientation, absolute speed, CO2 emission and time steps spent
         idled (speed=0). We also include the binary state of all RL controlled
-        traffic lights.
+        traffic lights and how many steps each tl have maintained their state
+        for.
 
-        Ex: If beta=2 and gamma=10 (2 observed cars and 3 RL controlled
-        traffic lights), our state lives in $R^{6\times2} U B^10$ where
+        Ex: If 2 observed cars and 10 RL controlled traffic lights control 3
+        intersections, our state lives in $R^{6\times2} U B^10 U R^3$ where
         B={0,1} is the on/off state each traffic light can take.
 
         (See parent class for more information)"""
@@ -244,7 +245,7 @@ class IssyEnv4(IssyEnv3):
         )
 
     def get_state(self, **kwargs):
-        """ We concatenate time tl have not switch to parent state.
+        """ We concatenate time tl have maintained state to parent class state.
 
         (See parent class for more information)"""
         tl_wait_steps = [
@@ -255,9 +256,8 @@ class IssyEnv4(IssyEnv3):
         return np.concatenate((super().get_state(), tl_wait_steps))
 
     def compute_reward(self, rl_actions, **kwargs):
-        """ The reward in this simple model is simply the mean velocity
-        of all simulated vehicles present on the mesh devided by the
-        mean CO2 emission.
+        """We reward vehicule speeds and penalize their emissions along
+        with idled cars.
 
         (See parent class for more information)"""
         # km/h
