@@ -109,14 +109,14 @@ class BaseIssyEnv(Env):
         """
         new_state = []
         if self.algorithm == "DQN":
-            identity_action = [
-                tuple(
-                    self.k.traffic_light.get_state(id)
-                    for id in self.action_spec.keys())
-            ]
+            # identity_action = [
+            #     tuple(
+            #         self.k.traffic_light.get_state(id)
+            #         for id in self.action_spec.keys())
+            # ]
             all_actions = list(
                 itertools.product(
-                    *list(self.action_spec.values()))) + identity_action
+                    *list(self.action_spec.values())))  # + identity_action
             new_state = all_actions[rl_actions]
         elif self.algorithm == "PPO":
             new_state = [
@@ -170,7 +170,7 @@ class BaseIssyEnv(Env):
         for k in self.action_spec.keys():
             count *= len(self.action_spec[k])
         if self.algorithm == "DQN":
-            return count + 1
+            return count  # + 1
         elif self.algorithm == "PPO":
             return len(self.action_spec.keys())
         else:
