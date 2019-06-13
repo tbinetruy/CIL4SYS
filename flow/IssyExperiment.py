@@ -58,6 +58,7 @@ class IssyExperimentParams:
             warmup_steps=750,
             render=False,
             tl_constraint=100,
+            sim_step=0.1,
             osm_path='/Users/adrienly/Documents/Telecom/Cil4Sys/CIL4SYS/flow/issy.osm'
     ):
         """Instantiate an experiment parameter object.
@@ -111,6 +112,8 @@ class IssyExperimentParams:
             Should sumo-gui be launched during training.
         tl_constraint: str
             Minimum number of timesteps tl has to remain in same state
+        sim_step: float
+            Number of seconds between steps on simulator (Sumo in our case)
         osm_path: str
             Path to the .osm file of the district to simulate.
 
@@ -136,6 +139,7 @@ class IssyExperimentParams:
         self.warmup_steps = warmup_steps
         self.cluster_params = cluster_params
         self.tl_constraint = tl_constraint
+        self.sim_step = sim_step
 
         self.osm_path = osm_path
         self.edges_distribution = list(inflow_spec.keys())
@@ -334,6 +338,7 @@ class IssyExperiment:
                 "action_spec": self.exp_params.action_spec,
                 "algorithm": self.exp_params.algorithm,
                 "tl_constraint": self.exp_params.tl_constraint,
+                "sim_step": self.exp_params.sim_step,
             },
             horizon=self.exp_params.horizon,
             warmup_steps=self.exp_params.warmup_steps,
@@ -348,4 +353,6 @@ class IssyExperiment:
         parameter as recommended by the Flow documentation when using inflows.
         See `flow.envs.base_env.reset` docstring for more information.
         """
-        return SumoParams(render=self.exp_params.render, restart_instance=True)
+        return SumoParams(render=self.exp_params.render,
+                          restart_instance=True,
+                          sim_step=self.exp_params.sim_step)

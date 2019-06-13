@@ -40,6 +40,7 @@ class BaseIssyEnv(Env):
         self.tl_constraint = env_params.get_additional_param("tl_constraint")
         self.action_spec = env_params.get_additional_param("action_spec")
         self.algorithm = env_params.get_additional_param("algorithm")
+        self.sim_step = env_params.get_additional_param("sim_step")
         self.model_params = dict(beta=self.beta, )
         self.rewards = Rewards(self.k, self.action_spec)
 
