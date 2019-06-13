@@ -47,6 +47,7 @@ if __name__ == '__main__':
                                   algorithm="DQN",
                                   warmup_steps=500,
                                   render=False,
+                                  tl_constraint=300,
                                   osm_path='/home/thomas/sumo/models/issy.osm')
 
     exp = IssyExperiment(params)

@@ -37,6 +37,7 @@ class BaseIssyEnv(Env):
     def __init__(self, env_params, sim_params, scenario, simulator='traci'):
         super().__init__(env_params, sim_params, scenario, simulator)
         self.beta = env_params.get_additional_param("beta")
+        self.tl_constraint = env_params.get_additional_param("tl_constraint")
         self.action_spec = env_params.get_additional_param("action_spec")
         self.algorithm = env_params.get_additional_param("algorithm")
         self.model_params = dict(beta=self.beta, )
@@ -128,7 +129,7 @@ class BaseIssyEnv(Env):
         # Don't update traffic lights that have not exceeded the timer
         new_state = list(new_state)
         for i, tl_id in enumerate(self.action_spec.keys()):
-            if self.obs_tl_wait_steps[tl_id]['timer'] < 100:
+            if self.obs_tl_wait_steps[tl_id]['timer'] < self.tl_constraint:
                 new_state[i] = self.k.traffic_light.get_state(tl_id)
 
         return new_state
