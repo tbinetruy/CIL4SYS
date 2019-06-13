@@ -46,9 +46,25 @@ class BaseIssyEnv(Env):
 
         self._init_obs_veh_wait_steps()
         self._init_obs_tl_wait_steps()
+        self._init_obs_veh_acc()
 
         # Used for debug purposes
         self.current_timestep = 0
+
+    def _init_obs_veh_acc(self):
+        self._obs_veh_vel = [0] * self.beta  # m / s
+        self.obs_veh_acc = [0] * self.beta   # m / s^2
+
+    def _update_obs_veh_acc(self):
+        new_obs_veh_vel = [
+            self.k.vehicle.get_speed(v_id)
+            for v_id in self.get_observable_veh_ids()
+        ]
+        self.obs_veh_acc = [
+            (new_obs_veh_vel[i] - self._obs_veh_vel[i]) / self.sim_step
+            for i in range(len(self.obs_veh_acc))
+        ]
+        self._obs_veh_vel = new_obs_veh_vel
 
     def _init_obs_veh_wait_steps(self):
         """Initializes attributes that will store the number of steps stayed
@@ -265,6 +281,7 @@ class BaseIssyEnv(Env):
         See parent class for more information."""
         self._update_obs_wait_steps()
         self._increment_obs_tl_wait_steps()
+        self._update_obs_veh_acc()
 
         for veh_id in self.k.vehicle.get_ids():
             self._reroute_if_final_edge(veh_id)
