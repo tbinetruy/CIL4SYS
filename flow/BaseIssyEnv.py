@@ -7,6 +7,7 @@ from gym.spaces.discrete import Discrete
 from flow.envs import Env
 
 from Rewards import Rewards
+from States import States
 
 
 class BaseIssyEnv(Env):
@@ -43,6 +44,7 @@ class BaseIssyEnv(Env):
         self.sim_step = env_params.get_additional_param("sim_step")
         self.model_params = dict(beta=self.beta, )
         self.rewards = Rewards(self.k, self.action_spec)
+        self.states = States(self.k, self.beta)
 
         self._init_obs_veh_acc()
         self._init_obs_veh_wait_steps()
