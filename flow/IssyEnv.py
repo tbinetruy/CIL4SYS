@@ -274,4 +274,8 @@ class IssyEnv4(IssyEnv3):
         idled_max_steps = 300
         idle_reward = self.rewards.penalize_max_wait(self.obs_veh_wait_steps,
                                                      idled_max_steps, 10, -10)
-        return 0.001 * (base_reward + idle_reward)
+
+        max_abs_acc = 0.2  # m / s^2
+        acc_reward = self.rewards.penalize_max_acc(self.obs_veh_acc,
+                                                   max_abs_acc, 1, 0)
+        return 0.001 * (base_reward + idle_reward + acc_reward)

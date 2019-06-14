@@ -98,6 +98,24 @@ class Rewards:
             < max_emission else penalty for id in self._get_veh_ids()
         ])
 
+    def penalize_max_acc(self, obs_veh_acc, max_acc, reward=1, penalty=0):
+        """This rewards the beta vehicles accelerating less than a constraint.
+
+        Parameters
+        ----------
+        obs_veh_acc: List<Float>
+            List of accelerations in m/s^2.
+        max_acc: float
+            Absolute acceleration above which penalties are assigned.
+        reward: int
+            reward for each vehicles accelerating less than max_acc.
+        penalty: int
+             penalty to assign to vehicles traveling under max_acc"""
+        return np.sum([
+            reward if np.abs(acc) < max_acc else penalty
+            for acc in obs_veh_acc
+        ])
+
     def penalize_max_wait(self,
                           obs_veh_wait_steps,
                           max_wait,

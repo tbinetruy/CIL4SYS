@@ -44,9 +44,9 @@ class BaseIssyEnv(Env):
         self.model_params = dict(beta=self.beta, )
         self.rewards = Rewards(self.k, self.action_spec)
 
+        self._init_obs_veh_acc()
         self._init_obs_veh_wait_steps()
         self._init_obs_tl_wait_steps()
-        self._init_obs_veh_acc()
 
         # Used for debug purposes
         self.current_timestep = 0
@@ -62,7 +62,7 @@ class BaseIssyEnv(Env):
         ]
         self.obs_veh_acc = [
             (new_obs_veh_vel[i] - self._obs_veh_vel[i]) / self.sim_step
-            for i in range(len(self.obs_veh_acc))
+            for i in range(self.beta)
         ]
         self._obs_veh_vel = new_obs_veh_vel
 
