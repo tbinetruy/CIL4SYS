@@ -76,6 +76,20 @@ class VehicleStates:
     def _odict_to_list(self, odict):
         return list(odict.values())
 
+    def accelerations(self, veh_accs):
+        """Encodes vehicle speeds into a vector representation.
+
+        Parameters
+        ----------
+        veh_accs: List<Floats>
+            List of vehicle accelerations.
+
+        Returns
+        -------
+        encoded_state: List<Float>
+             Encoded orientations in same order as `ids`."""
+        return self._odict_to_list(veh_accs)
+
     def speeds(self, ids):
         """Encodes vehicle speeds into a vector representation.
 

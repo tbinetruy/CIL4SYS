@@ -103,8 +103,8 @@ class Rewards:
 
         Parameters
         ----------
-        obs_veh_acc: List<Float>
-            List of accelerations in m/s^2.
+        obs_veh_acc: Dict<String, Float>, type of `BaseIssyEnv.obs_veh_acc`
+            Dictionary of accelerations in m/s^2.
         max_acc: float
             Absolute acceleration above which penalties are assigned.
         reward: int
@@ -113,7 +113,7 @@ class Rewards:
              penalty to assign to vehicles traveling under max_acc"""
         return np.sum([
             reward if np.abs(acc) < max_acc else penalty
-            for acc in obs_veh_acc
+            for acc in obs_veh_acc.values()
         ])
 
     def penalize_max_wait(self,

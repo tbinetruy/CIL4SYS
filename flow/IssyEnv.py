@@ -45,7 +45,7 @@ class IssyEnv1(BaseIssyEnv):
         return Box(
             low=0,
             high=float("inf"),
-            shape=(6 * self.scenario.vehicles.num_vehicles +
+            shape=(7 * self.scenario.vehicles.num_vehicles +
                    self.get_num_traffic_lights() +
                    len(self.action_spec.keys()), ),
         )
@@ -64,6 +64,7 @@ class IssyEnv1(BaseIssyEnv):
             self.states.veh.orientations(veh_ids),
             self.states.veh.CO2_emissions(veh_ids),
             self.states.veh.wait_steps(self.obs_veh_wait_steps),
+            self.states.veh.accelerations(self.obs_veh_acc),
             self.states.tl.binary_state_ohe(tl_ids),
             self.states.tl.wait_steps(self.obs_tl_wait_steps),
         ))
