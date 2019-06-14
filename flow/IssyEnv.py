@@ -239,7 +239,7 @@ class IssyEnv4(IssyEnv3):
         return Box(
             low=0,
             high=float("inf"),
-            shape=(7 * self.scenario.vehicles.num_vehicles +
+            shape=(6 * self.scenario.vehicles.num_vehicles +
                    self.get_num_traffic_lights() +
                    len(self.action_spec.keys()), ),
         )
@@ -250,13 +250,18 @@ class IssyEnv4(IssyEnv3):
         accelerations.
 
         (See parent class for more information)"""
-        tl_wait_steps = [
-            self.obs_tl_wait_steps[tl_id]['timer']
-            for tl_id in self.obs_tl_wait_steps.keys()
-        ]
+        veh_ids = self.get_observable_veh_ids()
+        tl_ids = self.get_controlled_tl_ids()
+
+        vel = self.states.veh.speeds(veh_ids)
+        orientation = self.states.veh.orientations(veh_ids)
+        emission = self.states.veh.CO2_emissions(veh_ids)
+        idled = self.states.veh.wait_steps(self.obs_veh_wait_steps)
+        tl_states = self.states.tl.binary_state_ohe(tl_ids)
+        tl_wait_steps = self.states.tl.wait_steps(self.obs_tl_wait_steps)
 
         return np.concatenate(
-            (super().get_state(), tl_wait_steps, self.obs_veh_acc))
+            (vel, orientation, emission, idled, tl_states, tl_wait_steps))
 
     def compute_reward(self, rl_actions, **kwargs):
         """We reward vehicule speeds and penalize their emissions along
