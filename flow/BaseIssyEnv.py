@@ -55,10 +55,16 @@ class BaseIssyEnv(Env):
         self.current_timestep = 0
 
     def _init_obs_veh_acc(self):
+        """Initializes the data structures that will store vehicle speeds and
+        accelerations"""
         self._obs_veh_vel = [0] * self.beta  # m / s
         self.obs_veh_acc = [0] * self.beta  # m / s^2
 
     def _update_obs_veh_acc(self):
+        """Updates the observed vehicle speed and acceleration data structures.
+        We do so by using an ordered dict to maintain column order across
+        timesteps. When vehicles are being re-spawned, we set their
+        acceleration to 0."""
         placeholder = 0.
         speed_odict = OrderedDict([('human_' + str(i), placeholder)
                                    for i in range(self.beta)])
