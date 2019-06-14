@@ -59,34 +59,30 @@ class IssyEnv1(BaseIssyEnv):
         veh_ids = self.get_observable_veh_ids()
         tl_ids = self.get_controlled_tl_ids()
 
-        vel = self.states.veh.speeds(veh_ids)
-        orientation = self.states.veh.orientations(veh_ids)
-        emission = self.states.veh.CO2_emissions(veh_ids)
-        idled = self.states.veh.wait_steps(self.obs_veh_wait_steps)
-        tl_states = self.states.tl.binary_state_ohe(tl_ids)
-        tl_wait_steps = self.states.tl.wait_steps(self.obs_tl_wait_steps)
-
-        return np.concatenate(
-            (vel, orientation, emission, idled, tl_states, tl_wait_steps))
+        return np.concatenate((
+            self.states.veh.speeds(veh_ids),
+            self.states.veh.orientations(veh_ids),
+            self.states.veh.CO2_emissions(veh_ids),
+            self.states.veh.wait_steps(self.obs_veh_wait_steps),
+            self.states.tl.binary_state_ohe(tl_ids),
+            self.states.tl.wait_steps(self.obs_tl_wait_steps),
+        ))
 
     def compute_reward(self, rl_actions, **kwargs):
         """We reward vehicule speeds and penalize their emissions along
         with idled cars.
 
         (See parent class for more information)"""
-        # km/h
-        max_speed = 10
-        # mg of CO2 emitted per vehicle during the last timestep
-        max_emission = 3000
-
-        base_reward = self.rewards.penalize_min_speed(
-            max_speed) + self.rewards.penalize_max_emission(max_emission)
-
-        idled_max_steps = 300
-        idle_reward = self.rewards.penalize_max_wait(self.obs_veh_wait_steps,
-                                                     idled_max_steps, 10, -10)
-
-        max_abs_acc = 0.2  # m / s^2
-        acc_reward = self.rewards.penalize_max_acc(self.obs_veh_acc,
-                                                   max_abs_acc, 1, 0)
-        return 0.001 * (base_reward + idle_reward + acc_reward)
+        max_emission = 3000    # mg of CO2 per timestep
+        max_speed = 10         # km/h
+        idled_max_steps = 300  # steps
+        max_abs_acc = 0.2      # m / s^2
+        c = 0.001
+        return c * (
+            self.rewards.penalize_min_speed(max_speed) +
+            self.rewards.penalize_max_emission(max_emission) +
+            self.rewards.penalize_max_wait(self.obs_veh_wait_steps,
+                                           idled_max_steps, 10, -10) +
+            self.rewards.penalize_max_acc(self.obs_veh_acc,
+                                          max_abs_acc, 1, 0)
+        )
