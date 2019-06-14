@@ -1,5 +1,6 @@
 import numpy as np
-from helpers import pad_list, flatten
+from helpers import flatten
+from collections import OrderedDict
 
 
 class TrafficLightsStates:
@@ -67,6 +68,14 @@ class VehicleStates:
         self.k = kernel
         self.beta = beta
 
+    def _get_odict(self, placeholder):
+        return OrderedDict(
+            [('human_' + str(i), placeholder)
+             for i in range(self.beta)])
+
+    def _odict_to_list(self, odict):
+        return list(odict.values())
+
     def speeds(self, ids):
         """Encodes vehicle speeds into a vector representation.
 
@@ -79,8 +88,10 @@ class VehicleStates:
         -------
         encoded_state: List<Float>
              Encoded orientations in same order as `ids`."""
-        return pad_list([self.k.vehicle.get_speed(veh_id) for veh_id in ids],
-                        self.beta)
+        odict = self._get_odict(0.)
+        for id in ids:
+            odict[id] = self.k.vehicle.get_speed(id)
+        return self._odict_to_list(odict)
 
     def orientations(self, ids):
         """Encodes vehicle orientation into a vector representation.
@@ -96,10 +107,10 @@ class VehicleStates:
         -------
         encoded_state: List<Float> of length `3 * len(ids)`
              Encoded orientations in same order as `ids`."""
-        orientations = [
-            self.k.vehicle.get_orientation(veh_id) for veh_id in ids
-        ]
-        return flatten(pad_list(orientations, self.beta, [0., 0., 0.]))
+        odict = self._get_odict([0., 0., 0.])
+        for id in ids:
+            odict[id] = self.k.vehicle.get_orientation(id)
+        return flatten(self._odict_to_list(odict))
 
     def CO2_emissions(self, ids):
         """Encodes vehicle CO2 emissions into a vector representation.
@@ -113,9 +124,10 @@ class VehicleStates:
         -------
         encoded_state: List<Float>
              Encoded CO2 emissions in same order as `ids`."""
-        return pad_list([
-            self.k.vehicle.kernel_api.vehicle.getCO2Emission(id) for id in ids
-        ], self.beta)
+        odict = self._get_odict(0.)
+        for id in ids:
+            odict[id] = self.k.vehicle.kernel_api.vehicle.getCO2Emission(id)
+        return self._odict_to_list(odict)
 
     def wait_steps(self, veh_wait_steps):
         """Encodes steps vehicles spent idled into a vector representation.
@@ -129,8 +141,10 @@ class VehicleStates:
         -------
         encoded_state: List<Float>
              Encoded wait_steps in same order as `ids`."""
-        idled = [veh_wait_steps[id] for id in veh_wait_steps.keys()]
-        return pad_list(idled, self.beta, 0.)
+        odict = self._get_odict(0.)
+        for id in veh_wait_steps.keys():
+            odict[id] = veh_wait_steps[id]
+        return self._odict_to_list(odict)
 
 
 class States:
