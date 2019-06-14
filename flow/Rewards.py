@@ -92,7 +92,7 @@ class Rewards:
         reward: int
             reward for each vehicles emitting less than max_emission.
         penalty: int
-             penalty to assign to vehicles traveling under min_speed"""
+             penalty to assign to vehicles emitting more than max_emission."""
         return np.sum([
             reward if self.kernel.vehicle.kernel_api.vehicle.getCO2Emission(id)
             < max_emission else penalty for id in self._get_veh_ids()
