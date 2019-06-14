@@ -1,5 +1,6 @@
 import itertools
 import numpy as np
+from collections import OrderedDict
 
 from gym.spaces.box import Box
 from gym.spaces.discrete import Discrete
@@ -55,18 +56,26 @@ class BaseIssyEnv(Env):
 
     def _init_obs_veh_acc(self):
         self._obs_veh_vel = [0] * self.beta  # m / s
-        self.obs_veh_acc = [0] * self.beta   # m / s^2
+        self.obs_veh_acc = [0] * self.beta  # m / s^2
 
     def _update_obs_veh_acc(self):
-        new_obs_veh_vel = [
-            self.k.vehicle.get_speed(v_id)
-            for v_id in self.get_observable_veh_ids()
-        ]
-        self.obs_veh_acc = [
-            (new_obs_veh_vel[i] - self._obs_veh_vel[i]) / self.sim_step
-            for i in range(self.beta)
-        ]
-        self._obs_veh_vel = new_obs_veh_vel
+        placeholder = 0.
+        speed_odict = OrderedDict([('human_' + str(i), placeholder)
+                                   for i in range(self.beta)])
+        acc_odict = OrderedDict([('human_' + str(i), placeholder)
+                                 for i in range(self.beta)])
+
+        for id in self.get_observable_veh_ids():
+            speed_odict[id] = self.k.vehicle.get_speed(id)
+
+        new_speed = list(speed_odict.values())
+
+        for i in range(self.beta):
+            acc_odict[i] = (new_speed[i] -
+                            self._obs_veh_vel[i]) / self.sim_step
+
+        self.obs_veh_acc = list(acc_odict.values())
+        self._obs_veh_vel = new_speed
 
     def _init_obs_veh_wait_steps(self):
         """Initializes attributes that will store the number of steps stayed
