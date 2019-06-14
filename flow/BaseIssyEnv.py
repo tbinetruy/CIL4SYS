@@ -57,8 +57,11 @@ class BaseIssyEnv(Env):
     def _init_obs_veh_acc(self):
         """Initializes the data structures that will store vehicle speeds and
         accelerations"""
-        self._obs_veh_vel = [0] * self.beta  # m / s
-        self.obs_veh_acc = [0] * self.beta  # m / s^2
+        placeholder = 0.
+        self._obs_veh_vel = OrderedDict([('human_' + str(i), placeholder)
+                                         for i in range(self.beta)])
+        self.obs_veh_acc = OrderedDict([('human_' + str(i), placeholder)
+                                        for i in range(self.beta)])
 
     def _update_obs_veh_acc(self):
         """Updates the observed vehicle speed and acceleration data structures.
@@ -74,14 +77,12 @@ class BaseIssyEnv(Env):
         for id in self.get_observable_veh_ids():
             speed_odict[id] = self.k.vehicle.get_speed(id)
 
-        new_speed = list(speed_odict.values())
+        for i, id in enumerate(self.get_observable_veh_ids()):
+            acc_odict[id] = (speed_odict[id] -
+                             self._obs_veh_vel[id]) / self.sim_step
 
-        for i in range(self.beta):
-            acc_odict[i] = (new_speed[i] -
-                            self._obs_veh_vel[i]) / self.sim_step
-
-        self.obs_veh_acc = list(acc_odict.values())
-        self._obs_veh_vel = new_speed
+        self.obs_veh_acc = acc_odict
+        self._obs_veh_vel = speed_odict
 
     def _init_obs_veh_wait_steps(self):
         """Initializes attributes that will store the number of steps stayed
