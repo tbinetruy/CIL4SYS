@@ -111,8 +111,11 @@ class IssyExperimentParams:
             Copied from: `flow.core.params.EnvParams.warup_steps` docstring.
         render: boolean
             Should sumo-gui be launched during training.
-        tl_constraint: str
-            Minimum number of timesteps tl has to remain in same state
+        tl_constraint: [Int, Int]
+            Array of 2 ints, the first one stipulating the minimum number of
+            timesteps tl has to remain in same state and the second one the
+            maximum number of timesteps a tl can remain in the same state,
+            after which, the simulator will randomly choose a new state.
         sim_step: float
             Number of seconds between steps on simulator (Sumo in our case)
         osm_path: str
@@ -338,7 +341,8 @@ class IssyExperiment:
                 "beta": self.exp_params.n_veh,
                 "action_spec": self.exp_params.action_spec,
                 "algorithm": self.exp_params.algorithm,
-                "tl_constraint": self.exp_params.tl_constraint,
+                "tl_constraint_min": self.exp_params.tl_constraint[0],
+                "tl_constraint_max": self.exp_params.tl_constraint[1],
                 "sim_step": self.exp_params.sim_step,
             },
             horizon=self.exp_params.horizon,
