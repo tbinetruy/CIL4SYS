@@ -39,7 +39,10 @@ class BaseIssyEnv(Env):
     def __init__(self, env_params, sim_params, scenario, simulator='traci'):
         super().__init__(env_params, sim_params, scenario, simulator)
         self.beta = env_params.get_additional_param("beta")
-        self.tl_constraint = env_params.get_additional_param("tl_constraint")
+        self.tl_constraint_min = env_params.get_additional_param(
+            "tl_constraint_min")
+        self.tl_constraint_max = env_params.get_additional_param(
+            "tl_constraint_max")
         self.action_spec = env_params.get_additional_param("action_spec")
         self.algorithm = env_params.get_additional_param("algorithm")
         self.sim_step = env_params.get_additional_param("sim_step")
@@ -164,13 +167,28 @@ class BaseIssyEnv(Env):
         # Don't update traffic lights that have not exceeded the timer
         new_state = list(new_state)
         for i, tl_id in enumerate(self.action_spec.keys()):
-            if self.obs_tl_wait_steps[tl_id]['timer'] < self.tl_constraint:
-                new_state[i] = self.k.traffic_light.get_state(tl_id)
+            current_state = self.k.traffic_light.get_state(tl_id)
+            timer_value = self.obs_tl_wait_steps[tl_id]['timer']
+            if timer_value < self.tl_constraint_min:
+                new_state[i] = current_state
             else:
-                self.obs_tl_wait_steps[tl_id] = {
-                    'current_state': new_state[i],
-                    'timer': 0
-                }
+                # Pick new state if tl state hasn't changed in a while
+                cond_A = timer_value > self.tl_constraint_max
+                cond_B = new_state[i] == current_state
+                if cond_A and cond_B:
+                    possible_states = list(self.action_spec[tl_id])  # copy
+                    possible_states.remove(current_state)
+                    num_states = len(possible_states)
+                    if num_states:
+                        new_state_index = np.random.randint(num_states)
+                        new_state[i] = possible_states[new_state_index]
+
+                # Update state and timer if state changed
+                if new_state[i] is not current_state:
+                    self.obs_tl_wait_steps[tl_id] = {
+                        'current_state': new_state[i],
+                        'timer': 0
+                    }
 
         return new_state
 

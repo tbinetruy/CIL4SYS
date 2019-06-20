@@ -48,7 +48,7 @@ if __name__ == '__main__':
                                   algorithm="DQN",
                                   warmup_steps=500,
                                   render=False,
-                                  tl_constraint=100,  # steps
+                                  tl_constraint=[100, 600],  # steps
                                   sim_step=0.1,       # seconds / steps
                                   osm_path='/home/thomas/sumo/models/issy.osm')
 
