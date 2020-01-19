@@ -37,7 +37,7 @@ if __name__ == '__main__':
                                   rollouts=1,
                                   inflow_spec=inflow_spec,
                                   action_spec=action_spec,
-                                  n_cpus=0,
+                                  n_cpus=1,
                                   n_veh=5,
                                   cluster_params=cluster_params,
                                   checkpoint_freq=2,
@@ -50,7 +50,7 @@ if __name__ == '__main__':
                                   render=False,
                                   tl_constraint=[100, 600],  # steps
                                   sim_step=0.1,       # seconds / steps
-                                  osm_path='/home/thomas/sumo/models/issy.osm')
+                                  osm_path='/host/CIL4SYS/flow/issy.osm')
 
     exp = IssyExperiment(params)
     exp.run()
