@@ -10,8 +10,8 @@ RUN apt -y install python-pip git wget
 
 # install anaconda
 ## Copy the anaconda script
-COPY Anaconda3-5.3.1-Linux-x86_64.sh /app
-RUN chmod +x Anaconda3-5.3.1-Linux-x86_64.sh
+RUN cd /app && wget https://repo.anaconda.com/archive/Anaconda3-5.3.1-Linux-x86_64.sh
+RUN cd /app && chmod +x Anaconda3-5.3.1-Linux-x86_64.sh
 RUN cd /app && ./Anaconda3-5.3.1-Linux-x86_64.sh -b
 
 # install Flow and Sumo
