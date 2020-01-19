@@ -1,5 +1,5 @@
 #!/bin/sh
-!pip install --user cmake cython gym==0.12.0 pyprind nose2 cached_property joblib dill lz4 ray==0.6.1 setproctitle psutil opencv-python boto3 redis tensorflow imutils lxml
+pip3 install --user cmake cython gym==0.12.0 pyprind nose2 cached_property joblib dill lz4 ray==0.6.1 setproctitle psutil opencv-python boto3 redis tensorflow imutils lxml
 cd ~
 mkdir -p fil_rouge
 cd fil_rouge
