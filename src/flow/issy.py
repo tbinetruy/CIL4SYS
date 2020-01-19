@@ -33,24 +33,23 @@ if __name__ == '__main__':
 
     cluster_params = RayClusterParams(use_cluster=False, redis_address="")
 
-    params = IssyExperimentParams(horizon=2000,
+    params = IssyExperimentParams(horizon=3000,
                                   rollouts=1,
                                   inflow_spec=inflow_spec,
                                   action_spec=action_spec,
                                   n_cpus=1,
                                   n_veh=5,
                                   cluster_params=cluster_params,
-                                  checkpoint_freq=2,
-                                  training_iteration=200,
-                                  discount_rate=0.999,
-                                  env_name='IssyEnv3',
+                                  checkpoint_freq=20,
+                                  training_iteration=2000,
+                                  discount_rate=0.9999999,
                                   env_name='IssyEnv1',
                                   algorithm="DQN",
                                   warmup_steps=500,
                                   render=False,
                                   tl_constraint=[100, 600],  # steps
                                   sim_step=0.1,       # seconds / steps
-                                  osm_path='/host/CIL4SYS/flow/issy.osm')
+                                  osm_path='/host/src/flow/issy.osm')
 
     exp = IssyExperiment(params)
     exp.run()

@@ -1,6 +1,30 @@
-* Workflow
+* Running
+  
+In order to build the container from the Dockerfile, we first need to build it. We associate it the ~flow~ tag:
+  
+#+begin_src sh
+sudo docker build -t flow .
+#+end_src
 
-- https://trello.com/cil4sys
+In order to run the container, invoque the following instructions. The current directory (~$(pwd)~ on Linux) will be mounted to ~/host~ allowing the user to modify the project from the host machine and run it from the docker. There is also some Linux display wizardry going on with X11 allowing to set the ~render~ flag to ~True~ in ~IssyExperimentParams~ and have the Sumo GUI appear on the host machine:
+
+#+begin_src sh
+# allow connection to x11 server from docker
+xhost +
+
+# run sumo.py in dockerised sumo-gui
+sudo docker run -e DISPLAY=$DISPLAY -v /tmp/.X11-unix:/tmp/.X11-unix --privileged -ti --mount src="$(pwd)",target=/host,type=bind flow /bin/bash -c "source /root/.bashrc && python /host/src/flow/issy.py"
+#+end_src
+
+In order to open a shell inside the docker image with graphic support, run the following command.
+
+#+begin_src sh
+# allow connection to x11 server from docker
+xhost +
+
+# run sumo.py in dockerised sumo-gui
+sudo docker run -e DISPLAY=$DISPLAY -v /tmp/.X11-unix:/tmp/.X11-unix --privileged -ti --mount src="$(pwd)",target=/host,type=bind flow /bin/bash
+#+end_src
 
 * État de l'art
   
