@@ -25,6 +25,6 @@ tensorboard==1.13.1
 tensorflow==1.15
 tensorflow-estimator==1.13.0
 termcolor==1.1.0
-urllib3==1.24.2
+urllib3==1.26.5
 websockets==7.0
 Werkzeug==0.15.3
